@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package resolvercontract
+package resolver
 
 import (
 	"math/big"
@@ -28,7 +28,7 @@ var (
 )
 
 // ResolverContractABI is the input ABI used to generate the binding from.
-const ResolverContractABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"key\",\"type\":\"string\"},{\"name\":\"value\",\"type\":\"string\"}],\"name\":\"setText\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"contentTypes\",\"type\":\"uint256\"}],\"name\":\"ABI\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"x\",\"type\":\"bytes32\"},{\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"setPubkey\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"setContenthash\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"addr\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"multiaddr\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"key\",\"type\":\"string\"}],\"name\":\"text\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"contentType\",\"type\":\"uint256\"},{\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"setABI\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"name\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"name\",\"type\":\"string\"}],\"name\":\"setName\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"multiaddr\",\"type\":\"bytes\"}],\"name\":\"setMultiaddr\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"contenthash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"pubkey\",\"outputs\":[{\"name\":\"x\",\"type\":\"bytes32\"},{\"name\":\"y\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"setAddr\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"ensAddr\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"a\",\"type\":\"address\"}],\"name\":\"AddrChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"name\",\"type\":\"string\"}],\"name\":\"NameChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"contentType\",\"type\":\"uint256\"}],\"name\":\"ABIChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"x\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"PubkeyChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"indexedKey\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"key\",\"type\":\"string\"}],\"name\":\"TextChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"ContenthashChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"multiaddr\",\"type\":\"bytes\"}],\"name\":\"MultiaddrChanged\",\"type\":\"event\"}]"
+const ResolverContractABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"key\",\"type\":\"string\"},{\"name\":\"value\",\"type\":\"string\"}],\"name\":\"setText\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"contentTypes\",\"type\":\"uint256\"}],\"name\":\"ABI\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"x\",\"type\":\"bytes32\"},{\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"setPubkey\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"setContenthash\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"addr\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"contenthash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"key\",\"type\":\"string\"}],\"name\":\"text\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"contentType\",\"type\":\"uint256\"},{\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"setABI\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"name\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"name\",\"type\":\"string\"}],\"name\":\"setName\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"contenthash\",\"type\":\"bytes\"}],\"name\":\"setContenthash\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"contenthash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"pubkey\",\"outputs\":[{\"name\":\"x\",\"type\":\"bytes32\"},{\"name\":\"y\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"setAddr\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"ensAddr\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"a\",\"type\":\"address\"}],\"name\":\"AddrChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"name\",\"type\":\"string\"}],\"name\":\"NameChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"contentType\",\"type\":\"uint256\"}],\"name\":\"ABIChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"x\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"PubkeyChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"indexedKey\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"key\",\"type\":\"string\"}],\"name\":\"TextChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"ContenthashChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"contenthash\",\"type\":\"bytes\"}],\"name\":\"ContenthashChanged\",\"type\":\"event\"}]"
 
 // ResolverContract is an auto generated Go binding around an Ethereum contract.
 type ResolverContract struct {
@@ -254,32 +254,6 @@ func (_ResolverContract *ResolverContractCallerSession) Contenthash(node [32]byt
 	return _ResolverContract.Contract.Contenthash(&_ResolverContract.CallOpts, node)
 }
 
-// Multiaddr is a free data retrieval call binding the contract method 0x4cb7724c.
-//
-// Solidity: function multiaddr(bytes32 node) constant returns(bytes)
-func (_ResolverContract *ResolverContractCaller) Multiaddr(opts *bind.CallOpts, node [32]byte) ([]byte, error) {
-	var (
-		ret0 = new([]byte)
-	)
-	out := ret0
-	err := _ResolverContract.contract.Call(opts, out, "multiaddr", node)
-	return *ret0, err
-}
-
-// Multiaddr is a free data retrieval call binding the contract method 0x4cb7724c.
-//
-// Solidity: function multiaddr(bytes32 node) constant returns(bytes)
-func (_ResolverContract *ResolverContractSession) Multiaddr(node [32]byte) ([]byte, error) {
-	return _ResolverContract.Contract.Multiaddr(&_ResolverContract.CallOpts, node)
-}
-
-// Multiaddr is a free data retrieval call binding the contract method 0x4cb7724c.
-//
-// Solidity: function multiaddr(bytes32 node) constant returns(bytes)
-func (_ResolverContract *ResolverContractCallerSession) Multiaddr(node [32]byte) ([]byte, error) {
-	return _ResolverContract.Contract.Multiaddr(&_ResolverContract.CallOpts, node)
-}
-
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
 // Solidity: function name(bytes32 node) constant returns(string)
@@ -438,44 +412,23 @@ func (_ResolverContract *ResolverContractTransactorSession) SetAddr(node [32]byt
 
 // SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
 //
-// Solidity: function setContenthash(bytes32 node, bytes hash) returns()
-func (_ResolverContract *ResolverContractTransactor) SetContenthash(opts *bind.TransactOpts, node [32]byte, hash []byte) (*types.Transaction, error) {
-	return _ResolverContract.contract.Transact(opts, "setContenthash", node, hash)
+// Solidity: function setContenthash(bytes32 node, bytes contenthash) returns()
+func (_ResolverContract *ResolverContractTransactor) SetContenthash(opts *bind.TransactOpts, node [32]byte, contenthash []byte) (*types.Transaction, error) {
+	return _ResolverContract.contract.Transact(opts, "setContenthash", node, contenthash)
 }
 
 // SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
 //
-// Solidity: function setContenthash(bytes32 node, bytes hash) returns()
-func (_ResolverContract *ResolverContractSession) SetContenthash(node [32]byte, hash []byte) (*types.Transaction, error) {
-	return _ResolverContract.Contract.SetContenthash(&_ResolverContract.TransactOpts, node, hash)
+// Solidity: function setContenthash(bytes32 node, bytes contenthash) returns()
+func (_ResolverContract *ResolverContractSession) SetContenthash(node [32]byte, contenthash []byte) (*types.Transaction, error) {
+	return _ResolverContract.Contract.SetContenthash(&_ResolverContract.TransactOpts, node, contenthash)
 }
 
 // SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
 //
-// Solidity: function setContenthash(bytes32 node, bytes hash) returns()
-func (_ResolverContract *ResolverContractTransactorSession) SetContenthash(node [32]byte, hash []byte) (*types.Transaction, error) {
-	return _ResolverContract.Contract.SetContenthash(&_ResolverContract.TransactOpts, node, hash)
-}
-
-// SetMultiaddr is a paid mutator transaction binding the contract method 0x9775ac97.
-//
-// Solidity: function setMultiaddr(bytes32 node, bytes multiaddr) returns()
-func (_ResolverContract *ResolverContractTransactor) SetMultiaddr(opts *bind.TransactOpts, node [32]byte, multiaddr []byte) (*types.Transaction, error) {
-	return _ResolverContract.contract.Transact(opts, "setMultiaddr", node, multiaddr)
-}
-
-// SetMultiaddr is a paid mutator transaction binding the contract method 0x9775ac97.
-//
-// Solidity: function setMultiaddr(bytes32 node, bytes multiaddr) returns()
-func (_ResolverContract *ResolverContractSession) SetMultiaddr(node [32]byte, multiaddr []byte) (*types.Transaction, error) {
-	return _ResolverContract.Contract.SetMultiaddr(&_ResolverContract.TransactOpts, node, multiaddr)
-}
-
-// SetMultiaddr is a paid mutator transaction binding the contract method 0x9775ac97.
-//
-// Solidity: function setMultiaddr(bytes32 node, bytes multiaddr) returns()
-func (_ResolverContract *ResolverContractTransactorSession) SetMultiaddr(node [32]byte, multiaddr []byte) (*types.Transaction, error) {
-	return _ResolverContract.Contract.SetMultiaddr(&_ResolverContract.TransactOpts, node, multiaddr)
+// Solidity: function setContenthash(bytes32 node, bytes contenthash) returns()
+func (_ResolverContract *ResolverContractTransactorSession) SetContenthash(node [32]byte, contenthash []byte) (*types.Transaction, error) {
+	return _ResolverContract.Contract.SetContenthash(&_ResolverContract.TransactOpts, node, contenthash)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
@@ -884,14 +837,14 @@ func (it *ResolverContractContenthashChangedIterator) Close() error {
 
 // ResolverContractContenthashChanged represents a ContenthashChanged event raised by the ResolverContract contract.
 type ResolverContractContenthashChanged struct {
-	Node [32]byte
-	Hash []byte
-	Raw  types.Log // Blockchain specific contextual infos
+	Node        [32]byte
+	Contenthash []byte
+	Raw         types.Log // Blockchain specific contextual infos
 }
 
 // FilterContenthashChanged is a free log retrieval operation binding the contract event 0xe379c1624ed7e714cc0937528a32359d69d5281337765313dba4e081b72d7578.
 //
-// Solidity: event ContenthashChanged(bytes32 indexed node, bytes hash)
+// Solidity: event ContenthashChanged(bytes32 indexed node, bytes contenthash)
 func (_ResolverContract *ResolverContractFilterer) FilterContenthashChanged(opts *bind.FilterOpts, node [][32]byte) (*ResolverContractContenthashChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -908,7 +861,7 @@ func (_ResolverContract *ResolverContractFilterer) FilterContenthashChanged(opts
 
 // WatchContenthashChanged is a free log subscription operation binding the contract event 0xe379c1624ed7e714cc0937528a32359d69d5281337765313dba4e081b72d7578.
 //
-// Solidity: event ContenthashChanged(bytes32 indexed node, bytes hash)
+// Solidity: event ContenthashChanged(bytes32 indexed node, bytes contenthash)
 func (_ResolverContract *ResolverContractFilterer) WatchContenthashChanged(opts *bind.WatchOpts, sink chan<- *ResolverContractContenthashChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -928,139 +881,6 @@ func (_ResolverContract *ResolverContractFilterer) WatchContenthashChanged(opts 
 				// New log arrived, parse the event and forward to the user
 				event := new(ResolverContractContenthashChanged)
 				if err := _ResolverContract.contract.UnpackLog(event, "ContenthashChanged", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ResolverContractMultiaddrChangedIterator is returned from FilterMultiaddrChanged and is used to iterate over the raw logs and unpacked data for MultiaddrChanged events raised by the ResolverContract contract.
-type ResolverContractMultiaddrChangedIterator struct {
-	Event *ResolverContractMultiaddrChanged // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ResolverContractMultiaddrChangedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ResolverContractMultiaddrChanged)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ResolverContractMultiaddrChanged)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ResolverContractMultiaddrChangedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ResolverContractMultiaddrChangedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ResolverContractMultiaddrChanged represents a MultiaddrChanged event raised by the ResolverContract contract.
-type ResolverContractMultiaddrChanged struct {
-	Node      [32]byte
-	Multiaddr []byte
-	Raw       types.Log // Blockchain specific contextual infos
-}
-
-// FilterMultiaddrChanged is a free log retrieval operation binding the contract event 0xececa271fd07e9fa2e19fc9210b62c4c5cf858b1a8b8abe72895498d71951e22.
-//
-// Solidity: event MultiaddrChanged(bytes32 indexed node, bytes multiaddr)
-func (_ResolverContract *ResolverContractFilterer) FilterMultiaddrChanged(opts *bind.FilterOpts, node [][32]byte) (*ResolverContractMultiaddrChangedIterator, error) {
-
-	var nodeRule []interface{}
-	for _, nodeItem := range node {
-		nodeRule = append(nodeRule, nodeItem)
-	}
-
-	logs, sub, err := _ResolverContract.contract.FilterLogs(opts, "MultiaddrChanged", nodeRule)
-	if err != nil {
-		return nil, err
-	}
-	return &ResolverContractMultiaddrChangedIterator{contract: _ResolverContract.contract, event: "MultiaddrChanged", logs: logs, sub: sub}, nil
-}
-
-// WatchMultiaddrChanged is a free log subscription operation binding the contract event 0xececa271fd07e9fa2e19fc9210b62c4c5cf858b1a8b8abe72895498d71951e22.
-//
-// Solidity: event MultiaddrChanged(bytes32 indexed node, bytes multiaddr)
-func (_ResolverContract *ResolverContractFilterer) WatchMultiaddrChanged(opts *bind.WatchOpts, sink chan<- *ResolverContractMultiaddrChanged, node [][32]byte) (event.Subscription, error) {
-
-	var nodeRule []interface{}
-	for _, nodeItem := range node {
-		nodeRule = append(nodeRule, nodeItem)
-	}
-
-	logs, sub, err := _ResolverContract.contract.WatchLogs(opts, "MultiaddrChanged", nodeRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ResolverContractMultiaddrChanged)
-				if err := _ResolverContract.contract.UnpackLog(event, "MultiaddrChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log

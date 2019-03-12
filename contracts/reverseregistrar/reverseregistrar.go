@@ -1,15 +1,30 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package reverseregistrarcontract
+package reverseregistrar
 
 import (
+	"math/big"
 	"strings"
 
+	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/event"
+)
+
+// Reference imports to suppress errors if they are not otherwise used.
+var (
+	_ = big.NewInt
+	_ = strings.NewReader
+	_ = ethereum.NotFound
+	_ = abi.U256
+	_ = bind.Bind
+	_ = common.Big1
+	_ = types.BloomLookup
+	_ = event.NewSubscription
 )
 
 // ReverseRegistrarContractABI is the input ABI used to generate the binding from.
@@ -211,7 +226,7 @@ func (_ReverseRegistrarContract *ReverseRegistrarContractCallerSession) Ens() (c
 
 // Node is a free data retrieval call binding the contract method 0xbffbe61c.
 //
-// Solidity: function node(addr address) constant returns(ret bytes32)
+// Solidity: function node(address addr) constant returns(bytes32 ret)
 func (_ReverseRegistrarContract *ReverseRegistrarContractCaller) Node(opts *bind.CallOpts, addr common.Address) ([32]byte, error) {
 	var (
 		ret0 = new([32]byte)
@@ -223,77 +238,77 @@ func (_ReverseRegistrarContract *ReverseRegistrarContractCaller) Node(opts *bind
 
 // Node is a free data retrieval call binding the contract method 0xbffbe61c.
 //
-// Solidity: function node(addr address) constant returns(ret bytes32)
+// Solidity: function node(address addr) constant returns(bytes32 ret)
 func (_ReverseRegistrarContract *ReverseRegistrarContractSession) Node(addr common.Address) ([32]byte, error) {
 	return _ReverseRegistrarContract.Contract.Node(&_ReverseRegistrarContract.CallOpts, addr)
 }
 
 // Node is a free data retrieval call binding the contract method 0xbffbe61c.
 //
-// Solidity: function node(addr address) constant returns(ret bytes32)
+// Solidity: function node(address addr) constant returns(bytes32 ret)
 func (_ReverseRegistrarContract *ReverseRegistrarContractCallerSession) Node(addr common.Address) ([32]byte, error) {
 	return _ReverseRegistrarContract.Contract.Node(&_ReverseRegistrarContract.CallOpts, addr)
 }
 
 // Claim is a paid mutator transaction binding the contract method 0x1e83409a.
 //
-// Solidity: function claim(owner address) returns(node bytes32)
+// Solidity: function claim(address owner) returns(bytes32 node)
 func (_ReverseRegistrarContract *ReverseRegistrarContractTransactor) Claim(opts *bind.TransactOpts, owner common.Address) (*types.Transaction, error) {
 	return _ReverseRegistrarContract.contract.Transact(opts, "claim", owner)
 }
 
 // Claim is a paid mutator transaction binding the contract method 0x1e83409a.
 //
-// Solidity: function claim(owner address) returns(node bytes32)
+// Solidity: function claim(address owner) returns(bytes32 node)
 func (_ReverseRegistrarContract *ReverseRegistrarContractSession) Claim(owner common.Address) (*types.Transaction, error) {
 	return _ReverseRegistrarContract.Contract.Claim(&_ReverseRegistrarContract.TransactOpts, owner)
 }
 
 // Claim is a paid mutator transaction binding the contract method 0x1e83409a.
 //
-// Solidity: function claim(owner address) returns(node bytes32)
+// Solidity: function claim(address owner) returns(bytes32 node)
 func (_ReverseRegistrarContract *ReverseRegistrarContractTransactorSession) Claim(owner common.Address) (*types.Transaction, error) {
 	return _ReverseRegistrarContract.Contract.Claim(&_ReverseRegistrarContract.TransactOpts, owner)
 }
 
 // ClaimWithResolver is a paid mutator transaction binding the contract method 0x0f5a5466.
 //
-// Solidity: function claimWithResolver(owner address, resolver address) returns(node bytes32)
+// Solidity: function claimWithResolver(address owner, address resolver) returns(bytes32 node)
 func (_ReverseRegistrarContract *ReverseRegistrarContractTransactor) ClaimWithResolver(opts *bind.TransactOpts, owner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _ReverseRegistrarContract.contract.Transact(opts, "claimWithResolver", owner, resolver)
 }
 
 // ClaimWithResolver is a paid mutator transaction binding the contract method 0x0f5a5466.
 //
-// Solidity: function claimWithResolver(owner address, resolver address) returns(node bytes32)
+// Solidity: function claimWithResolver(address owner, address resolver) returns(bytes32 node)
 func (_ReverseRegistrarContract *ReverseRegistrarContractSession) ClaimWithResolver(owner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _ReverseRegistrarContract.Contract.ClaimWithResolver(&_ReverseRegistrarContract.TransactOpts, owner, resolver)
 }
 
 // ClaimWithResolver is a paid mutator transaction binding the contract method 0x0f5a5466.
 //
-// Solidity: function claimWithResolver(owner address, resolver address) returns(node bytes32)
+// Solidity: function claimWithResolver(address owner, address resolver) returns(bytes32 node)
 func (_ReverseRegistrarContract *ReverseRegistrarContractTransactorSession) ClaimWithResolver(owner common.Address, resolver common.Address) (*types.Transaction, error) {
 	return _ReverseRegistrarContract.Contract.ClaimWithResolver(&_ReverseRegistrarContract.TransactOpts, owner, resolver)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0xc47f0027.
 //
-// Solidity: function setName(name string) returns(node bytes32)
+// Solidity: function setName(string name) returns(bytes32 node)
 func (_ReverseRegistrarContract *ReverseRegistrarContractTransactor) SetName(opts *bind.TransactOpts, name string) (*types.Transaction, error) {
 	return _ReverseRegistrarContract.contract.Transact(opts, "setName", name)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0xc47f0027.
 //
-// Solidity: function setName(name string) returns(node bytes32)
+// Solidity: function setName(string name) returns(bytes32 node)
 func (_ReverseRegistrarContract *ReverseRegistrarContractSession) SetName(name string) (*types.Transaction, error) {
 	return _ReverseRegistrarContract.Contract.SetName(&_ReverseRegistrarContract.TransactOpts, name)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0xc47f0027.
 //
-// Solidity: function setName(name string) returns(node bytes32)
+// Solidity: function setName(string name) returns(bytes32 node)
 func (_ReverseRegistrarContract *ReverseRegistrarContractTransactorSession) SetName(name string) (*types.Transaction, error) {
 	return _ReverseRegistrarContract.Contract.SetName(&_ReverseRegistrarContract.TransactOpts, name)
 }

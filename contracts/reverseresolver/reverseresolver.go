@@ -1,15 +1,30 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package reverseresolvercontract
+package reverseresolver
 
 import (
+	"math/big"
 	"strings"
 
+	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/event"
+)
+
+// Reference imports to suppress errors if they are not otherwise used.
+var (
+	_ = big.NewInt
+	_ = strings.NewReader
+	_ = ethereum.NotFound
+	_ = abi.U256
+	_ = bind.Bind
+	_ = common.Big1
+	_ = types.BloomLookup
+	_ = event.NewSubscription
 )
 
 // ReverseResolverABI is the input ABI used to generate the binding from.
@@ -185,7 +200,7 @@ func (_ReverseResolver *ReverseResolverCallerSession) Ens() (common.Address, err
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name( bytes32) constant returns(string)
+// Solidity: function name(bytes32 ) constant returns(string)
 func (_ReverseResolver *ReverseResolverCaller) Name(opts *bind.CallOpts, arg0 [32]byte) (string, error) {
 	var (
 		ret0 = new(string)
@@ -197,35 +212,35 @@ func (_ReverseResolver *ReverseResolverCaller) Name(opts *bind.CallOpts, arg0 [3
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name( bytes32) constant returns(string)
+// Solidity: function name(bytes32 ) constant returns(string)
 func (_ReverseResolver *ReverseResolverSession) Name(arg0 [32]byte) (string, error) {
 	return _ReverseResolver.Contract.Name(&_ReverseResolver.CallOpts, arg0)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name( bytes32) constant returns(string)
+// Solidity: function name(bytes32 ) constant returns(string)
 func (_ReverseResolver *ReverseResolverCallerSession) Name(arg0 [32]byte) (string, error) {
 	return _ReverseResolver.Contract.Name(&_ReverseResolver.CallOpts, arg0)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(node bytes32, _name string) returns()
+// Solidity: function setName(bytes32 node, string _name) returns()
 func (_ReverseResolver *ReverseResolverTransactor) SetName(opts *bind.TransactOpts, node [32]byte, _name string) (*types.Transaction, error) {
 	return _ReverseResolver.contract.Transact(opts, "setName", node, _name)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(node bytes32, _name string) returns()
+// Solidity: function setName(bytes32 node, string _name) returns()
 func (_ReverseResolver *ReverseResolverSession) SetName(node [32]byte, _name string) (*types.Transaction, error) {
 	return _ReverseResolver.Contract.SetName(&_ReverseResolver.TransactOpts, node, _name)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(node bytes32, _name string) returns()
+// Solidity: function setName(bytes32 node, string _name) returns()
 func (_ReverseResolver *ReverseResolverTransactorSession) SetName(node [32]byte, _name string) (*types.Transaction, error) {
 	return _ReverseResolver.Contract.SetName(&_ReverseResolver.TransactOpts, node, _name)
 }

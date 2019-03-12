@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package dnsresolvercontract
+package dnsresolver
 
 import (
 	"math/big"
@@ -13,6 +13,18 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
+)
+
+// Reference imports to suppress errors if they are not otherwise used.
+var (
+	_ = big.NewInt
+	_ = strings.NewReader
+	_ = ethereum.NotFound
+	_ = abi.U256
+	_ = bind.Bind
+	_ = common.Big1
+	_ = types.BloomLookup
+	_ = event.NewSubscription
 )
 
 // DNSResolverContractABI is the input ABI used to generate the binding from.
@@ -162,7 +174,7 @@ func (_DNSResolverContract *DNSResolverContractTransactorRaw) Transact(opts *bin
 
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
-// Solidity: function ABI(node bytes32, contentTypes uint256) constant returns(contentType uint256, data bytes)
+// Solidity: function ABI(bytes32 node, uint256 contentTypes) constant returns(uint256 contentType, bytes data)
 func (_DNSResolverContract *DNSResolverContractCaller) ABI(opts *bind.CallOpts, node [32]byte, contentTypes *big.Int) (struct {
 	ContentType *big.Int
 	Data        []byte
@@ -178,7 +190,7 @@ func (_DNSResolverContract *DNSResolverContractCaller) ABI(opts *bind.CallOpts, 
 
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
-// Solidity: function ABI(node bytes32, contentTypes uint256) constant returns(contentType uint256, data bytes)
+// Solidity: function ABI(bytes32 node, uint256 contentTypes) constant returns(uint256 contentType, bytes data)
 func (_DNSResolverContract *DNSResolverContractSession) ABI(node [32]byte, contentTypes *big.Int) (struct {
 	ContentType *big.Int
 	Data        []byte
@@ -188,7 +200,7 @@ func (_DNSResolverContract *DNSResolverContractSession) ABI(node [32]byte, conte
 
 // ABI is a free data retrieval call binding the contract method 0x2203ab56.
 //
-// Solidity: function ABI(node bytes32, contentTypes uint256) constant returns(contentType uint256, data bytes)
+// Solidity: function ABI(bytes32 node, uint256 contentTypes) constant returns(uint256 contentType, bytes data)
 func (_DNSResolverContract *DNSResolverContractCallerSession) ABI(node [32]byte, contentTypes *big.Int) (struct {
 	ContentType *big.Int
 	Data        []byte
@@ -198,7 +210,7 @@ func (_DNSResolverContract *DNSResolverContractCallerSession) ABI(node [32]byte,
 
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
-// Solidity: function addr(node bytes32) constant returns(ret address)
+// Solidity: function addr(bytes32 node) constant returns(address ret)
 func (_DNSResolverContract *DNSResolverContractCaller) Addr(opts *bind.CallOpts, node [32]byte) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -210,21 +222,21 @@ func (_DNSResolverContract *DNSResolverContractCaller) Addr(opts *bind.CallOpts,
 
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
-// Solidity: function addr(node bytes32) constant returns(ret address)
+// Solidity: function addr(bytes32 node) constant returns(address ret)
 func (_DNSResolverContract *DNSResolverContractSession) Addr(node [32]byte) (common.Address, error) {
 	return _DNSResolverContract.Contract.Addr(&_DNSResolverContract.CallOpts, node)
 }
 
 // Addr is a free data retrieval call binding the contract method 0x3b3b57de.
 //
-// Solidity: function addr(node bytes32) constant returns(ret address)
+// Solidity: function addr(bytes32 node) constant returns(address ret)
 func (_DNSResolverContract *DNSResolverContractCallerSession) Addr(node [32]byte) (common.Address, error) {
 	return _DNSResolverContract.Contract.Addr(&_DNSResolverContract.CallOpts, node)
 }
 
 // Content is a free data retrieval call binding the contract method 0x2dff6941.
 //
-// Solidity: function content(node bytes32) constant returns(ret bytes32)
+// Solidity: function content(bytes32 node) constant returns(bytes32 ret)
 func (_DNSResolverContract *DNSResolverContractCaller) Content(opts *bind.CallOpts, node [32]byte) ([32]byte, error) {
 	var (
 		ret0 = new([32]byte)
@@ -236,21 +248,21 @@ func (_DNSResolverContract *DNSResolverContractCaller) Content(opts *bind.CallOp
 
 // Content is a free data retrieval call binding the contract method 0x2dff6941.
 //
-// Solidity: function content(node bytes32) constant returns(ret bytes32)
+// Solidity: function content(bytes32 node) constant returns(bytes32 ret)
 func (_DNSResolverContract *DNSResolverContractSession) Content(node [32]byte) ([32]byte, error) {
 	return _DNSResolverContract.Contract.Content(&_DNSResolverContract.CallOpts, node)
 }
 
 // Content is a free data retrieval call binding the contract method 0x2dff6941.
 //
-// Solidity: function content(node bytes32) constant returns(ret bytes32)
+// Solidity: function content(bytes32 node) constant returns(bytes32 ret)
 func (_DNSResolverContract *DNSResolverContractCallerSession) Content(node [32]byte) ([32]byte, error) {
 	return _DNSResolverContract.Contract.Content(&_DNSResolverContract.CallOpts, node)
 }
 
 // DnsRecord is a free data retrieval call binding the contract method 0xa8fa5682.
 //
-// Solidity: function dnsRecord(_node bytes32, _name bytes32, _resource uint16) constant returns(bytes)
+// Solidity: function dnsRecord(bytes32 _node, bytes32 _name, uint16 _resource) constant returns(bytes)
 func (_DNSResolverContract *DNSResolverContractCaller) DnsRecord(opts *bind.CallOpts, _node [32]byte, _name [32]byte, _resource uint16) ([]byte, error) {
 	var (
 		ret0 = new([]byte)
@@ -262,21 +274,21 @@ func (_DNSResolverContract *DNSResolverContractCaller) DnsRecord(opts *bind.Call
 
 // DnsRecord is a free data retrieval call binding the contract method 0xa8fa5682.
 //
-// Solidity: function dnsRecord(_node bytes32, _name bytes32, _resource uint16) constant returns(bytes)
+// Solidity: function dnsRecord(bytes32 _node, bytes32 _name, uint16 _resource) constant returns(bytes)
 func (_DNSResolverContract *DNSResolverContractSession) DnsRecord(_node [32]byte, _name [32]byte, _resource uint16) ([]byte, error) {
 	return _DNSResolverContract.Contract.DnsRecord(&_DNSResolverContract.CallOpts, _node, _name, _resource)
 }
 
 // DnsRecord is a free data retrieval call binding the contract method 0xa8fa5682.
 //
-// Solidity: function dnsRecord(_node bytes32, _name bytes32, _resource uint16) constant returns(bytes)
+// Solidity: function dnsRecord(bytes32 _node, bytes32 _name, uint16 _resource) constant returns(bytes)
 func (_DNSResolverContract *DNSResolverContractCallerSession) DnsRecord(_node [32]byte, _name [32]byte, _resource uint16) ([]byte, error) {
 	return _DNSResolverContract.Contract.DnsRecord(&_DNSResolverContract.CallOpts, _node, _name, _resource)
 }
 
 // HasDNSRecords is a free data retrieval call binding the contract method 0x4cbf6ba4.
 //
-// Solidity: function hasDNSRecords(_node bytes32, _name bytes32) constant returns(bool)
+// Solidity: function hasDNSRecords(bytes32 _node, bytes32 _name) constant returns(bool)
 func (_DNSResolverContract *DNSResolverContractCaller) HasDNSRecords(opts *bind.CallOpts, _node [32]byte, _name [32]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -288,21 +300,21 @@ func (_DNSResolverContract *DNSResolverContractCaller) HasDNSRecords(opts *bind.
 
 // HasDNSRecords is a free data retrieval call binding the contract method 0x4cbf6ba4.
 //
-// Solidity: function hasDNSRecords(_node bytes32, _name bytes32) constant returns(bool)
+// Solidity: function hasDNSRecords(bytes32 _node, bytes32 _name) constant returns(bool)
 func (_DNSResolverContract *DNSResolverContractSession) HasDNSRecords(_node [32]byte, _name [32]byte) (bool, error) {
 	return _DNSResolverContract.Contract.HasDNSRecords(&_DNSResolverContract.CallOpts, _node, _name)
 }
 
 // HasDNSRecords is a free data retrieval call binding the contract method 0x4cbf6ba4.
 //
-// Solidity: function hasDNSRecords(_node bytes32, _name bytes32) constant returns(bool)
+// Solidity: function hasDNSRecords(bytes32 _node, bytes32 _name) constant returns(bool)
 func (_DNSResolverContract *DNSResolverContractCallerSession) HasDNSRecords(_node [32]byte, _name [32]byte) (bool, error) {
 	return _DNSResolverContract.Contract.HasDNSRecords(&_DNSResolverContract.CallOpts, _node, _name)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(node bytes32) constant returns(ret string)
+// Solidity: function name(bytes32 node) constant returns(string ret)
 func (_DNSResolverContract *DNSResolverContractCaller) Name(opts *bind.CallOpts, node [32]byte) (string, error) {
 	var (
 		ret0 = new(string)
@@ -314,21 +326,21 @@ func (_DNSResolverContract *DNSResolverContractCaller) Name(opts *bind.CallOpts,
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(node bytes32) constant returns(ret string)
+// Solidity: function name(bytes32 node) constant returns(string ret)
 func (_DNSResolverContract *DNSResolverContractSession) Name(node [32]byte) (string, error) {
 	return _DNSResolverContract.Contract.Name(&_DNSResolverContract.CallOpts, node)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(node bytes32) constant returns(ret string)
+// Solidity: function name(bytes32 node) constant returns(string ret)
 func (_DNSResolverContract *DNSResolverContractCallerSession) Name(node [32]byte) (string, error) {
 	return _DNSResolverContract.Contract.Name(&_DNSResolverContract.CallOpts, node)
 }
 
 // NameEntriesCount is a free data retrieval call binding the contract method 0x0dee3863.
 //
-// Solidity: function nameEntriesCount( bytes32,  uint16,  bytes32) constant returns(uint16)
+// Solidity: function nameEntriesCount(bytes32 , uint16 , bytes32 ) constant returns(uint16)
 func (_DNSResolverContract *DNSResolverContractCaller) NameEntriesCount(opts *bind.CallOpts, arg0 [32]byte, arg1 uint16, arg2 [32]byte) (uint16, error) {
 	var (
 		ret0 = new(uint16)
@@ -340,21 +352,21 @@ func (_DNSResolverContract *DNSResolverContractCaller) NameEntriesCount(opts *bi
 
 // NameEntriesCount is a free data retrieval call binding the contract method 0x0dee3863.
 //
-// Solidity: function nameEntriesCount( bytes32,  uint16,  bytes32) constant returns(uint16)
+// Solidity: function nameEntriesCount(bytes32 , uint16 , bytes32 ) constant returns(uint16)
 func (_DNSResolverContract *DNSResolverContractSession) NameEntriesCount(arg0 [32]byte, arg1 uint16, arg2 [32]byte) (uint16, error) {
 	return _DNSResolverContract.Contract.NameEntriesCount(&_DNSResolverContract.CallOpts, arg0, arg1, arg2)
 }
 
 // NameEntriesCount is a free data retrieval call binding the contract method 0x0dee3863.
 //
-// Solidity: function nameEntriesCount( bytes32,  uint16,  bytes32) constant returns(uint16)
+// Solidity: function nameEntriesCount(bytes32 , uint16 , bytes32 ) constant returns(uint16)
 func (_DNSResolverContract *DNSResolverContractCallerSession) NameEntriesCount(arg0 [32]byte, arg1 uint16, arg2 [32]byte) (uint16, error) {
 	return _DNSResolverContract.Contract.NameEntriesCount(&_DNSResolverContract.CallOpts, arg0, arg1, arg2)
 }
 
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
-// Solidity: function pubkey(node bytes32) constant returns(x bytes32, y bytes32)
+// Solidity: function pubkey(bytes32 node) constant returns(bytes32 x, bytes32 y)
 func (_DNSResolverContract *DNSResolverContractCaller) Pubkey(opts *bind.CallOpts, node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
@@ -370,7 +382,7 @@ func (_DNSResolverContract *DNSResolverContractCaller) Pubkey(opts *bind.CallOpt
 
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
-// Solidity: function pubkey(node bytes32) constant returns(x bytes32, y bytes32)
+// Solidity: function pubkey(bytes32 node) constant returns(bytes32 x, bytes32 y)
 func (_DNSResolverContract *DNSResolverContractSession) Pubkey(node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
@@ -380,7 +392,7 @@ func (_DNSResolverContract *DNSResolverContractSession) Pubkey(node [32]byte) (s
 
 // Pubkey is a free data retrieval call binding the contract method 0xc8690233.
 //
-// Solidity: function pubkey(node bytes32) constant returns(x bytes32, y bytes32)
+// Solidity: function pubkey(bytes32 node) constant returns(bytes32 x, bytes32 y)
 func (_DNSResolverContract *DNSResolverContractCallerSession) Pubkey(node [32]byte) (struct {
 	X [32]byte
 	Y [32]byte
@@ -390,7 +402,7 @@ func (_DNSResolverContract *DNSResolverContractCallerSession) Pubkey(node [32]by
 
 // Records is a free data retrieval call binding the contract method 0x4f96bc00.
 //
-// Solidity: function records( bytes32,  uint16,  bytes32,  uint16) constant returns(bytes)
+// Solidity: function records(bytes32 , uint16 , bytes32 , uint16 ) constant returns(bytes)
 func (_DNSResolverContract *DNSResolverContractCaller) Records(opts *bind.CallOpts, arg0 [32]byte, arg1 uint16, arg2 [32]byte, arg3 uint16) ([]byte, error) {
 	var (
 		ret0 = new([]byte)
@@ -402,21 +414,21 @@ func (_DNSResolverContract *DNSResolverContractCaller) Records(opts *bind.CallOp
 
 // Records is a free data retrieval call binding the contract method 0x4f96bc00.
 //
-// Solidity: function records( bytes32,  uint16,  bytes32,  uint16) constant returns(bytes)
+// Solidity: function records(bytes32 , uint16 , bytes32 , uint16 ) constant returns(bytes)
 func (_DNSResolverContract *DNSResolverContractSession) Records(arg0 [32]byte, arg1 uint16, arg2 [32]byte, arg3 uint16) ([]byte, error) {
 	return _DNSResolverContract.Contract.Records(&_DNSResolverContract.CallOpts, arg0, arg1, arg2, arg3)
 }
 
 // Records is a free data retrieval call binding the contract method 0x4f96bc00.
 //
-// Solidity: function records( bytes32,  uint16,  bytes32,  uint16) constant returns(bytes)
+// Solidity: function records(bytes32 , uint16 , bytes32 , uint16 ) constant returns(bytes)
 func (_DNSResolverContract *DNSResolverContractCallerSession) Records(arg0 [32]byte, arg1 uint16, arg2 [32]byte, arg3 uint16) ([]byte, error) {
 	return _DNSResolverContract.Contract.Records(&_DNSResolverContract.CallOpts, arg0, arg1, arg2, arg3)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceId bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceId) constant returns(bool)
 func (_DNSResolverContract *DNSResolverContractCaller) SupportsInterface(opts *bind.CallOpts, interfaceId [4]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -428,21 +440,21 @@ func (_DNSResolverContract *DNSResolverContractCaller) SupportsInterface(opts *b
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceId bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceId) constant returns(bool)
 func (_DNSResolverContract *DNSResolverContractSession) SupportsInterface(interfaceId [4]byte) (bool, error) {
 	return _DNSResolverContract.Contract.SupportsInterface(&_DNSResolverContract.CallOpts, interfaceId)
 }
 
 // SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
 //
-// Solidity: function supportsInterface(interfaceId bytes4) constant returns(bool)
+// Solidity: function supportsInterface(bytes4 interfaceId) constant returns(bool)
 func (_DNSResolverContract *DNSResolverContractCallerSession) SupportsInterface(interfaceId [4]byte) (bool, error) {
 	return _DNSResolverContract.Contract.SupportsInterface(&_DNSResolverContract.CallOpts, interfaceId)
 }
 
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
-// Solidity: function text(node bytes32, key string) constant returns(ret string)
+// Solidity: function text(bytes32 node, string key) constant returns(string ret)
 func (_DNSResolverContract *DNSResolverContractCaller) Text(opts *bind.CallOpts, node [32]byte, key string) (string, error) {
 	var (
 		ret0 = new(string)
@@ -454,21 +466,21 @@ func (_DNSResolverContract *DNSResolverContractCaller) Text(opts *bind.CallOpts,
 
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
-// Solidity: function text(node bytes32, key string) constant returns(ret string)
+// Solidity: function text(bytes32 node, string key) constant returns(string ret)
 func (_DNSResolverContract *DNSResolverContractSession) Text(node [32]byte, key string) (string, error) {
 	return _DNSResolverContract.Contract.Text(&_DNSResolverContract.CallOpts, node, key)
 }
 
 // Text is a free data retrieval call binding the contract method 0x59d1d43c.
 //
-// Solidity: function text(node bytes32, key string) constant returns(ret string)
+// Solidity: function text(bytes32 node, string key) constant returns(string ret)
 func (_DNSResolverContract *DNSResolverContractCallerSession) Text(node [32]byte, key string) (string, error) {
 	return _DNSResolverContract.Contract.Text(&_DNSResolverContract.CallOpts, node, key)
 }
 
 // Versions is a free data retrieval call binding the contract method 0xc7cec7f8.
 //
-// Solidity: function versions( bytes32) constant returns(uint16)
+// Solidity: function versions(bytes32 ) constant returns(uint16)
 func (_DNSResolverContract *DNSResolverContractCaller) Versions(opts *bind.CallOpts, arg0 [32]byte) (uint16, error) {
 	var (
 		ret0 = new(uint16)
@@ -480,182 +492,182 @@ func (_DNSResolverContract *DNSResolverContractCaller) Versions(opts *bind.CallO
 
 // Versions is a free data retrieval call binding the contract method 0xc7cec7f8.
 //
-// Solidity: function versions( bytes32) constant returns(uint16)
+// Solidity: function versions(bytes32 ) constant returns(uint16)
 func (_DNSResolverContract *DNSResolverContractSession) Versions(arg0 [32]byte) (uint16, error) {
 	return _DNSResolverContract.Contract.Versions(&_DNSResolverContract.CallOpts, arg0)
 }
 
 // Versions is a free data retrieval call binding the contract method 0xc7cec7f8.
 //
-// Solidity: function versions( bytes32) constant returns(uint16)
+// Solidity: function versions(bytes32 ) constant returns(uint16)
 func (_DNSResolverContract *DNSResolverContractCallerSession) Versions(arg0 [32]byte) (uint16, error) {
 	return _DNSResolverContract.Contract.Versions(&_DNSResolverContract.CallOpts, arg0)
 }
 
 // ClearDNSZone is a paid mutator transaction binding the contract method 0xad5780af.
 //
-// Solidity: function clearDNSZone(_node bytes32) returns()
+// Solidity: function clearDNSZone(bytes32 _node) returns()
 func (_DNSResolverContract *DNSResolverContractTransactor) ClearDNSZone(opts *bind.TransactOpts, _node [32]byte) (*types.Transaction, error) {
 	return _DNSResolverContract.contract.Transact(opts, "clearDNSZone", _node)
 }
 
 // ClearDNSZone is a paid mutator transaction binding the contract method 0xad5780af.
 //
-// Solidity: function clearDNSZone(_node bytes32) returns()
+// Solidity: function clearDNSZone(bytes32 _node) returns()
 func (_DNSResolverContract *DNSResolverContractSession) ClearDNSZone(_node [32]byte) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.ClearDNSZone(&_DNSResolverContract.TransactOpts, _node)
 }
 
 // ClearDNSZone is a paid mutator transaction binding the contract method 0xad5780af.
 //
-// Solidity: function clearDNSZone(_node bytes32) returns()
+// Solidity: function clearDNSZone(bytes32 _node) returns()
 func (_DNSResolverContract *DNSResolverContractTransactorSession) ClearDNSZone(_node [32]byte) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.ClearDNSZone(&_DNSResolverContract.TransactOpts, _node)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
-// Solidity: function setABI(_node bytes32, _contentType uint256, _data bytes) returns()
+// Solidity: function setABI(bytes32 _node, uint256 _contentType, bytes _data) returns()
 func (_DNSResolverContract *DNSResolverContractTransactor) SetABI(opts *bind.TransactOpts, _node [32]byte, _contentType *big.Int, _data []byte) (*types.Transaction, error) {
 	return _DNSResolverContract.contract.Transact(opts, "setABI", _node, _contentType, _data)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
-// Solidity: function setABI(_node bytes32, _contentType uint256, _data bytes) returns()
+// Solidity: function setABI(bytes32 _node, uint256 _contentType, bytes _data) returns()
 func (_DNSResolverContract *DNSResolverContractSession) SetABI(_node [32]byte, _contentType *big.Int, _data []byte) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetABI(&_DNSResolverContract.TransactOpts, _node, _contentType, _data)
 }
 
 // SetABI is a paid mutator transaction binding the contract method 0x623195b0.
 //
-// Solidity: function setABI(_node bytes32, _contentType uint256, _data bytes) returns()
+// Solidity: function setABI(bytes32 _node, uint256 _contentType, bytes _data) returns()
 func (_DNSResolverContract *DNSResolverContractTransactorSession) SetABI(_node [32]byte, _contentType *big.Int, _data []byte) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetABI(&_DNSResolverContract.TransactOpts, _node, _contentType, _data)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
-// Solidity: function setAddr(_node bytes32, _addr address) returns()
+// Solidity: function setAddr(bytes32 _node, address _addr) returns()
 func (_DNSResolverContract *DNSResolverContractTransactor) SetAddr(opts *bind.TransactOpts, _node [32]byte, _addr common.Address) (*types.Transaction, error) {
 	return _DNSResolverContract.contract.Transact(opts, "setAddr", _node, _addr)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
-// Solidity: function setAddr(_node bytes32, _addr address) returns()
+// Solidity: function setAddr(bytes32 _node, address _addr) returns()
 func (_DNSResolverContract *DNSResolverContractSession) SetAddr(_node [32]byte, _addr common.Address) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetAddr(&_DNSResolverContract.TransactOpts, _node, _addr)
 }
 
 // SetAddr is a paid mutator transaction binding the contract method 0xd5fa2b00.
 //
-// Solidity: function setAddr(_node bytes32, _addr address) returns()
+// Solidity: function setAddr(bytes32 _node, address _addr) returns()
 func (_DNSResolverContract *DNSResolverContractTransactorSession) SetAddr(_node [32]byte, _addr common.Address) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetAddr(&_DNSResolverContract.TransactOpts, _node, _addr)
 }
 
 // SetContent is a paid mutator transaction binding the contract method 0xc3d014d6.
 //
-// Solidity: function setContent(_node bytes32, _hash bytes32) returns()
+// Solidity: function setContent(bytes32 _node, bytes32 _hash) returns()
 func (_DNSResolverContract *DNSResolverContractTransactor) SetContent(opts *bind.TransactOpts, _node [32]byte, _hash [32]byte) (*types.Transaction, error) {
 	return _DNSResolverContract.contract.Transact(opts, "setContent", _node, _hash)
 }
 
 // SetContent is a paid mutator transaction binding the contract method 0xc3d014d6.
 //
-// Solidity: function setContent(_node bytes32, _hash bytes32) returns()
+// Solidity: function setContent(bytes32 _node, bytes32 _hash) returns()
 func (_DNSResolverContract *DNSResolverContractSession) SetContent(_node [32]byte, _hash [32]byte) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetContent(&_DNSResolverContract.TransactOpts, _node, _hash)
 }
 
 // SetContent is a paid mutator transaction binding the contract method 0xc3d014d6.
 //
-// Solidity: function setContent(_node bytes32, _hash bytes32) returns()
+// Solidity: function setContent(bytes32 _node, bytes32 _hash) returns()
 func (_DNSResolverContract *DNSResolverContractTransactorSession) SetContent(_node [32]byte, _hash [32]byte) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetContent(&_DNSResolverContract.TransactOpts, _node, _hash)
 }
 
 // SetDNSRecords is a paid mutator transaction binding the contract method 0x0af179d7.
 //
-// Solidity: function setDNSRecords(_node bytes32, _data bytes) returns()
+// Solidity: function setDNSRecords(bytes32 _node, bytes _data) returns()
 func (_DNSResolverContract *DNSResolverContractTransactor) SetDNSRecords(opts *bind.TransactOpts, _node [32]byte, _data []byte) (*types.Transaction, error) {
 	return _DNSResolverContract.contract.Transact(opts, "setDNSRecords", _node, _data)
 }
 
 // SetDNSRecords is a paid mutator transaction binding the contract method 0x0af179d7.
 //
-// Solidity: function setDNSRecords(_node bytes32, _data bytes) returns()
+// Solidity: function setDNSRecords(bytes32 _node, bytes _data) returns()
 func (_DNSResolverContract *DNSResolverContractSession) SetDNSRecords(_node [32]byte, _data []byte) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetDNSRecords(&_DNSResolverContract.TransactOpts, _node, _data)
 }
 
 // SetDNSRecords is a paid mutator transaction binding the contract method 0x0af179d7.
 //
-// Solidity: function setDNSRecords(_node bytes32, _data bytes) returns()
+// Solidity: function setDNSRecords(bytes32 _node, bytes _data) returns()
 func (_DNSResolverContract *DNSResolverContractTransactorSession) SetDNSRecords(_node [32]byte, _data []byte) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetDNSRecords(&_DNSResolverContract.TransactOpts, _node, _data)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(_node bytes32, _name string) returns()
+// Solidity: function setName(bytes32 _node, string _name) returns()
 func (_DNSResolverContract *DNSResolverContractTransactor) SetName(opts *bind.TransactOpts, _node [32]byte, _name string) (*types.Transaction, error) {
 	return _DNSResolverContract.contract.Transact(opts, "setName", _node, _name)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(_node bytes32, _name string) returns()
+// Solidity: function setName(bytes32 _node, string _name) returns()
 func (_DNSResolverContract *DNSResolverContractSession) SetName(_node [32]byte, _name string) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetName(&_DNSResolverContract.TransactOpts, _node, _name)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
 //
-// Solidity: function setName(_node bytes32, _name string) returns()
+// Solidity: function setName(bytes32 _node, string _name) returns()
 func (_DNSResolverContract *DNSResolverContractTransactorSession) SetName(_node [32]byte, _name string) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetName(&_DNSResolverContract.TransactOpts, _node, _name)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
-// Solidity: function setPubkey(_node bytes32, _x bytes32, _y bytes32) returns()
+// Solidity: function setPubkey(bytes32 _node, bytes32 _x, bytes32 _y) returns()
 func (_DNSResolverContract *DNSResolverContractTransactor) SetPubkey(opts *bind.TransactOpts, _node [32]byte, _x [32]byte, _y [32]byte) (*types.Transaction, error) {
 	return _DNSResolverContract.contract.Transact(opts, "setPubkey", _node, _x, _y)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
-// Solidity: function setPubkey(_node bytes32, _x bytes32, _y bytes32) returns()
+// Solidity: function setPubkey(bytes32 _node, bytes32 _x, bytes32 _y) returns()
 func (_DNSResolverContract *DNSResolverContractSession) SetPubkey(_node [32]byte, _x [32]byte, _y [32]byte) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetPubkey(&_DNSResolverContract.TransactOpts, _node, _x, _y)
 }
 
 // SetPubkey is a paid mutator transaction binding the contract method 0x29cd62ea.
 //
-// Solidity: function setPubkey(_node bytes32, _x bytes32, _y bytes32) returns()
+// Solidity: function setPubkey(bytes32 _node, bytes32 _x, bytes32 _y) returns()
 func (_DNSResolverContract *DNSResolverContractTransactorSession) SetPubkey(_node [32]byte, _x [32]byte, _y [32]byte) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetPubkey(&_DNSResolverContract.TransactOpts, _node, _x, _y)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
-// Solidity: function setText(_node bytes32, _key string, _value string) returns()
+// Solidity: function setText(bytes32 _node, string _key, string _value) returns()
 func (_DNSResolverContract *DNSResolverContractTransactor) SetText(opts *bind.TransactOpts, _node [32]byte, _key string, _value string) (*types.Transaction, error) {
 	return _DNSResolverContract.contract.Transact(opts, "setText", _node, _key, _value)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
-// Solidity: function setText(_node bytes32, _key string, _value string) returns()
+// Solidity: function setText(bytes32 _node, string _key, string _value) returns()
 func (_DNSResolverContract *DNSResolverContractSession) SetText(_node [32]byte, _key string, _value string) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetText(&_DNSResolverContract.TransactOpts, _node, _key, _value)
 }
 
 // SetText is a paid mutator transaction binding the contract method 0x10f13a8c.
 //
-// Solidity: function setText(_node bytes32, _key string, _value string) returns()
+// Solidity: function setText(bytes32 _node, string _key, string _value) returns()
 func (_DNSResolverContract *DNSResolverContractTransactorSession) SetText(_node [32]byte, _key string, _value string) (*types.Transaction, error) {
 	return _DNSResolverContract.Contract.SetText(&_DNSResolverContract.TransactOpts, _node, _key, _value)
 }
@@ -736,7 +748,7 @@ type DNSResolverContractABIChanged struct {
 
 // FilterABIChanged is a free log retrieval operation binding the contract event 0xaa121bbeef5f32f5961a2a28966e769023910fc9479059ee3495d4c1a696efe3.
 //
-// Solidity: e ABIChanged(node indexed bytes32, contentType indexed uint256)
+// Solidity: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
 func (_DNSResolverContract *DNSResolverContractFilterer) FilterABIChanged(opts *bind.FilterOpts, node [][32]byte, contentType []*big.Int) (*DNSResolverContractABIChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -757,7 +769,7 @@ func (_DNSResolverContract *DNSResolverContractFilterer) FilterABIChanged(opts *
 
 // WatchABIChanged is a free log subscription operation binding the contract event 0xaa121bbeef5f32f5961a2a28966e769023910fc9479059ee3495d4c1a696efe3.
 //
-// Solidity: e ABIChanged(node indexed bytes32, contentType indexed uint256)
+// Solidity: event ABIChanged(bytes32 indexed node, uint256 indexed contentType)
 func (_DNSResolverContract *DNSResolverContractFilterer) WatchABIChanged(opts *bind.WatchOpts, sink chan<- *DNSResolverContractABIChanged, node [][32]byte, contentType []*big.Int) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -877,7 +889,7 @@ type DNSResolverContractAddrChanged struct {
 
 // FilterAddrChanged is a free log retrieval operation binding the contract event 0x52d7d861f09ab3d26239d492e8968629f95e9e318cf0b73bfddc441522a15fd2.
 //
-// Solidity: e AddrChanged(node indexed bytes32, a address)
+// Solidity: event AddrChanged(bytes32 indexed node, address a)
 func (_DNSResolverContract *DNSResolverContractFilterer) FilterAddrChanged(opts *bind.FilterOpts, node [][32]byte) (*DNSResolverContractAddrChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -894,7 +906,7 @@ func (_DNSResolverContract *DNSResolverContractFilterer) FilterAddrChanged(opts 
 
 // WatchAddrChanged is a free log subscription operation binding the contract event 0x52d7d861f09ab3d26239d492e8968629f95e9e318cf0b73bfddc441522a15fd2.
 //
-// Solidity: e AddrChanged(node indexed bytes32, a address)
+// Solidity: event AddrChanged(bytes32 indexed node, address a)
 func (_DNSResolverContract *DNSResolverContractFilterer) WatchAddrChanged(opts *bind.WatchOpts, sink chan<- *DNSResolverContractAddrChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1009,7 +1021,7 @@ type DNSResolverContractCleared struct {
 
 // FilterCleared is a free log retrieval operation binding the contract event 0xf9c9793a5e1c345ae880b8c5e3b0a241f568d7242dcf6e21a2bea5dfb817d88e.
 //
-// Solidity: e Cleared(node bytes32)
+// Solidity: event Cleared(bytes32 node)
 func (_DNSResolverContract *DNSResolverContractFilterer) FilterCleared(opts *bind.FilterOpts) (*DNSResolverContractClearedIterator, error) {
 
 	logs, sub, err := _DNSResolverContract.contract.FilterLogs(opts, "Cleared")
@@ -1021,7 +1033,7 @@ func (_DNSResolverContract *DNSResolverContractFilterer) FilterCleared(opts *bin
 
 // WatchCleared is a free log subscription operation binding the contract event 0xf9c9793a5e1c345ae880b8c5e3b0a241f568d7242dcf6e21a2bea5dfb817d88e.
 //
-// Solidity: e Cleared(node bytes32)
+// Solidity: event Cleared(bytes32 node)
 func (_DNSResolverContract *DNSResolverContractFilterer) WatchCleared(opts *bind.WatchOpts, sink chan<- *DNSResolverContractCleared) (event.Subscription, error) {
 
 	logs, sub, err := _DNSResolverContract.contract.WatchLogs(opts, "Cleared")
@@ -1132,7 +1144,7 @@ type DNSResolverContractContentChanged struct {
 
 // FilterContentChanged is a free log retrieval operation binding the contract event 0x0424b6fe0d9c3bdbece0e7879dc241bb0c22e900be8b6c168b4ee08bd9bf83bc.
 //
-// Solidity: e ContentChanged(node indexed bytes32, hash bytes32)
+// Solidity: event ContentChanged(bytes32 indexed node, bytes32 hash)
 func (_DNSResolverContract *DNSResolverContractFilterer) FilterContentChanged(opts *bind.FilterOpts, node [][32]byte) (*DNSResolverContractContentChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1149,7 +1161,7 @@ func (_DNSResolverContract *DNSResolverContractFilterer) FilterContentChanged(op
 
 // WatchContentChanged is a free log subscription operation binding the contract event 0x0424b6fe0d9c3bdbece0e7879dc241bb0c22e900be8b6c168b4ee08bd9bf83bc.
 //
-// Solidity: e ContentChanged(node indexed bytes32, hash bytes32)
+// Solidity: event ContentChanged(bytes32 indexed node, bytes32 hash)
 func (_DNSResolverContract *DNSResolverContractFilterer) WatchContentChanged(opts *bind.WatchOpts, sink chan<- *DNSResolverContractContentChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1266,7 +1278,7 @@ type DNSResolverContractDeleted struct {
 
 // FilterDeleted is a free log retrieval operation binding the contract event 0x133052c72ea386f24d31f74751f618e877370038e43ae5a1571abd4e7039a10b.
 //
-// Solidity: e Deleted(node bytes32, name bytes, resource uint16)
+// Solidity: event Deleted(bytes32 node, bytes name, uint16 resource)
 func (_DNSResolverContract *DNSResolverContractFilterer) FilterDeleted(opts *bind.FilterOpts) (*DNSResolverContractDeletedIterator, error) {
 
 	logs, sub, err := _DNSResolverContract.contract.FilterLogs(opts, "Deleted")
@@ -1278,7 +1290,7 @@ func (_DNSResolverContract *DNSResolverContractFilterer) FilterDeleted(opts *bin
 
 // WatchDeleted is a free log subscription operation binding the contract event 0x133052c72ea386f24d31f74751f618e877370038e43ae5a1571abd4e7039a10b.
 //
-// Solidity: e Deleted(node bytes32, name bytes, resource uint16)
+// Solidity: event Deleted(bytes32 node, bytes name, uint16 resource)
 func (_DNSResolverContract *DNSResolverContractFilterer) WatchDeleted(opts *bind.WatchOpts, sink chan<- *DNSResolverContractDeleted) (event.Subscription, error) {
 
 	logs, sub, err := _DNSResolverContract.contract.WatchLogs(opts, "Deleted")
@@ -1389,7 +1401,7 @@ type DNSResolverContractNameChanged struct {
 
 // FilterNameChanged is a free log retrieval operation binding the contract event 0xb7d29e911041e8d9b843369e890bcb72c9388692ba48b65ac54e7214c4c348f7.
 //
-// Solidity: e NameChanged(node indexed bytes32, name string)
+// Solidity: event NameChanged(bytes32 indexed node, string name)
 func (_DNSResolverContract *DNSResolverContractFilterer) FilterNameChanged(opts *bind.FilterOpts, node [][32]byte) (*DNSResolverContractNameChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1406,7 +1418,7 @@ func (_DNSResolverContract *DNSResolverContractFilterer) FilterNameChanged(opts 
 
 // WatchNameChanged is a free log subscription operation binding the contract event 0xb7d29e911041e8d9b843369e890bcb72c9388692ba48b65ac54e7214c4c348f7.
 //
-// Solidity: e NameChanged(node indexed bytes32, name string)
+// Solidity: event NameChanged(bytes32 indexed node, string name)
 func (_DNSResolverContract *DNSResolverContractFilterer) WatchNameChanged(opts *bind.WatchOpts, sink chan<- *DNSResolverContractNameChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1523,7 +1535,7 @@ type DNSResolverContractPubkeyChanged struct {
 
 // FilterPubkeyChanged is a free log retrieval operation binding the contract event 0x1d6f5e03d3f63eb58751986629a5439baee5079ff04f345becb66e23eb154e46.
 //
-// Solidity: e PubkeyChanged(node indexed bytes32, x bytes32, y bytes32)
+// Solidity: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
 func (_DNSResolverContract *DNSResolverContractFilterer) FilterPubkeyChanged(opts *bind.FilterOpts, node [][32]byte) (*DNSResolverContractPubkeyChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1540,7 +1552,7 @@ func (_DNSResolverContract *DNSResolverContractFilterer) FilterPubkeyChanged(opt
 
 // WatchPubkeyChanged is a free log subscription operation binding the contract event 0x1d6f5e03d3f63eb58751986629a5439baee5079ff04f345becb66e23eb154e46.
 //
-// Solidity: e PubkeyChanged(node indexed bytes32, x bytes32, y bytes32)
+// Solidity: event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y)
 func (_DNSResolverContract *DNSResolverContractFilterer) WatchPubkeyChanged(opts *bind.WatchOpts, sink chan<- *DNSResolverContractPubkeyChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1657,7 +1669,7 @@ type DNSResolverContractTextChanged struct {
 
 // FilterTextChanged is a free log retrieval operation binding the contract event 0xd8c9334b1a9c2f9da342a0a2b32629c1a229b6445dad78947f674b44444a7550.
 //
-// Solidity: e TextChanged(node indexed bytes32, indexedKey indexed string, key string)
+// Solidity: event TextChanged(bytes32 indexed node, string indexed indexedKey, string key)
 func (_DNSResolverContract *DNSResolverContractFilterer) FilterTextChanged(opts *bind.FilterOpts, node [][32]byte, indexedKey []string) (*DNSResolverContractTextChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -1678,7 +1690,7 @@ func (_DNSResolverContract *DNSResolverContractFilterer) FilterTextChanged(opts 
 
 // WatchTextChanged is a free log subscription operation binding the contract event 0xd8c9334b1a9c2f9da342a0a2b32629c1a229b6445dad78947f674b44444a7550.
 //
-// Solidity: e TextChanged(node indexed bytes32, indexedKey indexed string, key string)
+// Solidity: event TextChanged(bytes32 indexed node, string indexed indexedKey, string key)
 func (_DNSResolverContract *DNSResolverContractFilterer) WatchTextChanged(opts *bind.WatchOpts, sink chan<- *DNSResolverContractTextChanged, node [][32]byte, indexedKey []string) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -1799,7 +1811,7 @@ type DNSResolverContractUpdated struct {
 
 // FilterUpdated is a free log retrieval operation binding the contract event 0xb09b445b0776998f69b77758912de74d641195b10c8f03062f124495b13ef9f6.
 //
-// Solidity: e Updated(node bytes32, name bytes, resource uint16)
+// Solidity: event Updated(bytes32 node, bytes name, uint16 resource)
 func (_DNSResolverContract *DNSResolverContractFilterer) FilterUpdated(opts *bind.FilterOpts) (*DNSResolverContractUpdatedIterator, error) {
 
 	logs, sub, err := _DNSResolverContract.contract.FilterLogs(opts, "Updated")
@@ -1811,7 +1823,7 @@ func (_DNSResolverContract *DNSResolverContractFilterer) FilterUpdated(opts *bin
 
 // WatchUpdated is a free log subscription operation binding the contract event 0xb09b445b0776998f69b77758912de74d641195b10c8f03062f124495b13ef9f6.
 //
-// Solidity: e Updated(node bytes32, name bytes, resource uint16)
+// Solidity: event Updated(bytes32 node, bytes name, uint16 resource)
 func (_DNSResolverContract *DNSResolverContractFilterer) WatchUpdated(opts *bind.WatchOpts, sink chan<- *DNSResolverContractUpdated) (event.Subscription, error) {
 
 	logs, sub, err := _DNSResolverContract.contract.WatchLogs(opts, "Updated")

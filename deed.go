@@ -17,35 +17,30 @@ package ens
 import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/wealdtech/go-ens/deedcontract"
-	"github.com/wealdtech/go-ens/registrarcontract"
+	"github.com/wealdtech/go-ens/contracts/auctionregistrar"
+	"github.com/wealdtech/go-ens/contracts/deed"
 )
 
 // DeedContract obtains the deed contract at a particular address
-func DeedContract(client *ethclient.Client, address *common.Address) (deed *deedcontract.DeedContract, err error) {
-	deed, err = deedcontract.NewDeedContract(*address, client)
-	return
+func DeedContract(client *ethclient.Client, address *common.Address) (*deed.DeedContract, error) {
+	return deed.NewDeedContract(*address, client)
 }
 
 // DeedContractFor obtains the deed contract for a particular name
-func DeedContractFor(client *ethclient.Client, registrar *registrarcontract.RegistrarContract, name string) (deedContract *deedcontract.DeedContract, err error) {
+func DeedContractFor(client *ethclient.Client, registrar *auctionregistrar.AuctionRegistrarContract, name string) (*deed.DeedContract, error) {
 	_, deedAddress, _, _, _, err := Entry(registrar, client, name)
 	if err != nil {
-		return
+		return nil, err
 	}
-	deedContract, err = DeedContract(client, &deedAddress)
-
-	return
+	return DeedContract(client, &deedAddress)
 }
 
 // Owner obtains the owner of a deed
-func Owner(contract *deedcontract.DeedContract) (address common.Address, err error) {
-	address, err = contract.Owner(nil)
-	return
+func Owner(contract *deed.DeedContract) (common.Address, error) {
+	return contract.Owner(nil)
 }
 
 // PreviousOwner obtains the previous owner of a deed
-func PreviousOwner(contract *deedcontract.DeedContract) (address common.Address, err error) {
-	address, err = contract.PreviousOwner(nil)
-	return
+func PreviousOwner(contract *deed.DeedContract) (common.Address, error) {
+	return contract.PreviousOwner(nil)
 }

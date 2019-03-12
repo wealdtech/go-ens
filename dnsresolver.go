@@ -25,17 +25,17 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/wealdtech/go-ens/dnsresolvercontract"
+	"github.com/wealdtech/go-ens/contracts/dnsresolver"
 	"github.com/wealdtech/go-ens/util"
 )
 
 // CreateDNSResolverSession creates a session suitable for multiple calls
-func CreateDNSResolverSession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *dnsresolvercontract.DNSResolverContract, gasPrice *big.Int) *dnsresolvercontract.DNSResolverContractSession {
+func CreateDNSResolverSession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *dnsresolver.DNSResolverContract, gasPrice *big.Int) *dnsresolver.DNSResolverContractSession {
 	// Create a signer
 	signer := util.AccountSigner(chainID, wallet, account, passphrase)
 
 	// Return our session
-	session := &dnsresolvercontract.DNSResolverContractSession{
+	session := &dnsresolver.DNSResolverContractSession{
 		Contract: contract,
 		CallOpts: bind.CallOpts{
 			Pending: true,
@@ -60,15 +60,15 @@ func DNSRecord(client *ethclient.Client, domain string, name string, rrType uint
 }
 
 // SetDNSRecords sets DNS records
-func SetDNSRecords(session *dnsresolvercontract.DNSResolverContractSession, domain string, data []byte) (tx *types.Transaction, err error) {
+func SetDNSRecords(session *dnsresolver.DNSResolverContractSession, domain string, data []byte) (tx *types.Transaction, err error) {
 	tx, err = session.SetDNSRecords(NameHash(domain), data)
 	return
 }
 
 // DNSResolverContractByAddress instantiates the resolver contract at aspecific address
-func DNSResolverContractByAddress(client *ethclient.Client, resolverAddress common.Address) (resolver *dnsresolvercontract.DNSResolverContract, err error) {
+func DNSResolverContractByAddress(client *ethclient.Client, resolverAddress common.Address) (resolver *dnsresolver.DNSResolverContract, err error) {
 	// Instantiate the resolver contract
-	resolver, err = dnsresolvercontract.NewDNSResolverContract(resolverAddress, client)
+	resolver, err = dnsresolver.NewDNSResolverContract(resolverAddress, client)
 	if err != nil {
 		return
 	}
@@ -87,7 +87,7 @@ func DNSResolverContractByAddress(client *ethclient.Client, resolverAddress comm
 }
 
 // DNSResolverContract obtains the resolver contract for a domain
-func DNSResolverContract(client *ethclient.Client, domain string) (resolver *dnsresolvercontract.DNSResolverContract, err error) {
+func DNSResolverContract(client *ethclient.Client, domain string) (resolver *dnsresolver.DNSResolverContract, err error) {
 	resolverAddress, err := resolverAddress(client, domain)
 	if err != nil {
 		return

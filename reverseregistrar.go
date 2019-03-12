@@ -24,12 +24,12 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/wealdtech/go-ens/reverseregistrarcontract"
+	"github.com/wealdtech/go-ens/contracts/reverseregistrar"
 	"github.com/wealdtech/go-ens/util"
 )
 
 // ReverseRegistrarContract obtains the reverse registrar contract for a chain
-func ReverseRegistrarContract(client *ethclient.Client) (registrar *reverseregistrarcontract.ReverseRegistrarContract, err error) {
+func ReverseRegistrarContract(client *ethclient.Client) (registrar *reverseregistrar.ReverseRegistrarContract, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	_, err = client.NetworkID(ctx)
@@ -52,17 +52,17 @@ func ReverseRegistrarContract(client *ethclient.Client) (registrar *reverseregis
 		err = errors.New("no registrar for that network")
 	}
 
-	registrar, err = reverseregistrarcontract.NewReverseRegistrarContract(registrarAddress, client)
+	registrar, err = reverseregistrar.NewReverseRegistrarContract(registrarAddress, client)
 	return
 }
 
 // CreateReverseRegistrarSession creates a session suitable for multiple calls
-func CreateReverseRegistrarSession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *reverseregistrarcontract.ReverseRegistrarContract, gasPrice *big.Int) *reverseregistrarcontract.ReverseRegistrarContractSession {
+func CreateReverseRegistrarSession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *reverseregistrar.ReverseRegistrarContract, gasPrice *big.Int) *reverseregistrar.ReverseRegistrarContractSession {
 	// Create a signer
 	signer := util.AccountSigner(chainID, wallet, account, passphrase)
 
 	// Return our session
-	session := &reverseregistrarcontract.ReverseRegistrarContractSession{
+	session := &reverseregistrar.ReverseRegistrarContractSession{
 		Contract: contract,
 		CallOpts: bind.CallOpts{
 			Pending: true,
@@ -78,7 +78,7 @@ func CreateReverseRegistrarSession(chainID *big.Int, wallet *accounts.Wallet, ac
 }
 
 // SetName sets the name for the sending address
-func SetName(session *reverseregistrarcontract.ReverseRegistrarContractSession, name string) (tx *types.Transaction, err error) {
+func SetName(session *reverseregistrar.ReverseRegistrarContractSession, name string) (tx *types.Transaction, err error) {
 	tx, err = session.SetName(name)
 	return
 }

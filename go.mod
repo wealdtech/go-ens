@@ -1,4 +1,4 @@
-module github.com/weadltech/go-ens
+module github.com/wealdtech/go-ens
 
 go 1.12
 
@@ -16,7 +16,6 @@ require (
 	github.com/stretchr/testify v1.3.0
 	github.com/syndtr/goleveldb v1.0.0 // indirect
 	github.com/wealdtech/ethereal v0.0.0-20190301090357-1848397a0dd8
-	github.com/wealdtech/go-ens v0.0.0-00010101000000-000000000000
 	golang.org/x/crypto v0.0.0-20190228161510-8dd112bcdc25
 	golang.org/x/net v0.0.0-20190301231341-16b79f2e4e95
 )

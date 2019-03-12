@@ -28,7 +28,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/wealdtech/go-ens/resolvercontract"
+	"github.com/wealdtech/go-ens/contracts/resolver"
 	"github.com/wealdtech/go-ens/util"
 )
 
@@ -38,41 +38,36 @@ var zeroHash = make([]byte, 32)
 var UnknownAddress = common.HexToAddress("00")
 
 // PublicResolver obtains the public resolver for a chain
-func PublicResolver(client *ethclient.Client) (address common.Address, err error) {
-	address, err = resolverAddress(client, "resolver.eth")
-
-	return
+func PublicResolver(client *ethclient.Client) (common.Address, error) {
+	return resolverAddress(client, "resolver.eth")
 }
 
-func resolverAddress(client *ethclient.Client, name string) (address common.Address, err error) {
+func resolverAddress(client *ethclient.Client, name string) (common.Address, error) {
 	nameHash := NameHash(name)
 
 	registryContract, err := RegistryContract(client)
 	if err != nil {
-		return
+		return UnknownAddress, err
 	}
 
 	// Check that this name is owned
 	ownerAddress, err := registryContract.Owner(nil, nameHash)
 	if err != nil {
-		return
+		return UnknownAddress, err
 	}
 	if bytes.Compare(ownerAddress.Bytes(), UnknownAddress.Bytes()) == 0 {
-		err = errors.New("unregistered name")
-		return
+		return UnknownAddress, errors.New("unregistered name")
 	}
 
 	// Obtain the resolver address for this name
-	address, err = registryContract.Resolver(nil, nameHash)
+	address, err := registryContract.Resolver(nil, nameHash)
 	if err != nil {
-		return
+		return UnknownAddress, err
 	}
 	if bytes.Compare(address.Bytes(), UnknownAddress.Bytes()) == 0 {
 		err = errors.New("no resolver")
-		return
 	}
-
-	return
+	return address, err
 }
 
 // Resolve resolves an ENS name in to an Etheruem address
@@ -123,12 +118,12 @@ func resolveHash(client *ethclient.Client, name string) (address common.Address,
 }
 
 // CreateResolverSession creates a session suitable for multiple calls
-func CreateResolverSession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *resolvercontract.ResolverContract, gasPrice *big.Int) *resolvercontract.ResolverContractSession {
+func CreateResolverSession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *resolver.ResolverContract, gasPrice *big.Int) *resolver.ResolverContractSession {
 	// Create a signer
 	signer := util.AccountSigner(chainID, wallet, account, passphrase)
 
 	// Return our session
-	session := &resolvercontract.ResolverContractSession{
+	session := &resolver.ResolverContractSession{
 		Contract: contract,
 		CallOpts: bind.CallOpts{
 			Pending: true,
@@ -144,13 +139,13 @@ func CreateResolverSession(chainID *big.Int, wallet *accounts.Wallet, account *a
 }
 
 // SetResolution sets the address to which a name resolves
-func SetResolution(session *resolvercontract.ResolverContractSession, name string, resolutionAddress *common.Address) (tx *types.Transaction, err error) {
+func SetResolution(session *resolver.ResolverContractSession, name string, resolutionAddress *common.Address) (tx *types.Transaction, err error) {
 	tx, err = session.SetAddr(NameHash(name), *resolutionAddress)
 	return
 }
 
 // SetAbi sets the ABI associated with a name
-func SetAbi(session *resolvercontract.ResolverContractSession, name string, abi string, contentType *big.Int) (tx *types.Transaction, err error) {
+func SetAbi(session *resolver.ResolverContractSession, name string, abi string, contentType *big.Int) (tx *types.Transaction, err error) {
 	var data []byte
 	if contentType.Cmp(big.NewInt(1)) == 0 {
 		// Uncompressed JSON
@@ -173,7 +168,7 @@ func SetAbi(session *resolvercontract.ResolverContractSession, name string, abi 
 }
 
 // Abi returns the ABI associated with a name
-func Abi(resolver *resolvercontract.ResolverContract, name string) (abi string, err error) {
+func Abi(resolver *resolver.ResolverContract, name string) (abi string, err error) {
 	contentTypes := big.NewInt(3)
 	contentType, data, err := resolver.ABI(nil, NameHash(name), contentTypes)
 	if err == nil {
@@ -198,24 +193,20 @@ func Abi(resolver *resolvercontract.ResolverContract, name string) (abi string, 
 }
 
 // ResolverContractByAddress instantiates the resolver contract at aspecific address
-func ResolverContractByAddress(client *ethclient.Client, resolverAddress common.Address) (resolver *resolvercontract.ResolverContract, err error) {
+func ResolverContractByAddress(client *ethclient.Client, resolverAddress common.Address) (*resolver.ResolverContract, error) {
 	// Instantiate the resolver contract
-	resolver, err = resolvercontract.NewResolverContract(resolverAddress, client)
-
-	return
+	return resolver.NewResolverContract(resolverAddress, client)
 }
 
 // ResolverContract obtains the resolver contract for a name
-func ResolverContract(client *ethclient.Client, name string) (resolver *resolvercontract.ResolverContract, err error) {
+func ResolverContract(client *ethclient.Client, name string) (*resolver.ResolverContract, error) {
 	resolverAddress, err := resolverAddress(client, name)
 	if err != nil {
-		return
+		return nil, err
 	}
 	if bytes.Compare(resolverAddress.Bytes(), UnknownAddress.Bytes()) == 0 {
-		err = errors.New("no resolver")
-		return
+		return nil, errors.New("no resolver")
 	}
 
-	resolver, err = ResolverContractByAddress(client, resolverAddress)
-	return
+	return ResolverContractByAddress(client, resolverAddress)
 }

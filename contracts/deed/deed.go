@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package deedcontract
+package deed
 
 import (
 	"math/big"
@@ -13,6 +13,18 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
+)
+
+// Reference imports to suppress errors if they are not otherwise used.
+var (
+	_ = big.NewInt
+	_ = strings.NewReader
+	_ = ethereum.NotFound
+	_ = abi.U256
+	_ = bind.Bind
+	_ = common.Big1
+	_ = types.BloomLookup
+	_ = event.NewSubscription
 )
 
 // DeedContractABI is the input ABI used to generate the binding from.
@@ -292,21 +304,21 @@ func (_DeedContract *DeedContractCallerSession) Value() (*big.Int, error) {
 
 // CloseDeed is a paid mutator transaction binding the contract method 0xbbe42771.
 //
-// Solidity: function closeDeed(refundRatio uint256) returns()
+// Solidity: function closeDeed(uint256 refundRatio) returns()
 func (_DeedContract *DeedContractTransactor) CloseDeed(opts *bind.TransactOpts, refundRatio *big.Int) (*types.Transaction, error) {
 	return _DeedContract.contract.Transact(opts, "closeDeed", refundRatio)
 }
 
 // CloseDeed is a paid mutator transaction binding the contract method 0xbbe42771.
 //
-// Solidity: function closeDeed(refundRatio uint256) returns()
+// Solidity: function closeDeed(uint256 refundRatio) returns()
 func (_DeedContract *DeedContractSession) CloseDeed(refundRatio *big.Int) (*types.Transaction, error) {
 	return _DeedContract.Contract.CloseDeed(&_DeedContract.TransactOpts, refundRatio)
 }
 
 // CloseDeed is a paid mutator transaction binding the contract method 0xbbe42771.
 //
-// Solidity: function closeDeed(refundRatio uint256) returns()
+// Solidity: function closeDeed(uint256 refundRatio) returns()
 func (_DeedContract *DeedContractTransactorSession) CloseDeed(refundRatio *big.Int) (*types.Transaction, error) {
 	return _DeedContract.Contract.CloseDeed(&_DeedContract.TransactOpts, refundRatio)
 }
@@ -334,63 +346,63 @@ func (_DeedContract *DeedContractTransactorSession) DestroyDeed() (*types.Transa
 
 // SetBalance is a paid mutator transaction binding the contract method 0xb0c80972.
 //
-// Solidity: function setBalance(newValue uint256, throwOnFailure bool) returns()
+// Solidity: function setBalance(uint256 newValue, bool throwOnFailure) returns()
 func (_DeedContract *DeedContractTransactor) SetBalance(opts *bind.TransactOpts, newValue *big.Int, throwOnFailure bool) (*types.Transaction, error) {
 	return _DeedContract.contract.Transact(opts, "setBalance", newValue, throwOnFailure)
 }
 
 // SetBalance is a paid mutator transaction binding the contract method 0xb0c80972.
 //
-// Solidity: function setBalance(newValue uint256, throwOnFailure bool) returns()
+// Solidity: function setBalance(uint256 newValue, bool throwOnFailure) returns()
 func (_DeedContract *DeedContractSession) SetBalance(newValue *big.Int, throwOnFailure bool) (*types.Transaction, error) {
 	return _DeedContract.Contract.SetBalance(&_DeedContract.TransactOpts, newValue, throwOnFailure)
 }
 
 // SetBalance is a paid mutator transaction binding the contract method 0xb0c80972.
 //
-// Solidity: function setBalance(newValue uint256, throwOnFailure bool) returns()
+// Solidity: function setBalance(uint256 newValue, bool throwOnFailure) returns()
 func (_DeedContract *DeedContractTransactorSession) SetBalance(newValue *big.Int, throwOnFailure bool) (*types.Transaction, error) {
 	return _DeedContract.Contract.SetBalance(&_DeedContract.TransactOpts, newValue, throwOnFailure)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x13af4035.
 //
-// Solidity: function setOwner(newOwner address) returns()
+// Solidity: function setOwner(address newOwner) returns()
 func (_DeedContract *DeedContractTransactor) SetOwner(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
 	return _DeedContract.contract.Transact(opts, "setOwner", newOwner)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x13af4035.
 //
-// Solidity: function setOwner(newOwner address) returns()
+// Solidity: function setOwner(address newOwner) returns()
 func (_DeedContract *DeedContractSession) SetOwner(newOwner common.Address) (*types.Transaction, error) {
 	return _DeedContract.Contract.SetOwner(&_DeedContract.TransactOpts, newOwner)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x13af4035.
 //
-// Solidity: function setOwner(newOwner address) returns()
+// Solidity: function setOwner(address newOwner) returns()
 func (_DeedContract *DeedContractTransactorSession) SetOwner(newOwner common.Address) (*types.Transaction, error) {
 	return _DeedContract.Contract.SetOwner(&_DeedContract.TransactOpts, newOwner)
 }
 
 // SetRegistrar is a paid mutator transaction binding the contract method 0xfaab9d39.
 //
-// Solidity: function setRegistrar(newRegistrar address) returns()
+// Solidity: function setRegistrar(address newRegistrar) returns()
 func (_DeedContract *DeedContractTransactor) SetRegistrar(opts *bind.TransactOpts, newRegistrar common.Address) (*types.Transaction, error) {
 	return _DeedContract.contract.Transact(opts, "setRegistrar", newRegistrar)
 }
 
 // SetRegistrar is a paid mutator transaction binding the contract method 0xfaab9d39.
 //
-// Solidity: function setRegistrar(newRegistrar address) returns()
+// Solidity: function setRegistrar(address newRegistrar) returns()
 func (_DeedContract *DeedContractSession) SetRegistrar(newRegistrar common.Address) (*types.Transaction, error) {
 	return _DeedContract.Contract.SetRegistrar(&_DeedContract.TransactOpts, newRegistrar)
 }
 
 // SetRegistrar is a paid mutator transaction binding the contract method 0xfaab9d39.
 //
-// Solidity: function setRegistrar(newRegistrar address) returns()
+// Solidity: function setRegistrar(address newRegistrar) returns()
 func (_DeedContract *DeedContractTransactorSession) SetRegistrar(newRegistrar common.Address) (*types.Transaction, error) {
 	return _DeedContract.Contract.SetRegistrar(&_DeedContract.TransactOpts, newRegistrar)
 }
@@ -469,7 +481,7 @@ type DeedContractDeedClosed struct {
 
 // FilterDeedClosed is a free log retrieval operation binding the contract event 0xbb2ce2f51803bba16bc85282b47deeea9a5c6223eabea1077be696b3f265cf13.
 //
-// Solidity: e DeedClosed()
+// Solidity: event DeedClosed()
 func (_DeedContract *DeedContractFilterer) FilterDeedClosed(opts *bind.FilterOpts) (*DeedContractDeedClosedIterator, error) {
 
 	logs, sub, err := _DeedContract.contract.FilterLogs(opts, "DeedClosed")
@@ -481,7 +493,7 @@ func (_DeedContract *DeedContractFilterer) FilterDeedClosed(opts *bind.FilterOpt
 
 // WatchDeedClosed is a free log subscription operation binding the contract event 0xbb2ce2f51803bba16bc85282b47deeea9a5c6223eabea1077be696b3f265cf13.
 //
-// Solidity: e DeedClosed()
+// Solidity: event DeedClosed()
 func (_DeedContract *DeedContractFilterer) WatchDeedClosed(opts *bind.WatchOpts, sink chan<- *DeedContractDeedClosed) (event.Subscription, error) {
 
 	logs, sub, err := _DeedContract.contract.WatchLogs(opts, "DeedClosed")
@@ -591,7 +603,7 @@ type DeedContractOwnerChanged struct {
 
 // FilterOwnerChanged is a free log retrieval operation binding the contract event 0xa2ea9883a321a3e97b8266c2b078bfeec6d50c711ed71f874a90d500ae2eaf36.
 //
-// Solidity: e OwnerChanged(newOwner address)
+// Solidity: event OwnerChanged(address newOwner)
 func (_DeedContract *DeedContractFilterer) FilterOwnerChanged(opts *bind.FilterOpts) (*DeedContractOwnerChangedIterator, error) {
 
 	logs, sub, err := _DeedContract.contract.FilterLogs(opts, "OwnerChanged")
@@ -603,7 +615,7 @@ func (_DeedContract *DeedContractFilterer) FilterOwnerChanged(opts *bind.FilterO
 
 // WatchOwnerChanged is a free log subscription operation binding the contract event 0xa2ea9883a321a3e97b8266c2b078bfeec6d50c711ed71f874a90d500ae2eaf36.
 //
-// Solidity: e OwnerChanged(newOwner address)
+// Solidity: event OwnerChanged(address newOwner)
 func (_DeedContract *DeedContractFilterer) WatchOwnerChanged(opts *bind.WatchOpts, sink chan<- *DeedContractOwnerChanged) (event.Subscription, error) {
 
 	logs, sub, err := _DeedContract.contract.WatchLogs(opts, "OwnerChanged")

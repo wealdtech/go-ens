@@ -1,9 +1,10 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package registrycontract
+package registry
 
 import (
+	"math/big"
 	"strings"
 
 	ethereum "github.com/ethereum/go-ethereum"
@@ -12,6 +13,18 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
+)
+
+// Reference imports to suppress errors if they are not otherwise used.
+var (
+	_ = big.NewInt
+	_ = strings.NewReader
+	_ = ethereum.NotFound
+	_ = abi.U256
+	_ = bind.Bind
+	_ = common.Big1
+	_ = types.BloomLookup
+	_ = event.NewSubscription
 )
 
 // RegistryContractABI is the input ABI used to generate the binding from.
@@ -161,7 +174,7 @@ func (_RegistryContract *RegistryContractTransactorRaw) Transact(opts *bind.Tran
 
 // Owner is a free data retrieval call binding the contract method 0x02571be3.
 //
-// Solidity: function owner(node bytes32) constant returns(address)
+// Solidity: function owner(bytes32 node) constant returns(address)
 func (_RegistryContract *RegistryContractCaller) Owner(opts *bind.CallOpts, node [32]byte) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -173,21 +186,21 @@ func (_RegistryContract *RegistryContractCaller) Owner(opts *bind.CallOpts, node
 
 // Owner is a free data retrieval call binding the contract method 0x02571be3.
 //
-// Solidity: function owner(node bytes32) constant returns(address)
+// Solidity: function owner(bytes32 node) constant returns(address)
 func (_RegistryContract *RegistryContractSession) Owner(node [32]byte) (common.Address, error) {
 	return _RegistryContract.Contract.Owner(&_RegistryContract.CallOpts, node)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x02571be3.
 //
-// Solidity: function owner(node bytes32) constant returns(address)
+// Solidity: function owner(bytes32 node) constant returns(address)
 func (_RegistryContract *RegistryContractCallerSession) Owner(node [32]byte) (common.Address, error) {
 	return _RegistryContract.Contract.Owner(&_RegistryContract.CallOpts, node)
 }
 
 // Resolver is a free data retrieval call binding the contract method 0x0178b8bf.
 //
-// Solidity: function resolver(node bytes32) constant returns(address)
+// Solidity: function resolver(bytes32 node) constant returns(address)
 func (_RegistryContract *RegistryContractCaller) Resolver(opts *bind.CallOpts, node [32]byte) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -199,21 +212,21 @@ func (_RegistryContract *RegistryContractCaller) Resolver(opts *bind.CallOpts, n
 
 // Resolver is a free data retrieval call binding the contract method 0x0178b8bf.
 //
-// Solidity: function resolver(node bytes32) constant returns(address)
+// Solidity: function resolver(bytes32 node) constant returns(address)
 func (_RegistryContract *RegistryContractSession) Resolver(node [32]byte) (common.Address, error) {
 	return _RegistryContract.Contract.Resolver(&_RegistryContract.CallOpts, node)
 }
 
 // Resolver is a free data retrieval call binding the contract method 0x0178b8bf.
 //
-// Solidity: function resolver(node bytes32) constant returns(address)
+// Solidity: function resolver(bytes32 node) constant returns(address)
 func (_RegistryContract *RegistryContractCallerSession) Resolver(node [32]byte) (common.Address, error) {
 	return _RegistryContract.Contract.Resolver(&_RegistryContract.CallOpts, node)
 }
 
 // Ttl is a free data retrieval call binding the contract method 0x16a25cbd.
 //
-// Solidity: function ttl(node bytes32) constant returns(uint64)
+// Solidity: function ttl(bytes32 node) constant returns(uint64)
 func (_RegistryContract *RegistryContractCaller) Ttl(opts *bind.CallOpts, node [32]byte) (uint64, error) {
 	var (
 		ret0 = new(uint64)
@@ -225,98 +238,98 @@ func (_RegistryContract *RegistryContractCaller) Ttl(opts *bind.CallOpts, node [
 
 // Ttl is a free data retrieval call binding the contract method 0x16a25cbd.
 //
-// Solidity: function ttl(node bytes32) constant returns(uint64)
+// Solidity: function ttl(bytes32 node) constant returns(uint64)
 func (_RegistryContract *RegistryContractSession) Ttl(node [32]byte) (uint64, error) {
 	return _RegistryContract.Contract.Ttl(&_RegistryContract.CallOpts, node)
 }
 
 // Ttl is a free data retrieval call binding the contract method 0x16a25cbd.
 //
-// Solidity: function ttl(node bytes32) constant returns(uint64)
+// Solidity: function ttl(bytes32 node) constant returns(uint64)
 func (_RegistryContract *RegistryContractCallerSession) Ttl(node [32]byte) (uint64, error) {
 	return _RegistryContract.Contract.Ttl(&_RegistryContract.CallOpts, node)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x5b0fc9c3.
 //
-// Solidity: function setOwner(node bytes32, owner address) returns()
+// Solidity: function setOwner(bytes32 node, address owner) returns()
 func (_RegistryContract *RegistryContractTransactor) SetOwner(opts *bind.TransactOpts, node [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _RegistryContract.contract.Transact(opts, "setOwner", node, owner)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x5b0fc9c3.
 //
-// Solidity: function setOwner(node bytes32, owner address) returns()
+// Solidity: function setOwner(bytes32 node, address owner) returns()
 func (_RegistryContract *RegistryContractSession) SetOwner(node [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _RegistryContract.Contract.SetOwner(&_RegistryContract.TransactOpts, node, owner)
 }
 
 // SetOwner is a paid mutator transaction binding the contract method 0x5b0fc9c3.
 //
-// Solidity: function setOwner(node bytes32, owner address) returns()
+// Solidity: function setOwner(bytes32 node, address owner) returns()
 func (_RegistryContract *RegistryContractTransactorSession) SetOwner(node [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _RegistryContract.Contract.SetOwner(&_RegistryContract.TransactOpts, node, owner)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(node bytes32, resolver address) returns()
+// Solidity: function setResolver(bytes32 node, address resolver) returns()
 func (_RegistryContract *RegistryContractTransactor) SetResolver(opts *bind.TransactOpts, node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _RegistryContract.contract.Transact(opts, "setResolver", node, resolver)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(node bytes32, resolver address) returns()
+// Solidity: function setResolver(bytes32 node, address resolver) returns()
 func (_RegistryContract *RegistryContractSession) SetResolver(node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _RegistryContract.Contract.SetResolver(&_RegistryContract.TransactOpts, node, resolver)
 }
 
 // SetResolver is a paid mutator transaction binding the contract method 0x1896f70a.
 //
-// Solidity: function setResolver(node bytes32, resolver address) returns()
+// Solidity: function setResolver(bytes32 node, address resolver) returns()
 func (_RegistryContract *RegistryContractTransactorSession) SetResolver(node [32]byte, resolver common.Address) (*types.Transaction, error) {
 	return _RegistryContract.Contract.SetResolver(&_RegistryContract.TransactOpts, node, resolver)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0x06ab5923.
 //
-// Solidity: function setSubnodeOwner(node bytes32, label bytes32, owner address) returns()
+// Solidity: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns()
 func (_RegistryContract *RegistryContractTransactor) SetSubnodeOwner(opts *bind.TransactOpts, node [32]byte, label [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _RegistryContract.contract.Transact(opts, "setSubnodeOwner", node, label, owner)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0x06ab5923.
 //
-// Solidity: function setSubnodeOwner(node bytes32, label bytes32, owner address) returns()
+// Solidity: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns()
 func (_RegistryContract *RegistryContractSession) SetSubnodeOwner(node [32]byte, label [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _RegistryContract.Contract.SetSubnodeOwner(&_RegistryContract.TransactOpts, node, label, owner)
 }
 
 // SetSubnodeOwner is a paid mutator transaction binding the contract method 0x06ab5923.
 //
-// Solidity: function setSubnodeOwner(node bytes32, label bytes32, owner address) returns()
+// Solidity: function setSubnodeOwner(bytes32 node, bytes32 label, address owner) returns()
 func (_RegistryContract *RegistryContractTransactorSession) SetSubnodeOwner(node [32]byte, label [32]byte, owner common.Address) (*types.Transaction, error) {
 	return _RegistryContract.Contract.SetSubnodeOwner(&_RegistryContract.TransactOpts, node, label, owner)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(node bytes32, ttl uint64) returns()
+// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_RegistryContract *RegistryContractTransactor) SetTTL(opts *bind.TransactOpts, node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _RegistryContract.contract.Transact(opts, "setTTL", node, ttl)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(node bytes32, ttl uint64) returns()
+// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_RegistryContract *RegistryContractSession) SetTTL(node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _RegistryContract.Contract.SetTTL(&_RegistryContract.TransactOpts, node, ttl)
 }
 
 // SetTTL is a paid mutator transaction binding the contract method 0x14ab9038.
 //
-// Solidity: function setTTL(node bytes32, ttl uint64) returns()
+// Solidity: function setTTL(bytes32 node, uint64 ttl) returns()
 func (_RegistryContract *RegistryContractTransactorSession) SetTTL(node [32]byte, ttl uint64) (*types.Transaction, error) {
 	return _RegistryContract.Contract.SetTTL(&_RegistryContract.TransactOpts, node, ttl)
 }
@@ -398,7 +411,7 @@ type RegistryContractNewOwner struct {
 
 // FilterNewOwner is a free log retrieval operation binding the contract event 0xce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e82.
 //
-// Solidity: e NewOwner(node indexed bytes32, label indexed bytes32, owner address)
+// Solidity: event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
 func (_RegistryContract *RegistryContractFilterer) FilterNewOwner(opts *bind.FilterOpts, node [][32]byte, label [][32]byte) (*RegistryContractNewOwnerIterator, error) {
 
 	var nodeRule []interface{}
@@ -419,7 +432,7 @@ func (_RegistryContract *RegistryContractFilterer) FilterNewOwner(opts *bind.Fil
 
 // WatchNewOwner is a free log subscription operation binding the contract event 0xce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e82.
 //
-// Solidity: e NewOwner(node indexed bytes32, label indexed bytes32, owner address)
+// Solidity: event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner)
 func (_RegistryContract *RegistryContractFilterer) WatchNewOwner(opts *bind.WatchOpts, sink chan<- *RegistryContractNewOwner, node [][32]byte, label [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -539,7 +552,7 @@ type RegistryContractNewResolver struct {
 
 // FilterNewResolver is a free log retrieval operation binding the contract event 0x335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0.
 //
-// Solidity: e NewResolver(node indexed bytes32, resolver address)
+// Solidity: event NewResolver(bytes32 indexed node, address resolver)
 func (_RegistryContract *RegistryContractFilterer) FilterNewResolver(opts *bind.FilterOpts, node [][32]byte) (*RegistryContractNewResolverIterator, error) {
 
 	var nodeRule []interface{}
@@ -556,7 +569,7 @@ func (_RegistryContract *RegistryContractFilterer) FilterNewResolver(opts *bind.
 
 // WatchNewResolver is a free log subscription operation binding the contract event 0x335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0.
 //
-// Solidity: e NewResolver(node indexed bytes32, resolver address)
+// Solidity: event NewResolver(bytes32 indexed node, address resolver)
 func (_RegistryContract *RegistryContractFilterer) WatchNewResolver(opts *bind.WatchOpts, sink chan<- *RegistryContractNewResolver, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -672,7 +685,7 @@ type RegistryContractNewTTL struct {
 
 // FilterNewTTL is a free log retrieval operation binding the contract event 0x1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68.
 //
-// Solidity: e NewTTL(node indexed bytes32, ttl uint64)
+// Solidity: event NewTTL(bytes32 indexed node, uint64 ttl)
 func (_RegistryContract *RegistryContractFilterer) FilterNewTTL(opts *bind.FilterOpts, node [][32]byte) (*RegistryContractNewTTLIterator, error) {
 
 	var nodeRule []interface{}
@@ -689,7 +702,7 @@ func (_RegistryContract *RegistryContractFilterer) FilterNewTTL(opts *bind.Filte
 
 // WatchNewTTL is a free log subscription operation binding the contract event 0x1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68.
 //
-// Solidity: e NewTTL(node indexed bytes32, ttl uint64)
+// Solidity: event NewTTL(bytes32 indexed node, uint64 ttl)
 func (_RegistryContract *RegistryContractFilterer) WatchNewTTL(opts *bind.WatchOpts, sink chan<- *RegistryContractNewTTL, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -805,7 +818,7 @@ type RegistryContractTransfer struct {
 
 // FilterTransfer is a free log retrieval operation binding the contract event 0xd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d266.
 //
-// Solidity: e Transfer(node indexed bytes32, owner address)
+// Solidity: event Transfer(bytes32 indexed node, address owner)
 func (_RegistryContract *RegistryContractFilterer) FilterTransfer(opts *bind.FilterOpts, node [][32]byte) (*RegistryContractTransferIterator, error) {
 
 	var nodeRule []interface{}
@@ -822,7 +835,7 @@ func (_RegistryContract *RegistryContractFilterer) FilterTransfer(opts *bind.Fil
 
 // WatchTransfer is a free log subscription operation binding the contract event 0xd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d266.
 //
-// Solidity: e Transfer(node indexed bytes32, owner address)
+// Solidity: event Transfer(bytes32 indexed node, address owner)
 func (_RegistryContract *RegistryContractFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *RegistryContractTransfer, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}

@@ -6,7 +6,7 @@
 [![Travis CI](https://img.shields.io/travis/wealdtech/go-ens.svg)](https://travis-ci.org/wealdtech/go-ens)
 [![codecov.io](https://img.shields.io/codecov/c/github/wealdtech/go-ens.svg)](https://codecov.io/github/wealdtech/go-ens)
 
-Go module to simplify talking to the [Ethereum Name Service](https://ens.domains/) contracts.
+Go module to simplify interacting with the [Ethereum Name Service](https://ens.domains/) contracts.
 
 
 ## Table of Contents
