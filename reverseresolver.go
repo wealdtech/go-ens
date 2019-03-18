@@ -17,6 +17,7 @@ package ens
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts"
@@ -27,6 +28,15 @@ import (
 	"github.com/wealdtech/go-ens/contracts/reverseresolver"
 	"github.com/wealdtech/go-ens/util"
 )
+
+// Format provides a string version of an address, reverse resolving it if possible
+func Format(client *ethclient.Client, input *common.Address) string {
+	result, err := ReverseResolve(client, input)
+	if err != nil {
+		result = fmt.Sprintf("%s", input.Hex())
+	}
+	return result
+}
 
 // ReverseResolve resolves an address in to an ENS name
 // This will return an error if the name is not found or otherwise 0
