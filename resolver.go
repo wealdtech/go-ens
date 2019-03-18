@@ -39,7 +39,7 @@ var UnknownAddress = common.HexToAddress("00")
 
 // PublicResolver obtains the public resolver for a chain
 func PublicResolver(client *ethclient.Client) (common.Address, error) {
-	return resolverAddress(client, "resolver.eth")
+	return Resolve(client, "resolver.eth")
 }
 
 func resolverAddress(client *ethclient.Client, name string) (common.Address, error) {
