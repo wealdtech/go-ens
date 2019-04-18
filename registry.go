@@ -15,7 +15,6 @@
 package ens
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -32,6 +31,67 @@ import (
 	"github.com/wealdtech/go-ens/contracts/registry"
 	"github.com/wealdtech/go-ens/util"
 )
+
+// Registry is the structure for the registry contract
+type Registry struct {
+	client   *ethclient.Client
+	contract *registry.Contract
+}
+
+// NewRegistry obtains the ENS registry
+func NewRegistry(client *ethclient.Client) (*Registry, error) {
+	address, err := RegistryContractAddress(client)
+	if err != nil {
+		return nil, err
+	}
+	return NewRegistryAt(client, address)
+}
+
+// NewRegistryAt obtains the ENS registry at a given address
+func NewRegistryAt(client *ethclient.Client, address common.Address) (*Registry, error) {
+	contract, err := registry.NewContract(address, client)
+	if err != nil {
+		return nil, err
+	}
+	return &Registry{
+		client:   client,
+		contract: contract,
+	}, nil
+}
+
+// Owner returns the address of the owner of a name
+func (r *Registry) Owner(name string) (common.Address, error) {
+	return r.contract.Owner(nil, NameHash(name))
+}
+
+// ResolverAddress returns the address of the resolver for a name
+func (r *Registry) ResolverAddress(name string) (common.Address, error) {
+	return r.contract.Resolver(nil, NameHash(name))
+}
+
+// SetResolver sets the resolver for a name
+func (r *Registry) SetResolver(opts *bind.TransactOpts, name string, address common.Address) (*types.Transaction, error) {
+	return r.contract.SetResolver(opts, NameHash(name), address)
+}
+
+// Resolver returns the resolver for a name
+func (r *Registry) Resolver(name string) (*Resolver, error) {
+	address, err := r.ResolverAddress(name)
+	if err != nil {
+		return nil, err
+	}
+	return NewResolverAt(r.client, name, address)
+}
+
+// SetOwner sets the ownership of a domain
+func (r *Registry) SetOwner(opts *bind.TransactOpts, name string, address common.Address) (*types.Transaction, error) {
+	return r.contract.SetOwner(opts, NameHash(name), address)
+}
+
+// SetSubdomainOwner sets the ownership of a subdomain, potentially creating it in the process
+func (r *Registry) SetSubdomainOwner(opts *bind.TransactOpts, name string, subname string, address common.Address) (*types.Transaction, error) {
+	return r.contract.SetSubnodeOwner(opts, NameHash(name), LabelHash(subname), address)
+}
 
 // RegistryContractAddress obtains the address of the registry contract for a chain
 func RegistryContractAddress(client *ethclient.Client) (common.Address, error) {
@@ -56,20 +116,20 @@ func RegistryContractAddress(client *ethclient.Client) (common.Address, error) {
 	}
 }
 
-// RegistryContract obtains the registry contract for a chain
-func RegistryContract(client *ethclient.Client) (*registry.RegistryContract, error) {
-	address, err := RegistryContractAddress(client)
-	if err != nil {
-		return nil, err
-	}
-
-	// Instantiate the registry contract
-	return registry.NewRegistryContract(address, client)
-}
+//// RegistryContract obtains the registry contract for a chain
+//func RegistryContract(client *ethclient.Client) (*registry.RegistryContract, error) {
+//	address, err := RegistryContractAddress(client)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	// Instantiate the registry contract
+//	return registry.NewRegistryContract(address, client)
+//}
 
 // RegistryContractFromRegistrar obtains the registry contract given an
 // existing registrar contract
-func RegistryContractFromRegistrar(client *ethclient.Client, registrar *auctionregistrar.AuctionRegistrarContract) (*registry.RegistryContract, error) {
+func RegistryContractFromRegistrar(client *ethclient.Client, registrar *auctionregistrar.Contract) (*registry.RegistryContract, error) {
 	if registrar == nil {
 		return nil, errors.New("no registrar contract")
 	}
@@ -80,17 +140,17 @@ func RegistryContractFromRegistrar(client *ethclient.Client, registrar *auctionr
 	return registry.NewRegistryContract(registryAddress, client)
 }
 
-// Resolver obtains the address of the resolver for a .eth name
-func Resolver(contract *registry.RegistryContract, name string) (common.Address, error) {
-	if contract == nil {
-		return UnknownAddress, errors.New("no registry contract")
-	}
-	address, err := contract.Resolver(nil, NameHash(name))
-	if err == nil && bytes.Compare(address.Bytes(), UnknownAddress.Bytes()) == 0 {
-		err = errors.New("no resolver")
-	}
-	return address, err
-}
+//// Resolver obtains the address of the resolver for a .eth name
+//func Resolver(contract *registry.RegistryContract, name string) (common.Address, error) {
+//	if contract == nil {
+//		return UnknownAddress, errors.New("no registry contract")
+//	}
+//	address, err := contract.Resolver(nil, NameHash(name))
+//	if err == nil && bytes.Compare(address.Bytes(), UnknownAddress.Bytes()) == 0 {
+//		err = errors.New("no resolver")
+//	}
+//	return address, err
+//}
 
 // SetResolver sets the resolver for a name
 func SetResolver(session *registry.RegistryContractSession, name string, resolverAddr *common.Address) (*types.Transaction, error) {

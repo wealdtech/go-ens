@@ -1,4 +1,4 @@
-// Copyright 2017 Weald Technology Trading
+// Copyright 2017-2019 Weald Technology Trading
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,13 +23,11 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/contracts/resolver"
-	"github.com/wealdtech/go-ens/util"
 )
 
 var zeroHash = make([]byte, 32)
@@ -37,37 +35,81 @@ var zeroHash = make([]byte, 32)
 // UnknownAddress is the address to which unknown entries resolve
 var UnknownAddress = common.HexToAddress("00")
 
-// PublicResolver obtains the public resolver for a chain
-func PublicResolver(client *ethclient.Client) (common.Address, error) {
+// Resolver is the structure for the resolver contract
+type Resolver struct {
+	contract *resolver.Contract
+	domain   string
+}
+
+// NewResolver obtains an ENS resolver for a given domain
+func NewResolver(client *ethclient.Client, domain string) (*Resolver, error) {
+	registry, err := NewRegistry(client)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure the name is registered
+	ownerAddress, err := registry.Owner(domain)
+	if err != nil {
+		return nil, err
+	}
+	if bytes.Compare(ownerAddress.Bytes(), UnknownAddress.Bytes()) == 0 {
+		return nil, errors.New("unregistered name")
+	}
+
+	// Obtain the resolver address for this domain
+	resolver, err := registry.ResolverAddress(domain)
+	if err != nil {
+		return nil, err
+	}
+	return NewResolverAt(client, domain, resolver)
+}
+
+// NewResolverAt obtains an ENS resolver at a given address
+func NewResolverAt(client *ethclient.Client, domain string, address common.Address) (*Resolver, error) {
+	contract, err := resolver.NewContract(address, client)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure this really is a resolver contract
+	_, err = contract.Addr(nil, NameHash("test.eth"))
+	if err != nil {
+		if err.Error() == "no contract code at given address" {
+			return nil, errors.New("no resolver")
+		}
+		return nil, err
+	}
+
+	return &Resolver{
+		contract: contract,
+		domain:   domain,
+	}, nil
+}
+
+// PublicResolverAddress obtains the address of the public resolver for a chain
+func PublicResolverAddress(client *ethclient.Client) (common.Address, error) {
 	return Resolve(client, "resolver.eth")
 }
 
-func resolverAddress(client *ethclient.Client, name string) (common.Address, error) {
-	nameHash := NameHash(name)
+// Address returns the address of the domain
+func (r *Resolver) Address(domain string) (common.Address, error) {
+	return r.contract.Addr(nil, NameHash(domain))
+}
 
-	registryContract, err := RegistryContract(client)
-	if err != nil {
-		return UnknownAddress, err
-	}
+// SetAddress sets the address of the domain
+func (r *Resolver) SetAddress(opts *bind.TransactOpts, address common.Address) (*types.Transaction, error) {
+	return r.contract.SetAddr(opts, NameHash(r.domain), address)
+}
 
-	// Check that this name is owned
-	ownerAddress, err := registryContract.Owner(nil, nameHash)
-	if err != nil {
-		return UnknownAddress, err
-	}
-	if bytes.Compare(ownerAddress.Bytes(), UnknownAddress.Bytes()) == 0 {
-		return UnknownAddress, errors.New("unregistered name")
-	}
+// Contenthash returns the content hash of the domain
+func (r *Resolver) Contenthash() ([]byte, error) {
+	return r.contract.Contenthash(nil, NameHash(r.domain))
+}
 
-	// Obtain the resolver address for this name
-	address, err := registryContract.Resolver(nil, nameHash)
-	if err != nil {
-		return UnknownAddress, err
-	}
-	if bytes.Compare(address.Bytes(), UnknownAddress.Bytes()) == 0 {
-		err = errors.New("no resolver")
-	}
-	return address, err
+// SetContenthash sets the content hash of the domain
+func (r *Resolver) SetContenthash(opts *bind.TransactOpts, contenthash []byte) (*types.Transaction, error) {
+	return r.contract.SetContenthash(opts, NameHash(r.domain), contenthash)
 }
 
 // Resolve resolves an ENS name in to an Etheruem address
@@ -99,14 +141,14 @@ func resolveName(client *ethclient.Client, input string) (address common.Address
 	return
 }
 
-func resolveHash(client *ethclient.Client, name string) (address common.Address, err error) {
-	contract, err := ResolverContract(client, name)
+func resolveHash(client *ethclient.Client, domain string) (address common.Address, err error) {
+	resolver, err := NewResolver(client, domain)
 	if err != nil {
 		return UnknownAddress, err
 	}
 
-	// Resolve the name
-	address, err = contract.Addr(nil, NameHash(name))
+	// Resolve the domain
+	address, err = resolver.Address(domain)
 	if err != nil {
 		return UnknownAddress, err
 	}
@@ -117,35 +159,8 @@ func resolveHash(client *ethclient.Client, name string) (address common.Address,
 	return
 }
 
-// CreateResolverSession creates a session suitable for multiple calls
-func CreateResolverSession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *resolver.ResolverContract, gasPrice *big.Int) *resolver.ResolverContractSession {
-	// Create a signer
-	signer := util.AccountSigner(chainID, wallet, account, passphrase)
-
-	// Return our session
-	session := &resolver.ResolverContractSession{
-		Contract: contract,
-		CallOpts: bind.CallOpts{
-			Pending: true,
-		},
-		TransactOpts: bind.TransactOpts{
-			From:     account.Address,
-			Signer:   signer,
-			GasPrice: gasPrice,
-		},
-	}
-
-	return session
-}
-
-// SetResolution sets the address to which a name resolves
-func SetResolution(session *resolver.ResolverContractSession, name string, resolutionAddress *common.Address) (tx *types.Transaction, err error) {
-	tx, err = session.SetAddr(NameHash(name), *resolutionAddress)
-	return
-}
-
 // SetAbi sets the ABI associated with a name
-func SetAbi(session *resolver.ResolverContractSession, name string, abi string, contentType *big.Int) (tx *types.Transaction, err error) {
+func SetAbi(session *resolver.ContractSession, name string, abi string, contentType *big.Int) (tx *types.Transaction, err error) {
 	var data []byte
 	if contentType.Cmp(big.NewInt(1)) == 0 {
 		// Uncompressed JSON
@@ -168,7 +183,7 @@ func SetAbi(session *resolver.ResolverContractSession, name string, abi string, 
 }
 
 // Abi returns the ABI associated with a name
-func Abi(resolver *resolver.ResolverContract, name string) (abi string, err error) {
+func Abi(resolver *resolver.Contract, name string) (abi string, err error) {
 	contentTypes := big.NewInt(3)
 	contentType, data, err := resolver.ABI(nil, NameHash(name), contentTypes)
 	if err == nil {
@@ -190,23 +205,4 @@ func Abi(resolver *resolver.ResolverContract, name string) (abi string, err erro
 		}
 	}
 	return
-}
-
-// ResolverContractByAddress instantiates the resolver contract at aspecific address
-func ResolverContractByAddress(client *ethclient.Client, resolverAddress common.Address) (*resolver.ResolverContract, error) {
-	// Instantiate the resolver contract
-	return resolver.NewResolverContract(resolverAddress, client)
-}
-
-// ResolverContract obtains the resolver contract for a name
-func ResolverContract(client *ethclient.Client, name string) (*resolver.ResolverContract, error) {
-	resolverAddress, err := resolverAddress(client, name)
-	if err != nil {
-		return nil, err
-	}
-	if bytes.Compare(resolverAddress.Bytes(), UnknownAddress.Bytes()) == 0 {
-		return nil, errors.New("no resolver")
-	}
-
-	return ResolverContractByAddress(client, resolverAddress)
 }

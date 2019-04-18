@@ -1,3 +1,3 @@
 package reverseresolver
 
-//go:generate abigen -abi reverseresolver.abi -out reverseresolver.go -pkg reverseresolver -type ReverseResolver
+//go:generate abigen -abi contract.abi -out contract.go -pkg reverseresolver -type Contract

@@ -19,8 +19,12 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
+
+var client, _ = ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 func TestResolveEmpty(t *testing.T) {
 	_, err := Resolve(client, "")
@@ -34,54 +38,54 @@ func TestResolveZero(t *testing.T) {
 
 func TestResolveNotPresent(t *testing.T) {
 	_, err := Resolve(client, "sirnotappearinginthisregistry.eth")
-	assert.NotNil(t, err, "Resolved name that does not exist")
+	require.NotNil(t, err, "Resolved name that does not exist")
 	assert.Equal(t, "unregistered name", err.Error(), "Unexpected error")
 }
 
 func TestResolveNoResolver(t *testing.T) {
 	_, err := Resolve(client, "noresolver.eth")
-	assert.NotNil(t, err, "Resolved name without a resolver")
+	require.NotNil(t, err, "Resolved name without a resolver")
 	assert.Equal(t, "no resolver", err.Error(), "Unexpected error")
 }
 
 func TestResolveBadResolver(t *testing.T) {
 	_, err := Resolve(client, "resolvestozero.eth")
-	assert.NotNil(t, err, "Resolved name with a bad resolver")
+	require.NotNil(t, err, "Resolved name with a bad resolver")
 	assert.Equal(t, "no address", err.Error(), "Unexpected error")
 }
 
 func TestResolveTestEnsTest(t *testing.T) {
 	expected := "388ea662ef2c223ec0b047d41bf3c0f362142ad5"
 	actual, err := Resolve(client, "test.enstest.eth")
-	assert.Nil(t, err, "Error resolving name")
+	require.Nil(t, err, "Error resolving name")
 	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
 }
 
 func TestResolveResolverEth(t *testing.T) {
 	expected := "5ffc014343cd971b7eb70732021e26c35b744cc4"
 	actual, err := Resolve(client, "resolver.eth")
-	assert.Nil(t, err, "Error resolving name")
+	require.Nil(t, err, "Error resolving name")
 	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
 }
 
 func TestResolveNickJohnson(t *testing.T) {
 	expected := "70abd981e01ad3e6eb1726a5001000877ab04417"
 	actual, err := Resolve(client, "nickjohnson.eth")
-	assert.Nil(t, err, "Error resolving name")
+	require.Nil(t, err, "Error resolving name")
 	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
 }
 
 func TestResolveAddress(t *testing.T) {
 	expected := "5ffc014343cd971b7eb70732021e26c35b744cc4"
 	actual, err := Resolve(client, "0x5ffc014343cd971b7eb70732021e26c35b744cc4")
-	assert.Nil(t, err, "Error resolving address")
+	require.Nil(t, err, "Error resolving address")
 	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
 }
 
 func TestResolveShortAddress(t *testing.T) {
 	expected := "0000000000000000000000000000000000000001"
 	actual, err := Resolve(client, "0x1")
-	assert.Nil(t, err, "Error resolving address")
+	require.Nil(t, err, "Error resolving address")
 	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
 }
 
@@ -93,7 +97,7 @@ func TestResolveHexString(t *testing.T) {
 func TestReverseResolveTestEnsTest(t *testing.T) {
 	expected := "domainsale.eth"
 	address := common.HexToAddress("0x388ea662ef2c223ec0b047d41bf3c0f362142ad5")
-	actual, err := ReverseResolve(client, &address)
-	assert.Nil(t, err, "Error resolving address")
+	actual, err := ReverseResolve(client, address)
+	require.Nil(t, err, "Error resolving address")
 	assert.Equal(t, expected, actual, "Did not receive expected result")
 }

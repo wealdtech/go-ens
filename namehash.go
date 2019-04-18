@@ -40,9 +40,6 @@ func Normalize(input string) (output string) {
 
 // LabelHash generates a simple hash for a piece of a name.
 func LabelHash(label string) (hash [32]byte) {
-	if label == "" {
-		return
-	}
 	normalizedLabel := NormaliseDomain(label)
 
 	sha := sha3.NewLegacyKeccak256()

@@ -1,7 +1,11 @@
 package ens
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNormaliseDomain(t *testing.T) {
@@ -122,6 +126,36 @@ func TestDomainPart(t *testing.T) {
 		}
 		if tt.output != result {
 			t.Errorf("Failure: %v, %v => %v (expected %v)\n", tt.input, tt.part, result, tt.output)
+		}
+	}
+}
+
+func TestUnqualifiedName(t *testing.T) {
+	tests := []struct {
+		domain string
+		root   string
+		name   string
+		err    error
+	}{
+		{
+			domain: "",
+			root:   "",
+			name:   "",
+		},
+		{
+			domain: "wealdtech.eth",
+			root:   "eth",
+			name:   "wealdtech",
+		},
+	}
+
+	for i, test := range tests {
+		name, err := UnqualifiedName(test.domain, test.root)
+		if test.err != nil {
+			assert.Equal(t, test.err, err, fmt.Sprintf("Incorrect error at test %d", i))
+		} else {
+			require.Nil(t, err, fmt.Sprintf("Unexpected error at test %d", i))
+			assert.Equal(t, test.name, name, fmt.Sprintf("Incorrect result at test %d", i))
 		}
 	}
 }

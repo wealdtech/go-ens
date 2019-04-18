@@ -1,4 +1,4 @@
-// Copyright 2017 Weald Technology Trading
+// Copyright 2017-2019 Weald Technology Trading
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,101 +15,81 @@
 package ens
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"math/big"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/wealdtech/go-ens/contracts/reverseregistrar"
 	"github.com/wealdtech/go-ens/contracts/reverseresolver"
-	"github.com/wealdtech/go-ens/util"
 )
 
-// Format provides a string version of an address, reverse resolving it if possible
-func Format(client *ethclient.Client, input *common.Address) string {
-	result, err := ReverseResolve(client, input)
+// ReverseResolver is the structure for the reverse resolver contract
+type ReverseResolver struct {
+	contract *reverseresolver.Contract
+}
+
+// NewReverseResolver obtains the reverse resolver
+func NewReverseResolver(client *ethclient.Client) (*ReverseResolver, error) {
+	reverseRegistrar, err := NewReverseRegistrar(client)
 	if err != nil {
-		result = fmt.Sprintf("%s", input.Hex())
+		return nil, err
+	}
+
+	// Now fetch the default resolver
+	address, err := reverseRegistrar.DefaultResolverAddress()
+	if err != nil {
+		return nil, err
+	}
+
+	return NewReverseResolverAt(client, address)
+}
+
+// NewReverseResolverAt obtains the reverse resolver at a given address
+func NewReverseResolverAt(client *ethclient.Client, address common.Address) (*ReverseResolver, error) {
+	// Instantiate the reverse registrar contract
+	contract, err := reverseresolver.NewContract(address, client)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure the contract is a resolver
+	_, err = contract.Name(nil, NameHash("0.addr.reverse"))
+	if err != nil && err.Error() == "no contract code at given address" {
+		return nil, fmt.Errorf("not a resolver")
+	}
+
+	return &ReverseResolver{
+		contract: contract,
+	}, nil
+}
+
+// Name obtains the name for an address
+func (r *ReverseResolver) Name(address common.Address) (string, error) {
+	return r.contract.Name(nil, NameHash(fmt.Sprintf("%s.addr.reverse", address.Hex()[2:])))
+}
+
+// Format provides a string version of an address, reverse resolving it if possible
+func Format(client *ethclient.Client, address common.Address) string {
+	result, err := ReverseResolve(client, address)
+	if err != nil {
+		result = fmt.Sprintf("%s", address.Hex())
 	}
 	return result
 }
 
 // ReverseResolve resolves an address in to an ENS name
 // This will return an error if the name is not found or otherwise 0
-func ReverseResolve(client *ethclient.Client, input *common.Address) (string, error) {
-	if input == nil {
-		return "", errors.New("No address supplied")
-	}
-
-	nameHash := NameHash(input.Hex()[2:] + ".addr.reverse")
-
-	contract, err := ReverseResolver(client)
+func ReverseResolve(client *ethclient.Client, address common.Address) (string, error) {
+	resolver, err := NewReverseResolver(client)
 	if err != nil {
 		return "", err
 	}
 
 	// Resolve the name
-	name, err := contract.Name(nil, nameHash)
+	name, err := resolver.Name(address)
 	if name == "" {
-		err = errors.New("No resolution")
+		err = errors.New("no resolution")
 	}
 
 	return name, err
-}
-
-// ReverseResolver obtains the reverse resolver contract
-func ReverseResolver(client *ethclient.Client) (*reverseresolver.ReverseResolver, error) {
-	registryContract, err := RegistryContract(client)
-	if err != nil {
-		return nil, err
-	}
-
-	// Obtain the reverse registrar address
-	reverseRegistrarAddress, err := registryContract.Owner(nil, NameHash("addr.reverse"))
-	if err != nil {
-		return nil, err
-	}
-	if bytes.Compare(reverseRegistrarAddress.Bytes(), UnknownAddress.Bytes()) == 0 {
-		return nil, errors.New("unregistered name")
-	}
-
-	// Instantiate the reverse registrar contract
-	reverseRegistrarContract, err := reverseregistrar.NewReverseRegistrarContract(reverseRegistrarAddress, client)
-	if err != nil {
-		return nil, err
-	}
-
-	// Now fetch the default resolver
-	reverseResolverAddress, err := reverseRegistrarContract.DefaultResolver(nil)
-	if err != nil {
-		return nil, err
-	}
-
-	// Finally we can obtain the resolver itself
-	return reverseresolver.NewReverseResolver(reverseResolverAddress, client)
-}
-
-// CreateReverseResolverSession creates a session suitable for multiple calls
-func CreateReverseResolverSession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *reverseresolver.ReverseResolver, gasPrice *big.Int) *reverseresolver.ReverseResolverSession {
-	// Create a signer
-	signer := util.AccountSigner(chainID, wallet, account, passphrase)
-
-	// Return our session
-	session := &reverseresolver.ReverseResolverSession{
-		Contract: contract,
-		CallOpts: bind.CallOpts{
-			Pending: true,
-		},
-		TransactOpts: bind.TransactOpts{
-			From:     account.Address,
-			Signer:   signer,
-			GasPrice: gasPrice,
-		},
-	}
-
-	return session
 }

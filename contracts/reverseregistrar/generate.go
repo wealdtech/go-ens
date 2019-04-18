@@ -1,3 +1,3 @@
 package reverseregistrar
 
-//go:generate abigen -abi reverseregistrar.abi -out reverseregistrar.go -pkg reverseregistrar -type ReverseRegistrarContract
+//go:generate abigen -abi contract.abi -out contract.go -pkg reverseregistrar -type Contract

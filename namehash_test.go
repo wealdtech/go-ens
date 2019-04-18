@@ -16,7 +16,10 @@ package ens
 
 import (
 	"encoding/hex"
+	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNameHash(t *testing.T) {
@@ -50,14 +53,13 @@ func TestLabelHash(t *testing.T) {
 		input  string
 		output string
 	}{
+		{"", "c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"},
 		{"eth", "4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0"},
 		{"foo", "41b1a0649752af1b28b3dc29a1556eee781e4a4c3a1f7f53f90fa834de098c4d"},
 	}
 
-	for _, tt := range tests {
-		result := LabelHash(tt.input)
-		if tt.output != hex.EncodeToString(result[:]) {
-			t.Errorf("Failure: %v => %v (expected %v)\n", tt.input, hex.EncodeToString(result[:]), tt.output)
-		}
+	for i, test := range tests {
+		output := LabelHash(test.input)
+		assert.Equal(t, test.output, hex.EncodeToString(output[:]), fmt.Sprintf("Unexpected value at test %d", i))
 	}
 }

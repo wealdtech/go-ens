@@ -92,3 +92,14 @@ func abs(x int) int {
 	}
 	return x
 }
+
+// UnqualifiedName strips the root from the domain and ensures the result is
+// suitable as a name
+func UnqualifiedName(domain string, root string) (string, error) {
+	suffix := fmt.Sprintf(".%s", root)
+	name := strings.TrimSuffix(domain, suffix)
+	if strings.Contains(name, ".") {
+		return "", fmt.Errorf("%s not a direct child of %s", domain, root)
+	}
+	return name, nil
+}

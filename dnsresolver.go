@@ -1,4 +1,4 @@
-// Copyright 2017 Weald Technology Trading
+// Copyright 2017-2019 Weald Technology Trading
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,88 +15,103 @@
 package ens
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
-	"math/big"
+	"strings"
 
-	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/contracts/dnsresolver"
-	"github.com/wealdtech/go-ens/util"
+	"golang.org/x/crypto/sha3"
 )
 
-// CreateDNSResolverSession creates a session suitable for multiple calls
-func CreateDNSResolverSession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *dnsresolver.DNSResolverContract, gasPrice *big.Int) *dnsresolver.DNSResolverContractSession {
-	// Create a signer
-	signer := util.AccountSigner(chainID, wallet, account, passphrase)
-
-	// Return our session
-	session := &dnsresolver.DNSResolverContractSession{
-		Contract: contract,
-		CallOpts: bind.CallOpts{
-			Pending: true,
-		},
-		TransactOpts: bind.TransactOpts{
-			From:     account.Address,
-			Signer:   signer,
-			GasPrice: gasPrice,
-		},
-	}
-
-	return session
+// DNSResolver is the structure for the DNS resolver contract
+type DNSResolver struct {
+	client   *ethclient.Client
+	domain   string
+	contract *dnsresolver.Contract
 }
 
-// DNSRecord fetches a DNS record
-func DNSRecord(client *ethclient.Client, domain string, name string, rrType uint16) (data []byte, err error) {
-	contract, err := DNSResolverContract(client, domain)
-	if err == nil {
-		data, err = contract.DnsRecord(nil, NameHash(domain), LabelHash(name), rrType)
-	}
-	return
-}
-
-// SetDNSRecords sets DNS records
-func SetDNSRecords(session *dnsresolver.DNSResolverContractSession, domain string, data []byte) (tx *types.Transaction, err error) {
-	tx, err = session.SetDNSRecords(NameHash(domain), data)
-	return
-}
-
-// DNSResolverContractByAddress instantiates the resolver contract at aspecific address
-func DNSResolverContractByAddress(client *ethclient.Client, resolverAddress common.Address) (resolver *dnsresolver.DNSResolverContract, err error) {
-	// Instantiate the resolver contract
-	resolver, err = dnsresolver.NewDNSResolverContract(resolverAddress, client)
+// NewDNSResolver creates a new DNS resolver for a given domain
+func NewDNSResolver(client *ethclient.Client, domain string) (*DNSResolver, error) {
+	registry, err := NewRegistry(client)
 	if err != nil {
-		return
+		return nil, err
+	}
+	address, err := registry.ResolverAddress(domain)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewDNSResolverAt(client, domain, address)
+}
+
+// NewDNSResolverAt creates a new DNS resolver for a given domain at a given address
+func NewDNSResolverAt(client *ethclient.Client, domain string, address common.Address) (*DNSResolver, error) {
+	contract, err := dnsresolver.NewContract(address, client)
+	if err != nil {
+		return nil, err
 	}
 
 	// Ensure that this is a DNS resolver
-	var supported bool
-	supported, err = resolver.SupportsInterface(nil, [4]byte{0xa8, 0xfa, 0x56, 0x82})
+	supported, err := contract.SupportsInterface(nil, [4]byte{0xa8, 0xfa, 0x56, 0x82})
 	if err != nil {
-		return
+		return nil, err
 	}
 	if !supported {
-		err = fmt.Errorf("%s is not a DNS resolver contract", resolverAddress.Hex())
+		err = fmt.Errorf("%s is not a DNS resolver contract", address.Hex())
 	}
 
+	return &DNSResolver{
+		client:   client,
+		domain:   domain,
+		contract: contract,
+	}, nil
+}
+
+// Record obtains an RRSet for a name
+func (r *DNSResolver) Record(name string, rrType uint16) ([]byte, error) {
+	return r.contract.DnsRecord(nil, NameHash(r.domain), DNSWireFormatDomainHash(name), rrType)
+}
+
+// SetRecords sets one or more RRSets
+func (r *DNSResolver) SetRecords(opts *bind.TransactOpts, data []byte) (*types.Transaction, error) {
+	return r.contract.SetDNSRecords(opts, NameHash(r.domain), data)
+}
+
+// ClearDNSZone clears all records in the zone
+func (r *DNSResolver) ClearDNSZone(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return r.contract.ClearDNSZone(opts, NameHash(r.domain))
+}
+
+// DNSWireFormatDomainHash hashes a domain name in wire format
+func DNSWireFormatDomainHash(domain string) (hash [32]byte) {
+	sha := sha3.NewLegacyKeccak256()
+	sha.Write(DNSWireFormat(domain))
+	sha.Sum(hash[:0])
 	return
 }
 
-// DNSResolverContract obtains the resolver contract for a domain
-func DNSResolverContract(client *ethclient.Client, domain string) (resolver *dnsresolver.DNSResolverContract, err error) {
-	resolverAddress, err := resolverAddress(client, domain)
-	if err != nil {
-		return
-	}
-	if bytes.Compare(resolverAddress.Bytes(), UnknownAddress.Bytes()) == 0 {
-		err = errors.New("no resolver")
-		return
+// DNSWireFormat turns a domain name in to wire format
+func DNSWireFormat(domain string) []byte {
+	// Remove leading and trailing dots
+	domain = strings.TrimLeft(domain, ".")
+	domain = strings.TrimRight(domain, ".")
+	domain = strings.ToLower(domain)
+
+	if domain == "" {
+		return []byte{0x00}
 	}
 
-	resolver, err = DNSResolverContractByAddress(client, resolverAddress)
-	return
+	bytes := make([]byte, len(domain)+2)
+	pieces := strings.Split(domain, ".")
+	offset := 0
+	for _, piece := range pieces {
+		bytes[offset] = byte(len(piece))
+		offset++
+		copy(bytes[offset:offset+len(piece)], []byte(piece))
+		offset += len(piece)
+	}
+	return bytes
 }

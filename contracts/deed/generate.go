@@ -1,3 +1,3 @@
 package deed
 
-//go:generate abigen -abi deed.abi -out deed.go -pkg deed -type DeedContract
+//go:generate abigen -abi contract.abi -out contract.go -pkg deed -type Contract

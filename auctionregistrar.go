@@ -1,4 +1,4 @@
-// Copyright 2017 Weald Technology Trading
+// Copyright 2017-2019 Weald Technology Trading
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,291 +17,133 @@ package ens
 import (
 	"fmt"
 	"math/big"
-	"math/rand"
 	"time"
 
-	"github.com/dchest/uniuri"
-	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/contracts/auctionregistrar"
-	"github.com/wealdtech/go-ens/contracts/registry"
-	"github.com/wealdtech/go-ens/util"
-	"golang.org/x/crypto/sha3"
 )
 
-// AuctionRegistrarContractAddress obtains the registrar contract address for a given domain
-func AuctionRegistrarContractAddress(client *ethclient.Client, domain string) (address common.Address, err error) {
-	// Obtain a registry contract
-	registry, err := RegistryContract(client)
-	if err != nil {
-		return
-	}
-
-	// Obtain the registrar address from the registry
-	address, err = registry.Owner(nil, NameHash(domain))
-	if err != nil {
-		return
-	}
-	if address == UnknownAddress {
-		err = fmt.Errorf("no registrar for %s", domain)
-	}
-
-	return
+// AuctionRegistrar is the structure for the auction registrar contract
+type AuctionRegistrar struct {
+	client   *ethclient.Client
+	domain   string
+	contract *auctionregistrar.Contract
 }
 
-// AuctionRegistrarContract obtains the registrar contract for a given domain
-func AuctionRegistrarContract(client *ethclient.Client, domain string) (registrar *auctionregistrar.AuctionRegistrarContract, err error) {
-	var address common.Address
-	address, err = AuctionRegistrarContractAddress(client, domain)
-	if err != nil {
-		return
-	}
-
-	registrar, err = auctionregistrar.NewAuctionRegistrarContract(address, client)
-	return
+// AuctionEntry is an auction entry
+type AuctionEntry struct {
+	State        string
+	Deed         common.Address
+	Registration time.Time
+	Value        *big.Int
+	HighestBid   *big.Int
 }
 
-// CreateRegistrarSession creates a session suitable for multiple calls
-func CreateRegistrarSession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *auctionregistrar.AuctionRegistrarContract, gasPrice *big.Int) *auctionregistrar.AuctionRegistrarContractSession {
-	// Create a signer
-	signer := util.AccountSigner(chainID, wallet, account, passphrase)
-
-	// Return our session
-	session := &auctionregistrar.AuctionRegistrarContractSession{
-		Contract: contract,
-		CallOpts: bind.CallOpts{
-			Pending: true,
-		},
-		TransactOpts: bind.TransactOpts{
-			From:     account.Address,
-			Signer:   signer,
-			GasPrice: gasPrice,
-		},
+// NewAuctionRegistrar creates a new auction registrar for a given domain
+func NewAuctionRegistrar(client *ethclient.Client, domain string) (*AuctionRegistrar, error) {
+	address, err := RegistrarContractAddress(client, domain)
+	if err != nil {
+		return nil, err
 	}
 
-	return session
+	return NewAuctionRegistrarContractAt(client, domain, address)
 }
 
-// SealBid seals the elements of a bid in to a single hash
-func SealBid(name string, owner *common.Address, amount big.Int, salt string) (hash common.Hash, err error) {
-	domain, err := DomainPart(name, 1)
+// NewAuctionRegistrarContractAt creates an auction registrar for a given domain at a given address
+func NewAuctionRegistrarContractAt(client *ethclient.Client, domain string, address common.Address) (*AuctionRegistrar, error) {
+	contract, err := auctionregistrar.NewContract(address, client)
 	if err != nil {
-		err = fmt.Errorf("invalid name")
-		return
+		return nil, err
 	}
-	domainHash := LabelHash(domain)
-
-	sha := sha3.NewLegacyKeccak256()
-	sha.Write(domainHash[:])
-	sha.Write(owner.Bytes())
-	// Amount needs to be exactly 32 bytes
-	var amountBytes [32]byte
-	copy(amountBytes[len(amountBytes)-len(amount.Bytes()):], amount.Bytes()[:])
-	sha.Write(amountBytes[:])
-	saltHash := saltHash(salt)
-	sha.Write(saltHash[:])
-	sha.Sum(hash[:0])
-	return
+	return &AuctionRegistrar{
+		client:   client,
+		domain:   domain,
+		contract: contract,
+	}, nil
 }
 
-// StartAuction starts an auction without bidding
-func StartAuction(session *auctionregistrar.AuctionRegistrarContractSession, name string) (tx *types.Transaction, err error) {
-	domain, err := DomainPart(name, 1)
-	if err != nil {
-		err = fmt.Errorf("invalid name")
-		return
-	}
-
-	tx, err = session.StartAuction(LabelHash(domain))
-	return
-}
-
-// StartAuctionAndBid starts an auction and bids in the same transaction.
-func StartAuctionAndBid(session *auctionregistrar.AuctionRegistrarContractSession, name string, owner *common.Address, amount big.Int, salt string, dummies int) (tx *types.Transaction, err error) {
-	domain, err := DomainPart(name, 1)
-	if err != nil {
-		err = fmt.Errorf("invalid name")
-		return
-	}
-
-	sealedBid, err := SealBid(name, owner, amount, salt)
-	if err != nil {
-		return
-	}
-
-	var domainHashes [][32]byte
-	domainHashes = make([][32]byte, 0, dummies+1)
-	rand.Seed(time.Now().UnixNano())
-	namePlace := rand.Intn(dummies + 1)
-	for i := 0; i < dummies+1; i++ {
-		var thisDomain string
-		if i == namePlace {
-			thisDomain = domain
-		} else {
-			thisDomain = uniuri.New()
-		}
-		domainHashes = append(domainHashes, LabelHash(thisDomain))
-	}
-
-	tx, err = session.StartAuctionsAndBid(domainHashes, sealedBid)
-	return
-}
-
-// InvalidateName invalidates a non-conformant ENS registration.
-func InvalidateName(session *auctionregistrar.AuctionRegistrarContractSession, name string) (tx *types.Transaction, err error) {
-	domain, err := DomainPart(name, 1)
-	if err != nil {
-		err = fmt.Errorf("invalid name")
-		return
-	}
-
-	tx, err = session.InvalidateName(domain)
-	return
-}
-
-// NewBid bids on an existing auction
-func NewBid(session *auctionregistrar.AuctionRegistrarContractSession, name string, owner *common.Address, amount big.Int, salt string) (tx *types.Transaction, err error) {
-	sealedBid, err := SealBid(name, owner, amount, salt)
-	if err != nil {
-		return
-	}
-
-	tx, err = session.NewBid(sealedBid)
-	return
-}
-
-// RevealBid reveals an existing bid on an existing auction
-func RevealBid(session *auctionregistrar.AuctionRegistrarContractSession, name string, owner *common.Address, amount big.Int, salt string) (tx *types.Transaction, err error) {
-	domain, err := DomainPart(name, 1)
-	if err != nil {
-		err = fmt.Errorf("invalid name")
-		return
-	}
-	domainHash := LabelHash(domain)
-	saltHash := saltHash(salt)
-
-	session.TransactOpts.GasLimit = 200000
-	tx, err = session.UnsealBid(domainHash, &amount, saltHash)
-	return
-}
-
-// FinishAuction reveals an existing bid on an existing auction
-func FinishAuction(session *auctionregistrar.AuctionRegistrarContractSession, name string) (tx *types.Transaction, err error) {
-	domain, err := DomainPart(name, 1)
-	if err != nil {
-		err = fmt.Errorf("invalid name")
-		return
-	}
-
-	tx, err = session.FinalizeAuction(LabelHash(domain))
-	return
-}
-
-// Transfer transfers domain ownership to a new address
-func Transfer(session *auctionregistrar.AuctionRegistrarContractSession, name string, to common.Address) (tx *types.Transaction, err error) {
-	domain, err := DomainPart(name, 1)
-	if err != nil {
-		err = fmt.Errorf("invalid name")
-		return
-	}
-
-	tx, err = session.Transfer(LabelHash(domain), to)
-	return
+// State returns the state of a nam
+func (r *AuctionRegistrar) State(name string) (string, error) {
+	entry, err := r.Entry(name)
+	return entry.State, err
 }
 
 // Entry obtains a registrar entry for a name
-func Entry(contract *auctionregistrar.AuctionRegistrarContract, client *ethclient.Client, name string) (state string, deedAddress common.Address, registrationDate time.Time, value *big.Int, highestBid *big.Int, err error) {
+func (r *AuctionRegistrar) Entry(name string) (*AuctionEntry, error) {
 	domain, err := DomainPart(name, 1)
 	if err != nil {
-		err = fmt.Errorf("invalid name")
-		return
+		return nil, fmt.Errorf("invalid name %s", name)
 	}
 
-	status, deedAddress, registration, value, highestBid, err := contract.Entries(nil, LabelHash(domain))
+	status, deedAddress, registration, value, highestBid, err := r.contract.Entries(nil, LabelHash(domain))
 	if err != nil {
-		return
+		return nil, err
 	}
-	registrationDate = time.Unix(registration.Int64(), 0)
+
+	entry := &AuctionEntry{
+		Deed:       deedAddress,
+		Value:      value,
+		HighestBid: highestBid,
+	}
+	entry.Registration = time.Unix(registration.Int64(), 0)
 	switch status {
 	case 0:
-		state = "Available"
+		entry.State = "Available"
 	case 1:
-		state = "Bidding"
+		entry.State = "Bidding"
 	case 2:
 		// Might be won or owned
-		var registryContract *registry.RegistryContract
-		registryContract, err = RegistryContractFromRegistrar(client, contract)
+		registry, err := NewRegistry(r.client)
 		if err != nil {
-			return
+			return nil, err
 		}
 
-		var owner common.Address
-		owner, err = registryContract.Owner(nil, NameHash(name))
+		owner, err := registry.Owner(name)
 		if err != nil {
-			return
+			return nil, err
 		}
 
 		if owner == UnknownAddress {
-			state = "Won"
+			entry.State = "Won"
 		} else {
-			state = "Owned"
+			entry.State = "Owned"
 		}
 	case 3:
-		state = "Forbidden"
+		entry.State = "Forbidden"
 	case 4:
-		state = "Revealing"
+		entry.State = "Revealing"
 	case 5:
-		state = "Unavailable"
+		entry.State = "Unavailable"
 	default:
-		state = "Unknown"
+		entry.State = "Unknown"
 	}
-	return
+
+	return entry, nil
 }
 
-// State obains the current state of a name
-func State(contract *auctionregistrar.AuctionRegistrarContract, client *ethclient.Client, name string) (state string, err error) {
-	state, _, _, _, _, err = Entry(contract, client, name)
-
-	return
-}
-
-// NameInState checks if a name is in a given state, and errors if not.
-func NameInState(contract *auctionregistrar.AuctionRegistrarContract, client *ethclient.Client, name string, desiredState string) (inState bool, err error) {
-	state, err := State(contract, client, name)
-	if err == nil {
-		if state == desiredState {
-			inState = true
-		} else {
-			switch state {
-			case "Available":
-				err = fmt.Errorf("this name has not been auctioned")
-			case "Bidding":
-				err = fmt.Errorf("this name is being auctioned")
-			case "Won":
-				err = fmt.Errorf("this name's auction has finished")
-			case "Owned":
-				err = fmt.Errorf("this name is owned")
-			case "Forbidden":
-				err = fmt.Errorf("this name is unavailable")
-			case "Revealing":
-				err = fmt.Errorf("this name is being revealed")
-			case "Unavailable":
-				err = fmt.Errorf("this name is not yet available")
-			default:
-				err = fmt.Errorf("this name is in an unknown state")
-			}
-		}
+// Migrate migrates a domain to the permanent registrar
+func (r *AuctionRegistrar) Migrate(opts *bind.TransactOpts, name string) (*types.Transaction, error) {
+	domain, err := DomainPart(name, 1)
+	if err != nil {
+		return nil, fmt.Errorf("invalid name %s", name)
 	}
-	return
+
+	return r.contract.TransferRegistrars(opts, LabelHash(domain))
 }
 
-// Generate a simple hash for a salt
-func saltHash(salt string) (hash [32]byte) {
-	sha := sha3.NewLegacyKeccak256()
-	sha.Write([]byte(salt))
-	sha.Sum(hash[:0])
-	return
+// Owner obtains the owner of the deed that represents the name.
+func (r *AuctionRegistrar) Owner(name string) (common.Address, error) {
+	entry, err := r.Entry(name)
+	if err != nil {
+		return UnknownAddress, err
+	}
+
+	deed, err := NewDeedAt(r.client, entry.Deed)
+	if err != nil {
+		return UnknownAddress, err
+	}
+	return deed.Owner()
 }

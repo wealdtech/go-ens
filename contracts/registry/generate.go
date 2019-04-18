@@ -1,3 +1,3 @@
 package registry
 
-//go:generate abigen -abi registry.abi -out registry.go -pkg registry -type RegistryContract
+//go:generate abigen -abi contract.abi -out contract.go -pkg registry -type Contract

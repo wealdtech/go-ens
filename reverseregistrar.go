@@ -1,4 +1,4 @@
-// Copyright 2017 Weald Technology Trading
+// Copyright 2017-2019 Weald Technology Trading
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,70 +15,55 @@
 package ens
 
 import (
-	"context"
 	"errors"
-	"math/big"
-	"time"
 
-	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/contracts/reverseregistrar"
-	"github.com/wealdtech/go-ens/util"
 )
 
-// ReverseRegistrarContract obtains the reverse registrar contract for a chain
-func ReverseRegistrarContract(client *ethclient.Client) (registrar *reverseregistrar.ReverseRegistrarContract, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	_, err = client.NetworkID(ctx)
+// ReverseRegistrar is the structure for the reverse registrar
+type ReverseRegistrar struct {
+	contract *reverseregistrar.Contract
+}
+
+// NewReverseRegistrar obtains the reverse registrar
+func NewReverseRegistrar(client *ethclient.Client) (*ReverseRegistrar, error) {
+	registry, err := NewRegistry(client)
 	if err != nil {
 		return nil, err
 	}
 
-	// Obtain a registry contract
-	registry, err := RegistryContract(client)
-	if err != nil {
-		return
-	}
-
 	// Obtain the registry address from the registrar
-	registrarAddress, err := registry.Owner(nil, NameHash("addr.reverse"))
+	address, err := registry.Owner("addr.reverse")
 	if err != nil {
-		return
+		return nil, err
 	}
-	if registrarAddress == UnknownAddress {
-		err = errors.New("no registrar for that network")
+	if address == UnknownAddress {
+		return nil, errors.New("no registrar for that network")
 	}
-
-	registrar, err = reverseregistrar.NewReverseRegistrarContract(registrarAddress, client)
-	return
+	return NewReverseRegistrarAt(client, address)
 }
 
-// CreateReverseRegistrarSession creates a session suitable for multiple calls
-func CreateReverseRegistrarSession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *reverseregistrar.ReverseRegistrarContract, gasPrice *big.Int) *reverseregistrar.ReverseRegistrarContractSession {
-	// Create a signer
-	signer := util.AccountSigner(chainID, wallet, account, passphrase)
-
-	// Return our session
-	session := &reverseregistrar.ReverseRegistrarContractSession{
-		Contract: contract,
-		CallOpts: bind.CallOpts{
-			Pending: true,
-		},
-		TransactOpts: bind.TransactOpts{
-			From:     account.Address,
-			Signer:   signer,
-			GasPrice: gasPrice,
-		},
+// NewReverseRegistrarAt obtains the reverse registrar at a given address
+func NewReverseRegistrarAt(client *ethclient.Client, address common.Address) (*ReverseRegistrar, error) {
+	contract, err := reverseregistrar.NewContract(address, client)
+	if err != nil {
+		return nil, err
 	}
-
-	return session
+	return &ReverseRegistrar{
+		contract: contract,
+	}, nil
 }
 
-// SetName sets the name for the sending address
-func SetName(session *reverseregistrar.ReverseRegistrarContractSession, name string) (tx *types.Transaction, err error) {
-	tx, err = session.SetName(name)
-	return
+// SetName sets the name
+func (r *ReverseRegistrar) SetName(opts *bind.TransactOpts, name string) (tx *types.Transaction, err error) {
+	return r.contract.SetName(opts, name)
+}
+
+// DefaultResolverAddress obtains the default resolver address
+func (r *ReverseRegistrar) DefaultResolverAddress() (common.Address, error) {
+	return r.contract.DefaultResolver(nil)
 }

@@ -1,3 +1,3 @@
 package resolver
 
-//go:generate abigen -abi resolver.abi -out resolver.go -pkg resolver -type ResolverContract
+//go:generate abigen -abi contract.abi -out contract.go -pkg resolver -type Contract

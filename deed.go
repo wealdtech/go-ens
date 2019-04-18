@@ -1,4 +1,4 @@
-// Copyright 2017 Weald Technology Trading
+// Copyright 2017-2019 Weald Technology Trading
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,30 +17,50 @@ package ens
 import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/wealdtech/go-ens/contracts/auctionregistrar"
 	"github.com/wealdtech/go-ens/contracts/deed"
 )
 
-// DeedContract obtains the deed contract at a particular address
-func DeedContract(client *ethclient.Client, address *common.Address) (*deed.DeedContract, error) {
-	return deed.NewDeedContract(*address, client)
+// Deed is the structure for the deed
+type Deed struct {
+	contract *deed.Contract
+	address  common.Address
 }
 
-// DeedContractFor obtains the deed contract for a particular name
-func DeedContractFor(client *ethclient.Client, registrar *auctionregistrar.AuctionRegistrarContract, name string) (*deed.DeedContract, error) {
-	_, deedAddress, _, _, _, err := Entry(registrar, client, name)
+// NewDeed obtains the deed contract for a given domain
+func NewDeed(client *ethclient.Client, domain string) (*Deed, error) {
+
+	// Obtain the auction registrar for the deed
+	auctionRegistrar, err := NewAuctionRegistrar(client, domain)
 	if err != nil {
 		return nil, err
 	}
-	return DeedContract(client, &deedAddress)
+
+	entry, err := auctionRegistrar.Entry(domain)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewDeedAt(client, entry.Deed)
 }
 
-// Owner obtains the owner of a deed
-func Owner(contract *deed.DeedContract) (common.Address, error) {
-	return contract.Owner(nil)
+// NewDeedAt creates a deed contract at a given address
+func NewDeedAt(client *ethclient.Client, address common.Address) (*Deed, error) {
+	contract, err := deed.NewContract(address, client)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Deed{
+		contract: contract,
+	}, nil
 }
 
-// PreviousOwner obtains the previous owner of a deed
-func PreviousOwner(contract *deed.DeedContract) (common.Address, error) {
-	return contract.PreviousOwner(nil)
+// Owner obtains the owner of the deed
+func (c *Deed) Owner() (common.Address, error) {
+	return c.contract.Owner(nil)
+}
+
+// PreviousOwner obtains the previous owner of the deed
+func (c *Deed) PreviousOwner() (common.Address, error) {
+	return c.contract.PreviousOwner(nil)
 }
