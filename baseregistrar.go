@@ -79,7 +79,7 @@ func (r *BaseRegistrar) RegisteredWith(domain string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	owner, err := registry.Owner(name)
+	owner, err := registry.Owner(domain)
 	if err != nil {
 		return "", err
 	}
