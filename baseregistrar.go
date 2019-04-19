@@ -57,7 +57,7 @@ func (r *BaseRegistrar) PriorAuctionContract() (*AuctionRegistrar, error) {
 	if err != nil {
 		return nil, errors.New("no prior auction contract")
 	}
-	auctionContract, err := NewAuctionRegistrarContractAt(r.client, r.domain, address)
+	auctionContract, err := NewAuctionRegistrarAt(r.client, r.domain, address)
 	if err != nil {
 		return nil, errors.New("failed to instantiate prior auction contract")
 	}
@@ -129,4 +129,15 @@ func (r *BaseRegistrar) SetOwner(opts *bind.TransactOpts, domain string, newOwne
 	hash := LabelHash(name)
 	id := new(big.Int).SetBytes(hash[:])
 	return r.contract.TransferFrom(opts, owner, newOwner, id)
+}
+
+// Expiry obtains the unix timestamp at which the registration expires.
+func (r *BaseRegistrar) Expiry(domain string) (*big.Int, error) {
+	name, err := UnqualifiedName(domain, r.domain)
+	if err != nil {
+		return nil, err
+	}
+	hash := LabelHash(name)
+	id := new(big.Int).SetBytes(hash[:])
+	return r.contract.NameExpires(nil, id)
 }

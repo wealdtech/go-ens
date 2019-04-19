@@ -49,11 +49,11 @@ func NewAuctionRegistrar(client *ethclient.Client, domain string) (*AuctionRegis
 		return nil, err
 	}
 
-	return NewAuctionRegistrarContractAt(client, domain, address)
+	return NewAuctionRegistrarAt(client, domain, address)
 }
 
-// NewAuctionRegistrarContractAt creates an auction registrar for a given domain at a given address
-func NewAuctionRegistrarContractAt(client *ethclient.Client, domain string, address common.Address) (*AuctionRegistrar, error) {
+// NewAuctionRegistrarAt creates an auction registrar for a given domain at a given address
+func NewAuctionRegistrarAt(client *ethclient.Client, domain string, address common.Address) (*AuctionRegistrar, error) {
 	contract, err := auctionregistrar.NewContract(address, client)
 	if err != nil {
 		return nil, err
@@ -72,13 +72,13 @@ func (r *AuctionRegistrar) State(name string) (string, error) {
 }
 
 // Entry obtains a registrar entry for a name
-func (r *AuctionRegistrar) Entry(name string) (*AuctionEntry, error) {
-	domain, err := DomainPart(name, 1)
+func (r *AuctionRegistrar) Entry(domain string) (*AuctionEntry, error) {
+	name, err := UnqualifiedName(domain, r.domain)
 	if err != nil {
-		return nil, fmt.Errorf("invalid name %s", name)
+		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	status, deedAddress, registration, value, highestBid, err := r.contract.Entries(nil, LabelHash(domain))
+	status, deedAddress, registration, value, highestBid, err := r.contract.Entries(nil, LabelHash(name))
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func (r *AuctionRegistrar) Entry(name string) (*AuctionEntry, error) {
 			return nil, err
 		}
 
-		owner, err := registry.Owner(name)
+		owner, err := registry.Owner(domain)
 		if err != nil {
 			return nil, err
 		}
@@ -125,17 +125,32 @@ func (r *AuctionRegistrar) Entry(name string) (*AuctionEntry, error) {
 }
 
 // Migrate migrates a domain to the permanent registrar
-func (r *AuctionRegistrar) Migrate(opts *bind.TransactOpts, name string) (*types.Transaction, error) {
-	domain, err := DomainPart(name, 1)
+func (r *AuctionRegistrar) Migrate(opts *bind.TransactOpts, domain string) (*types.Transaction, error) {
+	name, err := UnqualifiedName(domain, r.domain)
 	if err != nil {
-		return nil, fmt.Errorf("invalid name %s", name)
+		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	return r.contract.TransferRegistrars(opts, LabelHash(domain))
+	return r.contract.TransferRegistrars(opts, LabelHash(name))
+}
+
+// Release releases a domain
+func (r *AuctionRegistrar) Release(opts *bind.TransactOpts, domain string) (*types.Transaction, error) {
+	name, err := UnqualifiedName(domain, r.domain)
+	if err != nil {
+		return nil, fmt.Errorf("invalid name %s", domain)
+	}
+
+	return r.contract.ReleaseDeed(opts, LabelHash(name))
 }
 
 // Owner obtains the owner of the deed that represents the name.
-func (r *AuctionRegistrar) Owner(name string) (common.Address, error) {
+func (r *AuctionRegistrar) Owner(domain string) (common.Address, error) {
+	name, err := UnqualifiedName(domain, r.domain)
+	if err != nil {
+		return UnknownAddress, err
+	}
+
 	entry, err := r.Entry(name)
 	if err != nil {
 		return UnknownAddress, err
@@ -146,4 +161,14 @@ func (r *AuctionRegistrar) Owner(name string) (common.Address, error) {
 		return UnknownAddress, err
 	}
 	return deed.Owner()
+}
+
+// SetOwner sets the owner of the deed that represents the name.
+func (r *AuctionRegistrar) SetOwner(opts *bind.TransactOpts, domain string, address common.Address) (*types.Transaction, error) {
+	name, err := UnqualifiedName(domain, r.domain)
+	if err != nil {
+		return nil, fmt.Errorf("invalid name %s", domain)
+	}
+
+	return r.contract.Transfer(opts, LabelHash(name), address)
 }

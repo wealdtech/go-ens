@@ -112,6 +112,11 @@ func (r *Resolver) SetContenthash(opts *bind.TransactOpts, contenthash []byte) (
 	return r.contract.SetContenthash(opts, NameHash(r.domain), contenthash)
 }
 
+// InterfaceImplementer returns the address of the contract that implements the given interface for the given domain
+func (r *Resolver) InterfaceImplementer(interfaceID [4]byte) (common.Address, error) {
+	return r.contract.InterfaceImplementer(nil, NameHash(r.domain), interfaceID)
+}
+
 // Resolve resolves an ENS name in to an Etheruem address
 // This will return an error if the name is not found or otherwise 0
 func Resolve(client *ethclient.Client, input string) (address common.Address, err error) {

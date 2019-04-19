@@ -15,7 +15,9 @@
 package ens
 
 import (
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/contracts/deed"
 )
@@ -23,7 +25,6 @@ import (
 // Deed is the structure for the deed
 type Deed struct {
 	contract *deed.Contract
-	address  common.Address
 }
 
 // NewDeed obtains the deed contract for a given domain
@@ -63,4 +64,9 @@ func (c *Deed) Owner() (common.Address, error) {
 // PreviousOwner obtains the previous owner of the deed
 func (c *Deed) PreviousOwner() (common.Address, error) {
 	return c.contract.PreviousOwner(nil)
+}
+
+// SetOwner sets the owner of the deed
+func (c *Deed) SetOwner(opts *bind.TransactOpts, address common.Address) (*types.Transaction, error) {
+	return c.contract.SetOwner(opts, address)
 }

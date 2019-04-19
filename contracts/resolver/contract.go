@@ -28,7 +28,7 @@ var (
 )
 
 // ContractABI is the input ABI used to generate the binding from.
-const ContractABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"key\",\"type\":\"string\"},{\"name\":\"value\",\"type\":\"string\"}],\"name\":\"setText\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"contentTypes\",\"type\":\"uint256\"}],\"name\":\"ABI\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"x\",\"type\":\"bytes32\"},{\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"setPubkey\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"setContenthash\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"addr\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"contenthash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"key\",\"type\":\"string\"}],\"name\":\"text\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"contentType\",\"type\":\"uint256\"},{\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"setABI\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"name\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"name\",\"type\":\"string\"}],\"name\":\"setName\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"contenthash\",\"type\":\"bytes\"}],\"name\":\"setContenthash\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"contenthash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"pubkey\",\"outputs\":[{\"name\":\"x\",\"type\":\"bytes32\"},{\"name\":\"y\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"setAddr\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"ensAddr\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"a\",\"type\":\"address\"}],\"name\":\"AddrChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"name\",\"type\":\"string\"}],\"name\":\"NameChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"contentType\",\"type\":\"uint256\"}],\"name\":\"ABIChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"x\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"PubkeyChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"indexedKey\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"key\",\"type\":\"string\"}],\"name\":\"TextChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"ContenthashChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"contenthash\",\"type\":\"bytes\"}],\"name\":\"ContenthashChanged\",\"type\":\"event\"}]"
+const ContractABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"key\",\"type\":\"string\"},{\"name\":\"value\",\"type\":\"string\"}],\"name\":\"setText\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"interfaceImplementer\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"contentTypes\",\"type\":\"uint256\"}],\"name\":\"ABI\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"},{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"x\",\"type\":\"bytes32\"},{\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"setPubkey\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"setContenthash\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"addr\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"target\",\"type\":\"address\"},{\"name\":\"isAuthorised\",\"type\":\"bool\"}],\"name\":\"setAuthorisation\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"key\",\"type\":\"string\"}],\"name\":\"text\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"contentType\",\"type\":\"uint256\"},{\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"setABI\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"name\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"name\",\"type\":\"string\"}],\"name\":\"setName\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"contenthash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"pubkey\",\"outputs\":[{\"name\":\"x\",\"type\":\"bytes32\"},{\"name\":\"y\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"setAddr\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\"},{\"name\":\"interfaceID\",\"type\":\"bytes4\"},{\"name\":\"implementer\",\"type\":\"address\"}],\"name\":\"setInterface\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"}],\"name\":\"authorisations\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_ens\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"target\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"isAuthorised\",\"type\":\"bool\"}],\"name\":\"AuthorisationChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"indexedKey\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"key\",\"type\":\"string\"}],\"name\":\"TextChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"x\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"PubkeyChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"name\",\"type\":\"string\"}],\"name\":\"NameChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"interfaceID\",\"type\":\"bytes4\"},{\"indexed\":false,\"name\":\"implementer\",\"type\":\"address\"}],\"name\":\"InterfaceChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"hash\",\"type\":\"bytes\"}],\"name\":\"ContenthashChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"a\",\"type\":\"address\"}],\"name\":\"AddrChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"contentType\",\"type\":\"uint256\"}],\"name\":\"ABIChanged\",\"type\":\"event\"}]"
 
 // Contract is an auto generated Go binding around an Ethereum contract.
 type Contract struct {
@@ -228,6 +228,32 @@ func (_Contract *ContractCallerSession) Addr(node [32]byte) (common.Address, err
 	return _Contract.Contract.Addr(&_Contract.CallOpts, node)
 }
 
+// Authorisations is a free data retrieval call binding the contract method 0xf86bc879.
+//
+// Solidity: function authorisations(bytes32 , address , address ) constant returns(bool)
+func (_Contract *ContractCaller) Authorisations(opts *bind.CallOpts, arg0 [32]byte, arg1 common.Address, arg2 common.Address) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Contract.contract.Call(opts, out, "authorisations", arg0, arg1, arg2)
+	return *ret0, err
+}
+
+// Authorisations is a free data retrieval call binding the contract method 0xf86bc879.
+//
+// Solidity: function authorisations(bytes32 , address , address ) constant returns(bool)
+func (_Contract *ContractSession) Authorisations(arg0 [32]byte, arg1 common.Address, arg2 common.Address) (bool, error) {
+	return _Contract.Contract.Authorisations(&_Contract.CallOpts, arg0, arg1, arg2)
+}
+
+// Authorisations is a free data retrieval call binding the contract method 0xf86bc879.
+//
+// Solidity: function authorisations(bytes32 , address , address ) constant returns(bool)
+func (_Contract *ContractCallerSession) Authorisations(arg0 [32]byte, arg1 common.Address, arg2 common.Address) (bool, error) {
+	return _Contract.Contract.Authorisations(&_Contract.CallOpts, arg0, arg1, arg2)
+}
+
 // Contenthash is a free data retrieval call binding the contract method 0xbc1c58d1.
 //
 // Solidity: function contenthash(bytes32 node) constant returns(bytes)
@@ -252,6 +278,32 @@ func (_Contract *ContractSession) Contenthash(node [32]byte) ([]byte, error) {
 // Solidity: function contenthash(bytes32 node) constant returns(bytes)
 func (_Contract *ContractCallerSession) Contenthash(node [32]byte) ([]byte, error) {
 	return _Contract.Contract.Contenthash(&_Contract.CallOpts, node)
+}
+
+// InterfaceImplementer is a free data retrieval call binding the contract method 0x124a319c.
+//
+// Solidity: function interfaceImplementer(bytes32 node, bytes4 interfaceID) constant returns(address)
+func (_Contract *ContractCaller) InterfaceImplementer(opts *bind.CallOpts, node [32]byte, interfaceID [4]byte) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Contract.contract.Call(opts, out, "interfaceImplementer", node, interfaceID)
+	return *ret0, err
+}
+
+// InterfaceImplementer is a free data retrieval call binding the contract method 0x124a319c.
+//
+// Solidity: function interfaceImplementer(bytes32 node, bytes4 interfaceID) constant returns(address)
+func (_Contract *ContractSession) InterfaceImplementer(node [32]byte, interfaceID [4]byte) (common.Address, error) {
+	return _Contract.Contract.InterfaceImplementer(&_Contract.CallOpts, node, interfaceID)
+}
+
+// InterfaceImplementer is a free data retrieval call binding the contract method 0x124a319c.
+//
+// Solidity: function interfaceImplementer(bytes32 node, bytes4 interfaceID) constant returns(address)
+func (_Contract *ContractCallerSession) InterfaceImplementer(node [32]byte, interfaceID [4]byte) (common.Address, error) {
+	return _Contract.Contract.InterfaceImplementer(&_Contract.CallOpts, node, interfaceID)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
@@ -410,25 +462,67 @@ func (_Contract *ContractTransactorSession) SetAddr(node [32]byte, addr common.A
 	return _Contract.Contract.SetAddr(&_Contract.TransactOpts, node, addr)
 }
 
-// SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
+// SetAuthorisation is a paid mutator transaction binding the contract method 0x3e9ce794.
 //
-// Solidity: function setContenthash(bytes32 node, bytes contenthash) returns()
-func (_Contract *ContractTransactor) SetContenthash(opts *bind.TransactOpts, node [32]byte, contenthash []byte) (*types.Transaction, error) {
-	return _Contract.contract.Transact(opts, "setContenthash", node, contenthash)
+// Solidity: function setAuthorisation(bytes32 node, address target, bool isAuthorised) returns()
+func (_Contract *ContractTransactor) SetAuthorisation(opts *bind.TransactOpts, node [32]byte, target common.Address, isAuthorised bool) (*types.Transaction, error) {
+	return _Contract.contract.Transact(opts, "setAuthorisation", node, target, isAuthorised)
+}
+
+// SetAuthorisation is a paid mutator transaction binding the contract method 0x3e9ce794.
+//
+// Solidity: function setAuthorisation(bytes32 node, address target, bool isAuthorised) returns()
+func (_Contract *ContractSession) SetAuthorisation(node [32]byte, target common.Address, isAuthorised bool) (*types.Transaction, error) {
+	return _Contract.Contract.SetAuthorisation(&_Contract.TransactOpts, node, target, isAuthorised)
+}
+
+// SetAuthorisation is a paid mutator transaction binding the contract method 0x3e9ce794.
+//
+// Solidity: function setAuthorisation(bytes32 node, address target, bool isAuthorised) returns()
+func (_Contract *ContractTransactorSession) SetAuthorisation(node [32]byte, target common.Address, isAuthorised bool) (*types.Transaction, error) {
+	return _Contract.Contract.SetAuthorisation(&_Contract.TransactOpts, node, target, isAuthorised)
 }
 
 // SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
 //
-// Solidity: function setContenthash(bytes32 node, bytes contenthash) returns()
-func (_Contract *ContractSession) SetContenthash(node [32]byte, contenthash []byte) (*types.Transaction, error) {
-	return _Contract.Contract.SetContenthash(&_Contract.TransactOpts, node, contenthash)
+// Solidity: function setContenthash(bytes32 node, bytes hash) returns()
+func (_Contract *ContractTransactor) SetContenthash(opts *bind.TransactOpts, node [32]byte, hash []byte) (*types.Transaction, error) {
+	return _Contract.contract.Transact(opts, "setContenthash", node, hash)
 }
 
 // SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
 //
-// Solidity: function setContenthash(bytes32 node, bytes contenthash) returns()
-func (_Contract *ContractTransactorSession) SetContenthash(node [32]byte, contenthash []byte) (*types.Transaction, error) {
-	return _Contract.Contract.SetContenthash(&_Contract.TransactOpts, node, contenthash)
+// Solidity: function setContenthash(bytes32 node, bytes hash) returns()
+func (_Contract *ContractSession) SetContenthash(node [32]byte, hash []byte) (*types.Transaction, error) {
+	return _Contract.Contract.SetContenthash(&_Contract.TransactOpts, node, hash)
+}
+
+// SetContenthash is a paid mutator transaction binding the contract method 0x304e6ade.
+//
+// Solidity: function setContenthash(bytes32 node, bytes hash) returns()
+func (_Contract *ContractTransactorSession) SetContenthash(node [32]byte, hash []byte) (*types.Transaction, error) {
+	return _Contract.Contract.SetContenthash(&_Contract.TransactOpts, node, hash)
+}
+
+// SetInterface is a paid mutator transaction binding the contract method 0xe59d895d.
+//
+// Solidity: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
+func (_Contract *ContractTransactor) SetInterface(opts *bind.TransactOpts, node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
+	return _Contract.contract.Transact(opts, "setInterface", node, interfaceID, implementer)
+}
+
+// SetInterface is a paid mutator transaction binding the contract method 0xe59d895d.
+//
+// Solidity: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
+func (_Contract *ContractSession) SetInterface(node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
+	return _Contract.Contract.SetInterface(&_Contract.TransactOpts, node, interfaceID, implementer)
+}
+
+// SetInterface is a paid mutator transaction binding the contract method 0xe59d895d.
+//
+// Solidity: function setInterface(bytes32 node, bytes4 interfaceID, address implementer) returns()
+func (_Contract *ContractTransactorSession) SetInterface(node [32]byte, interfaceID [4]byte, implementer common.Address) (*types.Transaction, error) {
+	return _Contract.Contract.SetInterface(&_Contract.TransactOpts, node, interfaceID, implementer)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0x77372213.
@@ -768,6 +862,157 @@ func (_Contract *ContractFilterer) WatchAddrChanged(opts *bind.WatchOpts, sink c
 	}), nil
 }
 
+// ContractAuthorisationChangedIterator is returned from FilterAuthorisationChanged and is used to iterate over the raw logs and unpacked data for AuthorisationChanged events raised by the Contract contract.
+type ContractAuthorisationChangedIterator struct {
+	Event *ContractAuthorisationChanged // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ContractAuthorisationChangedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ContractAuthorisationChanged)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ContractAuthorisationChanged)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ContractAuthorisationChangedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ContractAuthorisationChangedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ContractAuthorisationChanged represents a AuthorisationChanged event raised by the Contract contract.
+type ContractAuthorisationChanged struct {
+	Node         [32]byte
+	Owner        common.Address
+	Target       common.Address
+	IsAuthorised bool
+	Raw          types.Log // Blockchain specific contextual infos
+}
+
+// FilterAuthorisationChanged is a free log retrieval operation binding the contract event 0xe1c5610a6e0cbe10764ecd182adcef1ec338dc4e199c99c32ce98f38e12791df.
+//
+// Solidity: event AuthorisationChanged(bytes32 indexed node, address indexed owner, address indexed target, bool isAuthorised)
+func (_Contract *ContractFilterer) FilterAuthorisationChanged(opts *bind.FilterOpts, node [][32]byte, owner []common.Address, target []common.Address) (*ContractAuthorisationChangedIterator, error) {
+
+	var nodeRule []interface{}
+	for _, nodeItem := range node {
+		nodeRule = append(nodeRule, nodeItem)
+	}
+	var ownerRule []interface{}
+	for _, ownerItem := range owner {
+		ownerRule = append(ownerRule, ownerItem)
+	}
+	var targetRule []interface{}
+	for _, targetItem := range target {
+		targetRule = append(targetRule, targetItem)
+	}
+
+	logs, sub, err := _Contract.contract.FilterLogs(opts, "AuthorisationChanged", nodeRule, ownerRule, targetRule)
+	if err != nil {
+		return nil, err
+	}
+	return &ContractAuthorisationChangedIterator{contract: _Contract.contract, event: "AuthorisationChanged", logs: logs, sub: sub}, nil
+}
+
+// WatchAuthorisationChanged is a free log subscription operation binding the contract event 0xe1c5610a6e0cbe10764ecd182adcef1ec338dc4e199c99c32ce98f38e12791df.
+//
+// Solidity: event AuthorisationChanged(bytes32 indexed node, address indexed owner, address indexed target, bool isAuthorised)
+func (_Contract *ContractFilterer) WatchAuthorisationChanged(opts *bind.WatchOpts, sink chan<- *ContractAuthorisationChanged, node [][32]byte, owner []common.Address, target []common.Address) (event.Subscription, error) {
+
+	var nodeRule []interface{}
+	for _, nodeItem := range node {
+		nodeRule = append(nodeRule, nodeItem)
+	}
+	var ownerRule []interface{}
+	for _, ownerItem := range owner {
+		ownerRule = append(ownerRule, ownerItem)
+	}
+	var targetRule []interface{}
+	for _, targetItem := range target {
+		targetRule = append(targetRule, targetItem)
+	}
+
+	logs, sub, err := _Contract.contract.WatchLogs(opts, "AuthorisationChanged", nodeRule, ownerRule, targetRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ContractAuthorisationChanged)
+				if err := _Contract.contract.UnpackLog(event, "AuthorisationChanged", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
 // ContractContenthashChangedIterator is returned from FilterContenthashChanged and is used to iterate over the raw logs and unpacked data for ContenthashChanged events raised by the Contract contract.
 type ContractContenthashChangedIterator struct {
 	Event *ContractContenthashChanged // Event containing the contract specifics and raw log
@@ -837,14 +1082,14 @@ func (it *ContractContenthashChangedIterator) Close() error {
 
 // ContractContenthashChanged represents a ContenthashChanged event raised by the Contract contract.
 type ContractContenthashChanged struct {
-	Node        [32]byte
-	Contenthash []byte
-	Raw         types.Log // Blockchain specific contextual infos
+	Node [32]byte
+	Hash []byte
+	Raw  types.Log // Blockchain specific contextual infos
 }
 
 // FilterContenthashChanged is a free log retrieval operation binding the contract event 0xe379c1624ed7e714cc0937528a32359d69d5281337765313dba4e081b72d7578.
 //
-// Solidity: event ContenthashChanged(bytes32 indexed node, bytes contenthash)
+// Solidity: event ContenthashChanged(bytes32 indexed node, bytes hash)
 func (_Contract *ContractFilterer) FilterContenthashChanged(opts *bind.FilterOpts, node [][32]byte) (*ContractContenthashChangedIterator, error) {
 
 	var nodeRule []interface{}
@@ -861,7 +1106,7 @@ func (_Contract *ContractFilterer) FilterContenthashChanged(opts *bind.FilterOpt
 
 // WatchContenthashChanged is a free log subscription operation binding the contract event 0xe379c1624ed7e714cc0937528a32359d69d5281337765313dba4e081b72d7578.
 //
-// Solidity: event ContenthashChanged(bytes32 indexed node, bytes contenthash)
+// Solidity: event ContenthashChanged(bytes32 indexed node, bytes hash)
 func (_Contract *ContractFilterer) WatchContenthashChanged(opts *bind.WatchOpts, sink chan<- *ContractContenthashChanged, node [][32]byte) (event.Subscription, error) {
 
 	var nodeRule []interface{}
@@ -881,6 +1126,148 @@ func (_Contract *ContractFilterer) WatchContenthashChanged(opts *bind.WatchOpts,
 				// New log arrived, parse the event and forward to the user
 				event := new(ContractContenthashChanged)
 				if err := _Contract.contract.UnpackLog(event, "ContenthashChanged", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ContractInterfaceChangedIterator is returned from FilterInterfaceChanged and is used to iterate over the raw logs and unpacked data for InterfaceChanged events raised by the Contract contract.
+type ContractInterfaceChangedIterator struct {
+	Event *ContractInterfaceChanged // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ContractInterfaceChangedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ContractInterfaceChanged)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ContractInterfaceChanged)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ContractInterfaceChangedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ContractInterfaceChangedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ContractInterfaceChanged represents a InterfaceChanged event raised by the Contract contract.
+type ContractInterfaceChanged struct {
+	Node        [32]byte
+	InterfaceID [4]byte
+	Implementer common.Address
+	Raw         types.Log // Blockchain specific contextual infos
+}
+
+// FilterInterfaceChanged is a free log retrieval operation binding the contract event 0x7c69f06bea0bdef565b709e93a147836b0063ba2dd89f02d0b7e8d931e6a6daa.
+//
+// Solidity: event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
+func (_Contract *ContractFilterer) FilterInterfaceChanged(opts *bind.FilterOpts, node [][32]byte, interfaceID [][4]byte) (*ContractInterfaceChangedIterator, error) {
+
+	var nodeRule []interface{}
+	for _, nodeItem := range node {
+		nodeRule = append(nodeRule, nodeItem)
+	}
+	var interfaceIDRule []interface{}
+	for _, interfaceIDItem := range interfaceID {
+		interfaceIDRule = append(interfaceIDRule, interfaceIDItem)
+	}
+
+	logs, sub, err := _Contract.contract.FilterLogs(opts, "InterfaceChanged", nodeRule, interfaceIDRule)
+	if err != nil {
+		return nil, err
+	}
+	return &ContractInterfaceChangedIterator{contract: _Contract.contract, event: "InterfaceChanged", logs: logs, sub: sub}, nil
+}
+
+// WatchInterfaceChanged is a free log subscription operation binding the contract event 0x7c69f06bea0bdef565b709e93a147836b0063ba2dd89f02d0b7e8d931e6a6daa.
+//
+// Solidity: event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer)
+func (_Contract *ContractFilterer) WatchInterfaceChanged(opts *bind.WatchOpts, sink chan<- *ContractInterfaceChanged, node [][32]byte, interfaceID [][4]byte) (event.Subscription, error) {
+
+	var nodeRule []interface{}
+	for _, nodeItem := range node {
+		nodeRule = append(nodeRule, nodeItem)
+	}
+	var interfaceIDRule []interface{}
+	for _, interfaceIDItem := range interfaceID {
+		interfaceIDRule = append(interfaceIDRule, interfaceIDItem)
+	}
+
+	logs, sub, err := _Contract.contract.WatchLogs(opts, "InterfaceChanged", nodeRule, interfaceIDRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ContractInterfaceChanged)
+				if err := _Contract.contract.UnpackLog(event, "InterfaceChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
