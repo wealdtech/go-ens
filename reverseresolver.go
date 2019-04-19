@@ -20,7 +20,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/wealdtech/go-ens/contracts/reverseresolver"
+	"github.com/wealdtech/go-ens/v2/contracts/reverseresolver"
 )
 
 // ReverseResolver is the structure for the reverse resolver contract

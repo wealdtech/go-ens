@@ -19,7 +19,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/wealdtech/go-ens/contracts/deed"
+	"github.com/wealdtech/go-ens/v2/contracts/deed"
 )
 
 // Deed is the structure for the deed

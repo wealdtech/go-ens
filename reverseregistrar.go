@@ -21,7 +21,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/wealdtech/go-ens/contracts/reverseregistrar"
+	"github.com/wealdtech/go-ens/v2/contracts/reverseregistrar"
 )
 
 // ReverseRegistrar is the structure for the reverse registrar
