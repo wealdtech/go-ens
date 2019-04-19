@@ -16,6 +16,7 @@ package ens
 
 import (
 	"errors"
+	"fmt"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -39,10 +40,16 @@ func NewBaseRegistrar(client *ethclient.Client, domain string) (*BaseRegistrar, 
 		return nil, err
 	}
 
+	if address == UnknownAddress {
+		return nil, fmt.Errorf("No registrar for domain %s", domain)
+	}
+
 	contract, err := baseregistrar.NewContract(address, client)
 	if err != nil {
 		return nil, err
 	}
+
+	// TODO confirm this really is a base registrar contract
 
 	return &BaseRegistrar{
 		client:   client,
@@ -113,7 +120,12 @@ func (r *BaseRegistrar) Owner(domain string) (common.Address, error) {
 		return UnknownAddress, err
 	}
 	hash := LabelHash(name)
-	return r.contract.OwnerOf(nil, new(big.Int).SetBytes(hash[:]))
+	owner, err := r.contract.OwnerOf(nil, new(big.Int).SetBytes(hash[:]))
+	// Registrar reverts rather than provide a 0 owner, so...
+	if err != nil && err.Error() == "abi: unmarshalling empty output" {
+		return UnknownAddress, nil
+	}
+	return owner, err
 }
 
 // SetOwner sets the owner of the token holding the name

@@ -33,13 +33,13 @@ type ETHController struct {
 	domain   string
 }
 
-// NewETHController creates a new .eth controller
-func NewETHController(client *ethclient.Client) (*ETHController, error) {
+// NewETHController creates a new controller for a given domain
+func NewETHController(client *ethclient.Client, domain string) (*ETHController, error) {
 	registry, err := NewRegistry(client)
 	if err != nil {
 		return nil, err
 	}
-	resolver, err := registry.Resolver("eth")
+	resolver, err := registry.Resolver(domain)
 	if err != nil {
 		return nil, err
 	}
@@ -50,18 +50,18 @@ func NewETHController(client *ethclient.Client) (*ETHController, error) {
 		return nil, err
 	}
 
-	return NewETHControllerAt(client, controllerAddress)
+	return NewETHControllerAt(client, domain, controllerAddress)
 }
 
 // NewETHControllerAt creates a .eth controller at a given address
-func NewETHControllerAt(client *ethclient.Client, address common.Address) (*ETHController, error) {
+func NewETHControllerAt(client *ethclient.Client, domain string, address common.Address) (*ETHController, error) {
 	contract, err := ethcontroller.NewContract(address, client)
 	if err != nil {
 		return nil, err
 	}
 	return &ETHController{
 		contract: contract,
-		domain:   "eth",
+		domain:   domain,
 	}, nil
 }
 
@@ -107,6 +107,36 @@ func (c *ETHController) MinCommitmentInterval() (*big.Int, error) {
 	return c.contract.MinCommitmentAge(nil)
 }
 
+// MaxCommitmentInterval returns the maximum time that has to pass between a commit and reveal
+func (c *ETHController) MaxCommitmentInterval() (*big.Int, error) {
+	return c.contract.MaxCommitmentAge(nil)
+}
+
+// CommitmentHash returns the commitment hash for a label/owner/secret tuple
+func (c *ETHController) CommitmentHash(domain string, owner common.Address, secret [32]byte) (common.Hash, error) {
+	name, err := UnqualifiedName(domain, c.domain)
+	if err != nil {
+		return common.BytesToHash([]byte{}), fmt.Errorf("invalid name %s", domain)
+	}
+
+	commitment, err := c.contract.MakeCommitment(nil, name, owner, secret)
+	if err != nil {
+		return common.BytesToHash([]byte{}), err
+	}
+	hash := common.BytesToHash(commitment[:])
+	return hash, err
+}
+
+// CommitmentTime states the time at which a commitment was registered on the blockchain.
+func (c *ETHController) CommitmentTime(domain string, owner common.Address, secret [32]byte) (*big.Int, error) {
+	hash, err := c.CommitmentHash(domain, owner, secret)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.contract.Commitments(nil, hash)
+}
+
 // Commit sends a commitment to register a domain.
 func (c *ETHController) Commit(opts *bind.TransactOpts, domain string, owner common.Address, secret [32]byte) (*types.Transaction, error) {
 	name, err := UnqualifiedName(domain, c.domain)
@@ -119,7 +149,7 @@ func (c *ETHController) Commit(opts *bind.TransactOpts, domain string, owner com
 		return nil, errors.New("failed to create commitment")
 	}
 
-	if opts.Value != nil {
+	if opts.Value != nil && opts.Value.Cmp(big.NewInt(0)) != 0 {
 		return nil, errors.New("commitment should have 0 value")
 	}
 
@@ -167,6 +197,7 @@ func (c *ETHController) Renew(opts *bind.TransactOpts, domain string) (*types.Tr
 	if err != nil {
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
+
 	// TODO confirm the domain is registered?
 
 	// Calculate the duration given the rent cost and the value
