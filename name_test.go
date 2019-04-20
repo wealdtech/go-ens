@@ -22,6 +22,7 @@ import (
 	"math/big"
 	"math/rand"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -246,6 +247,51 @@ func TestNameExtensionNotRegistered(t *testing.T) {
 	assert.Equal(t, err.Error(), "name is not registered")
 }
 
+func TestNameSubdomainCreate(t *testing.T) {
+	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+
+	name, err := NewName(client, "foobar5.eth")
+	require.Nil(t, err, "Failed to create name")
+
+	sub := unregisteredDomain(client)
+	sub = strings.TrimSuffix(sub, ".eth")
+
+	opts, err := generateTxOpts(client, dsOwner, "0")
+	require.Nil(t, err, "Failed to generate transaction options")
+
+	tx, err := name.CreateSubdomain(sub, dsOwner, opts)
+	require.Nil(t, err, "Failed to send transaction")
+	// Wait until mined
+	waitForTransaction(client, tx.Hash())
+
+	// Confirm ownership of the subdomain
+	subdomain := fmt.Sprintf("%s.foobar5.eth", sub)
+
+	registry, err := NewRegistry(client)
+	require.Nil(t, err, "Failed to create registry")
+	owner, err := registry.Owner(subdomain)
+	require.Nil(t, err, "Failed to obtain subname's owner")
+	assert.Equal(t, dsOwner, owner, "Unexpected owner for %s", subdomain)
+}
+
+func TestNameSubdomainCreateAlreadyExists(t *testing.T) {
+	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+
+	name, err := NewName(client, "foobar5.eth")
+	require.Nil(t, err, "Failed to create name")
+
+	sub := "go-ens-test-1331354196"
+
+	opts, err := generateTxOpts(client, dsOwner, "0")
+	require.Nil(t, err, "Failed to generate transaction options")
+
+	_, err = name.CreateSubdomain(sub, dsOwner, opts)
+	require.NotNil(t, err, "Failed to error when it should")
+	assert.Equal(t, err.Error(), "go-ens-test-1331354196.foobar5.eth already exists")
+}
+
 func generateTxOpts(client *ethclient.Client, sender common.Address, valueStr string) (*bind.TransactOpts, error) {
 	key, err := crypto.HexToECDSA(os.Getenv(fmt.Sprintf("PRIVATE_KEY_%x", sender)))
 	if err != nil {
@@ -299,6 +345,7 @@ func waitForTransaction(client *ethclient.Client, txHash common.Hash) {
 }
 
 func unregisteredDomain(client *ethclient.Client) string {
+	rand.Seed(time.Now().UTC().UnixNano())
 	registry, _ := NewRegistry(client)
 	for {
 		domain := fmt.Sprintf("go-ens-test-%d.eth", rand.Int31())

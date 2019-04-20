@@ -254,4 +254,3 @@ func (n *Name) SetResolverAddress(address common.Address, opts *bind.TransactOpt
 }
 
 // TODO other registrar functions (reclaim separate from setadministrator?)
-// TODO resolver functions  (set address, set contenthash, etc.?)
