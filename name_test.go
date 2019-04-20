@@ -38,6 +38,7 @@ import (
 func TestName(t *testing.T) {
 	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	dsAdministrator := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsResolver := common.HexToAddress("4c641fb9bad9b60ef180c31f56051ce826d21a9a")
 	dsExpiry := time.Unix(1585591488, 0)
 	dsRegistrationInterval := 60 * time.Second
 
@@ -60,6 +61,10 @@ func TestName(t *testing.T) {
 	registrationInterval, err := name.RegistrationInterval()
 	require.Nil(t, err, "Failed to obtain registration interval")
 	assert.Equal(t, dsRegistrationInterval, registrationInterval, "Failed to obtain correct registration interval")
+
+	resolverAddress, err := name.ResolverAddress()
+	require.Nil(t, err, "Failed to obtain resolver address")
+	assert.Equal(t, dsResolver, resolverAddress, "Failed to obtain correct resolver address")
 }
 
 func TestNameExpiry(t *testing.T) {
@@ -80,7 +85,7 @@ func TestNameReRegistration(t *testing.T) {
 	// Register stage 1 - should fail as already registered
 	opts, err := generateTxOpts(client, owner, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	_, _, err = name.RegisterStageOne(opts, owner)
+	_, _, err = name.RegisterStageOne(owner, opts)
 	require.Equal(t, err.Error(), "name is already registered")
 }
 
@@ -100,7 +105,7 @@ func TestNameRegistration(t *testing.T) {
 	// Register stage 1
 	opts, err := generateTxOpts(client, owner, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, secret, err := name.RegisterStageOne(opts, owner)
+	tx, secret, err := name.RegisterStageOne(owner, opts)
 	require.Nil(t, err, "Failed to send stage one transaction")
 	// Wait until mined
 	waitForTransaction(client, tx.Hash())
@@ -115,7 +120,7 @@ func TestNameRegistration(t *testing.T) {
 	// Register stage 2
 	opts, err = generateTxOpts(client, owner, "0.1 Ether")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err = name.RegisterStageTwo(opts, owner, secret)
+	tx, err = name.RegisterStageTwo(owner, secret, opts)
 	require.Nil(t, err, "Failed to send stage two transaction")
 	// Wait until mined
 	waitForTransaction(client, tx.Hash())
@@ -138,7 +143,7 @@ func TestNameRegistrationStageTwoNoStageOne(t *testing.T) {
 	opts, err := generateTxOpts(client, owner, "0.1 Ether")
 	require.Nil(t, err, "Failed to generate transaction options")
 	var secret [32]byte
-	_, err = name.RegisterStageTwo(opts, owner, secret)
+	_, err = name.RegisterStageTwo(owner, secret, opts)
 	require.Equal(t, err.Error(), "stage 2 attempted prior to successful stage 1 transaction")
 }
 
@@ -153,7 +158,7 @@ func TestNameRegistrationNoValue(t *testing.T) {
 	// Register stage 1
 	opts, err := generateTxOpts(client, owner, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, secret, err := name.RegisterStageOne(opts, owner)
+	tx, secret, err := name.RegisterStageOne(owner, opts)
 	require.Nil(t, err, "Failed to send stage one transaction")
 	// Wait until mined
 	waitForTransaction(client, tx.Hash())
@@ -168,7 +173,7 @@ func TestNameRegistrationNoValue(t *testing.T) {
 	// Register stage 2 - no value
 	opts, err = generateTxOpts(client, owner, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err = name.RegisterStageTwo(opts, owner, secret)
+	tx, err = name.RegisterStageTwo(owner, secret, opts)
 	assert.Equal(t, err.Error(), "not enough funds to cover minimum duration of 672h0m0s")
 }
 
@@ -183,7 +188,7 @@ func TestNameRegistrationNoInterval(t *testing.T) {
 	// Register stage 1
 	opts, err := generateTxOpts(client, owner, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, secret, err := name.RegisterStageOne(opts, owner)
+	tx, secret, err := name.RegisterStageOne(owner, opts)
 	require.Nil(t, err, "Failed to send stage one transaction")
 	// Wait until mined
 	waitForTransaction(client, tx.Hash())
@@ -191,7 +196,7 @@ func TestNameRegistrationNoInterval(t *testing.T) {
 	// Register stage 2 immediately - should fail
 	opts, err = generateTxOpts(client, owner, "0.1 Ether")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err = name.RegisterStageTwo(opts, owner, secret)
+	tx, err = name.RegisterStageTwo(owner, secret, opts)
 	assert.Equal(t, err.Error(), "too early to send second transaction")
 }
 
@@ -216,13 +221,13 @@ func TestNameExtension(t *testing.T) {
 	assert.True(t, newExpires.After(oldExpires), "Failed to increase registration period")
 }
 
-func TestNameExtensionNoValue(t *testing.T) {
+func TestNameExtensionLowValue(t *testing.T) {
 	owner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
 
-	opts, err := generateTxOpts(client, owner, "0")
+	opts, err := generateTxOpts(client, owner, "1 wei")
 	require.Nil(t, err, "Failed to generate transaction options")
 	_, err = name.ExtendRegistration(opts)
 	assert.Equal(t, err.Error(), "not enough funds to extend the registration")

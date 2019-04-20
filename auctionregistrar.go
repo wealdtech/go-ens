@@ -172,3 +172,8 @@ func (r *AuctionRegistrar) SetOwner(opts *bind.TransactOpts, domain string, addr
 
 	return r.contract.Transfer(opts, LabelHash(name), address)
 }
+
+// ShaBid calculates the hash for a bid.
+func (r *AuctionRegistrar) ShaBid(hash [32]byte, address common.Address, value *big.Int, salt [32]byte) ([32]byte, error) {
+	return r.contract.ShaBid(nil, hash, address, value, salt)
+}

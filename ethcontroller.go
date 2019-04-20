@@ -29,6 +29,7 @@ import (
 
 // ETHController is the structure for the .eth controller contract
 type ETHController struct {
+	client   *ethclient.Client
 	contract *ethcontroller.Contract
 	domain   string
 }
@@ -60,6 +61,7 @@ func NewETHControllerAt(client *ethclient.Client, domain string, address common.
 		return nil, err
 	}
 	return &ETHController{
+		client:   client,
 		contract: contract,
 		domain:   domain,
 	}, nil
@@ -170,7 +172,34 @@ func (c *ETHController) Reveal(opts *bind.TransactOpts, domain string, owner com
 		return nil, errors.New("no ether supplied with transaction")
 	}
 
-	// TODO can we confirm the commitment exists and is still valid (not expired)?
+	commitTS, err := c.CommitmentTime(name, owner, secret)
+	if err != nil {
+		return nil, err
+	}
+	if commitTS.Cmp(big.NewInt(0)) == 0 {
+		return nil, errors.New("no commitment present")
+	}
+	commit := time.Unix(commitTS.Int64(), 0)
+
+	minCommitIntervalTS, err := c.MinCommitmentInterval()
+	if err != nil {
+		return nil, err
+	}
+	minCommitInterval := time.Duration(minCommitIntervalTS.Int64()) * time.Second
+	minRevealTime := commit.Add(minCommitInterval)
+	if time.Now().Before(minRevealTime) {
+		return nil, errors.New("commitment too young to reveal")
+	}
+
+	maxCommitIntervalTS, err := c.MaxCommitmentInterval()
+	if err != nil {
+		return nil, err
+	}
+	maxCommitInterval := time.Duration(maxCommitIntervalTS.Int64()) * time.Second
+	maxRevealTime := commit.Add(maxCommitInterval)
+	if time.Now().After(maxRevealTime) {
+		return nil, errors.New("commitment too old to reveal")
+	}
 
 	// Calculate the duration given the rent cost and the value
 	costPerSecond, err := c.RentCost(domain)
@@ -198,7 +227,18 @@ func (c *ETHController) Renew(opts *bind.TransactOpts, domain string) (*types.Tr
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	// TODO confirm the domain is registered?
+	// See if we're registered at all - fetch the owner to find out
+	registry, err := NewRegistry(c.client)
+	if err != nil {
+		return nil, err
+	}
+	owner, err := registry.Owner(domain)
+	if err != nil {
+		return nil, err
+	}
+	if owner == UnknownAddress {
+		return nil, fmt.Errorf("%s not registered", domain)
+	}
 
 	// Calculate the duration given the rent cost and the value
 	costPerSecond, err := c.RentCost(domain)

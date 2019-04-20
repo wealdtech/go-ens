@@ -15,6 +15,7 @@
 package ens
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"math/big"
@@ -24,6 +25,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/baseregistrar"
+	"golang.org/x/crypto/sha3"
 )
 
 // BaseRegistrar is the structure for the registrar
@@ -41,7 +43,7 @@ func NewBaseRegistrar(client *ethclient.Client, domain string) (*BaseRegistrar, 
 	}
 
 	if address == UnknownAddress {
-		return nil, fmt.Errorf("No registrar for domain %s", domain)
+		return nil, fmt.Errorf("no registrar for domain %s", domain)
 	}
 
 	contract, err := baseregistrar.NewContract(address, client)
@@ -49,7 +51,22 @@ func NewBaseRegistrar(client *ethclient.Client, domain string) (*BaseRegistrar, 
 		return nil, err
 	}
 
-	// TODO confirm this really is a base registrar contract
+	// Ensure this really is a base registrar.  To do this confirm that it supports
+	// the expected interfaces.
+	supported, err := contract.SupportsInterface(nil, [4]byte{0x6c, 0xcb, 0x2d, 0xf4})
+	if err != nil {
+		return nil, err
+	}
+	if !supported {
+		return nil, fmt.Errorf("purported registrar for domain %s does not support nametoken functionality", domain)
+	}
+	supported, err = contract.SupportsInterface(nil, [4]byte{0x2d, 0xab, 0xbe, 0xed})
+	if err != nil {
+		return nil, err
+	}
+	if !supported {
+		return nil, fmt.Errorf("purported registrar for domain %s does not support reclaim functionality", domain)
+	}
 
 	return &BaseRegistrar{
 		client:   client,
@@ -69,7 +86,24 @@ func (r *BaseRegistrar) PriorAuctionContract() (*AuctionRegistrar, error) {
 		return nil, errors.New("failed to instantiate prior auction contract")
 	}
 
-	// TODO Confirm this really is an auction contract
+	// Confirm ths really is an auction contract by trying to create (but not submit) a bid
+	var shaBid [32]byte
+	var emptyHash [32]byte
+	sha := sha3.NewLegacyKeccak256()
+	sha.Write(emptyHash[:])
+	sha.Write(UnknownAddress.Bytes())
+	var amountBytes [32]byte
+	sha.Write(amountBytes[:])
+	sha.Write(emptyHash[:])
+	sha.Sum(shaBid[:0])
+
+	contractShaBid, err := auctionContract.ShaBid(emptyHash, UnknownAddress, big.NewInt(0), emptyHash)
+	if err != nil {
+		return nil, errors.New("failed to confirm auction contract")
+	}
+	if bytes.Compare(contractShaBid[:], shaBid[:]) != 0 {
+		return nil, errors.New("failed to confirm auction contract")
+	}
 
 	return auctionContract, nil
 }
@@ -89,6 +123,9 @@ func (r *BaseRegistrar) RegisteredWith(domain string) (string, error) {
 	owner, err := registry.Owner(domain)
 	if err != nil {
 		return "", err
+	}
+	if owner == UnknownAddress {
+		return "", fmt.Errorf("%s not registered", domain)
 	}
 
 	// Fetch the temporary registrar and see if we're registered there
