@@ -27,7 +27,43 @@ go get github.com/wealdtech/go-ens
 
 ## Usage
 
-`go-ens` provides simple access to the [Ethereum Name Service](https://ens.domains/) contracts.
+`go-ens` provides simple access to the [Ethereum Name Service](https://ens.domains/) (ENS) contracts.
+
+### Resolution
+
+The most commonly-used feature of ENS is resolution: converting an ENS name to an address.  `go-ens` provides a simple call to allow this:
+
+```go
+address, err := ens.Resolve(client, domain)
+```
+
+where `client` is a connection to an Ethereum client and `domain` is the fully-qualified name you wish to resolve (e.g. `foo.mydomain.eth`) (full examples for using this are given in the [Example](#Example) section below).
+
+The reverse process, converting an address to an ENS name, is just as simple:
+
+```go
+domain, err := ens.ReverseResolve(client, address)
+```
+
+Note that if the address does not have a reverse resolution this will return "".
+
+### Management of names
+
+A top-level name is one that sits directly underneath `.eth`, for example `mydomain.eth`.  Lower-level names, such as `foo.mydomain.eth` are covered in the following section.  `go-ens` provides a simplified `Name` interface to manage top-level, removing the requirement to understand registrars, controllers, _etc._
+
+Starting out with names in `go-ens` is easy:
+
+```go
+name, err := ens.Name("mydomain.eth")
+```
+
+
+Most operations on a domain will involve setting resolvers and resolver information.
+
+
+### Management of subdomains
+
+Because subdomains have their own registrars they do not work with the `Name` interface.
 
 ### Example
 
@@ -55,6 +91,9 @@ func main() {
 
     // Reverse resolve an address to a name
     reverse, err := ens.ReverseResolve(client, address)
+    if err != nil {
+        panic(err)
+    }
     if reverse == "" {
       fmt.Printf("%s has no reverse lookup\n", address.Hex())
     } else {

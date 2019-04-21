@@ -208,8 +208,39 @@ func (n *Name) Administrator() (common.Address, error) {
 // The administrator can carry out operations on the name such as setting
 // records, but is not the ultimate owner of the name.
 func (n *Name) SetAdministrator(administrator common.Address, opts *bind.TransactOpts) (*types.Transaction, error) {
-	// TODO ensure is either administrator or owner; reclaim if required
-	return n.registry.SetOwner(opts, n.Name, administrator)
+	// Are we the current administrator?
+	curAdministrator, err := n.Administrator()
+	if err != nil {
+		return nil, err
+	}
+	if curAdministrator == opts.From {
+		return n.registry.SetOwner(opts, n.Name, administrator)
+	}
+
+	// Perhaps we are the owner
+	owner, err := n.Owner()
+	if err != nil {
+		return nil, err
+	}
+	// Are we actually trying to reclaim?
+	if owner == opts.From && owner == administrator {
+		return n.Reclaim(opts)
+	}
+
+	return nil, errors.New("not authorised to change the administrator")
+}
+
+// Reclaim reclaims administrator rights by the owner
+func (n *Name) Reclaim(opts *bind.TransactOpts) (*types.Transaction, error) {
+	// Ensure the we are the owner
+	owner, err := n.Owner()
+	if err != nil {
+		return nil, err
+	}
+	if owner != opts.From {
+		return nil, errors.New("not the owner")
+	}
+	return n.registrar.Reclaim(opts, n.Name)
 }
 
 // Owner obtains the owner for this name.
@@ -219,7 +250,14 @@ func (n *Name) Owner() (common.Address, error) {
 
 // SetOwner sets the owner for this name.
 func (n *Name) SetOwner(owner common.Address, opts *bind.TransactOpts) (*types.Transaction, error) {
-	// TODO ensure submitter is owner
+	// Ensure the we are the owner
+	currentOwner, err := n.Owner()
+	if err != nil {
+		return nil, err
+	}
+	if currentOwner != opts.From {
+		return nil, errors.New("not the owner")
+	}
 	return n.registrar.SetOwner(opts, n.Label, owner)
 }
 
@@ -237,7 +275,7 @@ func (n *Name) CreateSubdomain(label string, owner common.Address, opts *bind.Tr
 		return nil, err
 	}
 	if subdomainOwner != UnknownAddress {
-		return nil, fmt.Errorf("%s already exists", fqdn)
+		return nil, errors.New("that subdomain already exists")
 	}
 
 	return n.registry.SetSubdomainOwner(opts, n.Name, label, owner)
@@ -252,5 +290,3 @@ func (n *Name) ResolverAddress() (common.Address, error) {
 func (n *Name) SetResolverAddress(address common.Address, opts *bind.TransactOpts) (*types.Transaction, error) {
 	return n.registry.SetResolver(opts, n.Name, address)
 }
-
-// TODO other registrar functions (reclaim separate from setadministrator?)

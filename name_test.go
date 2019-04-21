@@ -198,6 +198,7 @@ func TestNameRegistrationNoInterval(t *testing.T) {
 	opts, err = generateTxOpts(client, owner, "0.1 Ether")
 	require.Nil(t, err, "Failed to generate transaction options")
 	tx, err = name.RegisterStageTwo(owner, secret, opts)
+	require.NotNil(t, err, "No error when trying to register stage 2 immediately")
 	assert.Equal(t, err.Error(), "too early to send second transaction")
 }
 
@@ -289,7 +290,184 @@ func TestNameSubdomainCreateAlreadyExists(t *testing.T) {
 
 	_, err = name.CreateSubdomain(sub, dsOwner, opts)
 	require.NotNil(t, err, "Failed to error when it should")
-	assert.Equal(t, err.Error(), "go-ens-test-1331354196.foobar5.eth already exists")
+	assert.Equal(t, "that subdomain already exists", err.Error())
+}
+
+func TestSetAdministrator(t *testing.T) {
+	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsAdministrator := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+
+	name, err := NewName(client, "foobar5.eth")
+	require.Nil(t, err, "Failed to create name")
+
+	// Ensure that the owner starts out as the administrator
+	administrator, err := name.Administrator()
+	require.Nil(t, err, "Failed to obtain administrator")
+	require.Equal(t, dsOwner, administrator, "Initial administrator incorrect")
+
+	// Set the administrator
+	opts, err := generateTxOpts(client, dsOwner, "0")
+	require.Nil(t, err, "Failed to generate transaction options")
+	tx, err := name.SetAdministrator(dsAdministrator, opts)
+	require.Nil(t, err, "Failed to generate transaction")
+	waitForTransaction(client, tx.Hash())
+
+	// Confirm the administrator is set
+	administrator, err = name.Administrator()
+	require.Nil(t, err, "Failed to obtain administrator (2)")
+	require.Equal(t, dsAdministrator, administrator, "Updated administrator incorrect")
+
+	// Reset the administrator role
+	opts, err = generateTxOpts(client, dsOwner, "0")
+	require.Nil(t, err, "Failed to generate transaction options")
+	tx, err = name.SetAdministrator(dsOwner, opts)
+	require.Nil(t, err, "Failed to generate transaction (2)")
+	waitForTransaction(client, tx.Hash())
+
+	// Confirm the administrator is reset
+	administrator, err = name.Administrator()
+	require.Nil(t, err, "Failed to obtain administrator (3)")
+	require.Equal(t, dsOwner, administrator, "Reset administrator incorrect")
+}
+
+func TestSetAdministratorUnauthorised(t *testing.T) {
+	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsThief := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+
+	name, err := NewName(client, "foobar5.eth")
+	require.Nil(t, err, "Failed to create name")
+
+	// Ensure that the owner starts out as the administrator
+	administrator, err := name.Administrator()
+	require.Nil(t, err, "Failed to obtain administrator")
+	require.Equal(t, dsOwner, administrator, "Initial administrator incorrect")
+
+	// Try to set the administrator
+	opts, err := generateTxOpts(client, dsThief, "0")
+	require.Nil(t, err, "Failed to generate transaction options")
+	_, err = name.SetAdministrator(dsOwner, opts)
+	require.NotNil(t, err, "Failed to error when it should")
+	assert.Equal(t, "not authorised to change the administrator", err.Error())
+}
+
+func TestReclaim(t *testing.T) {
+	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsAdministrator := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+
+	name, err := NewName(client, "foobar5.eth")
+	require.Nil(t, err, "Failed to create name")
+
+	// Ensure that the owner starts out as the administrator
+	administrator, err := name.Administrator()
+	require.Nil(t, err, "Failed to obtain administrator")
+	require.Equal(t, dsOwner, administrator, "Initial administrator incorrect")
+
+	// Set the administrator
+	opts, err := generateTxOpts(client, dsOwner, "0")
+	require.Nil(t, err, "Failed to generate transaction options")
+	tx, err := name.SetAdministrator(dsAdministrator, opts)
+	require.Nil(t, err, "Failed to generate transaction")
+	waitForTransaction(client, tx.Hash())
+
+	// Confirm the administrator is set
+	administrator, err = name.Administrator()
+	require.Nil(t, err, "Failed to obtain administrator (2)")
+	require.Equal(t, dsAdministrator, administrator, "Updated administrator incorrect")
+
+	// Set the administrator role
+	opts, err = generateTxOpts(client, dsOwner, "0")
+	require.Nil(t, err, "Failed to generate transaction options")
+	tx, err = name.Reclaim(opts)
+	require.Nil(t, err, "Failed to generate transaction (2)")
+	waitForTransaction(client, tx.Hash())
+
+	// Confirm the administrator is reset
+	administrator, err = name.Administrator()
+	require.Nil(t, err, "Failed to obtain administrator (3)")
+	require.Equal(t, dsOwner, administrator, "Reset administrator incorrect")
+}
+
+func TestReclaimUnauthorised(t *testing.T) {
+	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsThief := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+
+	name, err := NewName(client, "foobar5.eth")
+	require.Nil(t, err, "Failed to create name")
+
+	// Ensure that the owner starts out as the administrator
+	administrator, err := name.Administrator()
+	require.Nil(t, err, "Failed to obtain administrator")
+	require.Equal(t, dsOwner, administrator, "Initial administrator incorrect")
+
+	// Try to reclaim
+	opts, err := generateTxOpts(client, dsThief, "0")
+	require.Nil(t, err, "Failed to generate transaction options")
+	_, err = name.Reclaim(opts)
+	require.NotNil(t, err, "Failed to error when it should")
+	assert.Equal(t, "not the owner", err.Error())
+}
+
+func TestSetOwner(t *testing.T) {
+	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsNewOwner := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+
+	name, err := NewName(client, "foobar5.eth")
+	require.Nil(t, err, "Failed to create name")
+
+	// Ensure the existing owner is correct
+	owner, err := name.Owner()
+	require.Nil(t, err, "Failed to obtain owner")
+	require.Equal(t, dsOwner, owner, "Initial owner incorrect")
+
+	// Set the owner
+	opts, err := generateTxOpts(client, dsOwner, "0")
+	require.Nil(t, err, "Failed to generate transaction options")
+	tx, err := name.SetOwner(dsNewOwner, opts)
+	require.Nil(t, err, "Failed to generate transaction")
+	waitForTransaction(client, tx.Hash())
+
+	// Confirm the new owner is set
+	owner, err = name.Owner()
+	require.Nil(t, err, "Failed to obtain owner (2)")
+	require.Equal(t, dsNewOwner, owner, "Updated owner incorrect")
+
+	// Reset the owner
+	opts, err = generateTxOpts(client, dsNewOwner, "0")
+	require.Nil(t, err, "Failed to generate transaction options")
+	tx, err = name.SetOwner(dsOwner, opts)
+	require.Nil(t, err, "Failed to generate transaction (2)")
+	waitForTransaction(client, tx.Hash())
+
+	// Confirm the owner is reset
+	owner, err = name.Owner()
+	require.Nil(t, err, "Failed to obtain owner (3)")
+	require.Equal(t, dsOwner, owner, "Reset owner incorrect")
+}
+
+func TestSetOwnerUnauthorised(t *testing.T) {
+	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsThief := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+
+	name, err := NewName(client, "foobar5.eth")
+	require.Nil(t, err, "Failed to create name")
+
+	// Ensure that the owner starts out as the administrator
+	owner, err := name.Owner()
+	require.Nil(t, err, "Failed to obtain owner")
+	require.Equal(t, dsOwner, owner, "Initial owner incorrect")
+
+	// Try to steal
+	opts, err := generateTxOpts(client, dsThief, "0")
+	require.Nil(t, err, "Failed to generate transaction options")
+	_, err = name.SetOwner(dsThief, opts)
+	require.NotNil(t, err, "Failed to error when it should")
+	assert.Equal(t, "not the owner", err.Error())
 }
 
 func generateTxOpts(client *ethclient.Client, sender common.Address, valueStr string) (*bind.TransactOpts, error) {

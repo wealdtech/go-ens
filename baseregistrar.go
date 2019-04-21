@@ -190,3 +190,14 @@ func (r *BaseRegistrar) Expiry(domain string) (*big.Int, error) {
 	id := new(big.Int).SetBytes(hash[:])
 	return r.contract.NameExpires(nil, id)
 }
+
+// Reclaim reclaims a domain by the owner
+func (r *BaseRegistrar) Reclaim(opts *bind.TransactOpts, domain string) (*types.Transaction, error) {
+	name, err := UnqualifiedName(domain, r.domain)
+	if err != nil {
+		return nil, err
+	}
+	hash := LabelHash(name)
+	id := new(big.Int).SetBytes(hash[:])
+	return r.contract.Reclaim(opts, id)
+}
