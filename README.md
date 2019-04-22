@@ -45,7 +45,14 @@ The reverse process, converting an address to an ENS name, is just as simple:
 domain, err := ens.ReverseResolve(client, address)
 ```
 
-Note that if the address does not have a reverse resolution this will return "".
+Note that if the address does not have a reverse resolution this will return "".  If you just want a string version of an address for on-screen display then you can use `ens.Format()`, for example:
+
+```go
+fmt.Printf("The address is %s\n", ens.Format(client, address))
+```
+
+This will carry out reverse resolution of the address and print the name if present; if not it will print a formatted version of the address.
+
 
 ### Management of names
 
@@ -57,6 +64,7 @@ Starting out with names in `go-ens` is easy:
 name, err := ens.Name("mydomain.eth")
 ```
 
+### Registering and extending names
 
 Most operations on a domain will involve setting resolvers and resolver information.
 

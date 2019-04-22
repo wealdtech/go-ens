@@ -37,8 +37,8 @@ import (
 )
 
 func TestName(t *testing.T) {
-	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
-	dsAdministrator := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsController := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	dsResolver := common.HexToAddress("4c641fb9bad9b60ef180c31f56051ce826d21a9a")
 	dsExpiry := time.Unix(1585591488, 0)
 	dsRegistrationInterval := 60 * time.Second
@@ -47,13 +47,13 @@ func TestName(t *testing.T) {
 	name, err := NewName(client, "domainsale.eth")
 	require.Nil(t, err, "Failed to create name")
 
-	owner, err := name.Owner()
-	require.Nil(t, err, "Failed to obtain owner")
-	assert.Equal(t, dsOwner, owner, "Failed to obtain correct owner")
+	registrant, err := name.Registrant()
+	require.Nil(t, err, "Failed to obtain registrant")
+	assert.Equal(t, dsRegistrant, registrant, "Failed to obtain correct registrant")
 
-	administrator, err := name.Administrator()
-	require.Nil(t, err, "Failed to obtain administrator")
-	assert.Equal(t, dsAdministrator, administrator, "Failed to obtain correct administrator")
+	controller, err := name.Controller()
+	require.Nil(t, err, "Failed to obtain controller")
+	assert.Equal(t, dsController, controller, "Failed to obtain correct controller")
 
 	expiry, err := name.Expires()
 	require.Nil(t, err, "Failed to obtain expiry")
@@ -78,15 +78,15 @@ func TestNameExpiry(t *testing.T) {
 }
 
 func TestNameReRegistration(t *testing.T) {
-	owner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	name, err := NewName(client, "domainsale.eth")
 	require.Nil(t, err, "Failed to create name")
 
 	// Register stage 1 - should fail as already registered
-	opts, err := generateTxOpts(client, owner, "0")
+	opts, err := generateTxOpts(client, registrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	_, _, err = name.RegisterStageOne(owner, opts)
+	_, _, err = name.RegisterStageOne(registrant, opts)
 	require.Equal(t, err.Error(), "name is already registered")
 }
 
@@ -98,15 +98,15 @@ func TestInvalidName(t *testing.T) {
 
 func TestNameRegistration(t *testing.T) {
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
-	owner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	domain := unregisteredDomain(client)
 	name, err := NewName(client, domain)
 	require.Nil(t, err, "Failed to create name")
 
 	// Register stage 1
-	opts, err := generateTxOpts(client, owner, "0")
+	opts, err := generateTxOpts(client, registrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, secret, err := name.RegisterStageOne(owner, opts)
+	tx, secret, err := name.RegisterStageOne(registrant, opts)
 	require.Nil(t, err, "Failed to send stage one transaction")
 	// Wait until mined
 	waitForTransaction(client, tx.Hash())
@@ -119,47 +119,47 @@ func TestNameRegistration(t *testing.T) {
 	time.Sleep(60 * time.Second)
 
 	// Register stage 2
-	opts, err = generateTxOpts(client, owner, "0.1 Ether")
+	opts, err = generateTxOpts(client, registrant, "0.1 Ether")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err = name.RegisterStageTwo(owner, secret, opts)
+	tx, err = name.RegisterStageTwo(registrant, secret, opts)
 	require.Nil(t, err, "Failed to send stage two transaction")
 	// Wait until mined
 	waitForTransaction(client, tx.Hash())
 
 	// Confirm registered
-	registeredOwner, err := name.Owner()
-	require.Nil(t, err, "Failed to obtain owner")
-	assert.Equal(t, owner, registeredOwner, "failed to register name")
+	registeredRegistrant, err := name.Registrant()
+	require.Nil(t, err, "Failed to obtain registrant")
+	assert.Equal(t, registrant, registeredRegistrant, "failed to register name")
 }
 
 func TestNameRegistrationStageTwoNoStageOne(t *testing.T) {
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
-	owner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	domain := unregisteredDomain(client)
 
 	name, err := NewName(client, domain)
 	require.Nil(t, err, "Failed to create name")
 
 	// Register stage 2
-	opts, err := generateTxOpts(client, owner, "0.1 Ether")
+	opts, err := generateTxOpts(client, registrant, "0.1 Ether")
 	require.Nil(t, err, "Failed to generate transaction options")
 	var secret [32]byte
-	_, err = name.RegisterStageTwo(owner, secret, opts)
+	_, err = name.RegisterStageTwo(registrant, secret, opts)
 	require.Equal(t, err.Error(), "stage 2 attempted prior to successful stage 1 transaction")
 }
 
 func TestNameRegistrationNoValue(t *testing.T) {
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
-	owner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	domain := unregisteredDomain(client)
 
 	name, err := NewName(client, domain)
 	require.Nil(t, err, "Failed to create name")
 
 	// Register stage 1
-	opts, err := generateTxOpts(client, owner, "0")
+	opts, err := generateTxOpts(client, registrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, secret, err := name.RegisterStageOne(owner, opts)
+	tx, secret, err := name.RegisterStageOne(registrant, opts)
 	require.Nil(t, err, "Failed to send stage one transaction")
 	// Wait until mined
 	waitForTransaction(client, tx.Hash())
@@ -172,38 +172,38 @@ func TestNameRegistrationNoValue(t *testing.T) {
 	time.Sleep(60 * time.Second)
 
 	// Register stage 2 - no value
-	opts, err = generateTxOpts(client, owner, "0")
+	opts, err = generateTxOpts(client, registrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err = name.RegisterStageTwo(owner, secret, opts)
+	tx, err = name.RegisterStageTwo(registrant, secret, opts)
 	assert.Equal(t, err.Error(), "not enough funds to cover minimum duration of 672h0m0s")
 }
 
 func TestNameRegistrationNoInterval(t *testing.T) {
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
-	owner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	domain := unregisteredDomain(client)
 
 	name, err := NewName(client, domain)
 	require.Nil(t, err, "Failed to create name")
 
 	// Register stage 1
-	opts, err := generateTxOpts(client, owner, "0")
+	opts, err := generateTxOpts(client, registrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, secret, err := name.RegisterStageOne(owner, opts)
+	tx, secret, err := name.RegisterStageOne(registrant, opts)
 	require.Nil(t, err, "Failed to send stage one transaction")
 	// Wait until mined
 	waitForTransaction(client, tx.Hash())
 
 	// Register stage 2 immediately - should fail
-	opts, err = generateTxOpts(client, owner, "0.1 Ether")
+	opts, err = generateTxOpts(client, registrant, "0.1 Ether")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err = name.RegisterStageTwo(owner, secret, opts)
+	tx, err = name.RegisterStageTwo(registrant, secret, opts)
 	require.NotNil(t, err, "No error when trying to register stage 2 immediately")
 	assert.Equal(t, err.Error(), "too early to send second transaction")
 }
 
 func TestNameExtension(t *testing.T) {
-	owner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
@@ -211,7 +211,7 @@ func TestNameExtension(t *testing.T) {
 	oldExpires, err := name.Expires()
 	require.Nil(t, err, "Failed to obtain old expires")
 
-	opts, err := generateTxOpts(client, owner, "0.001Ether")
+	opts, err := generateTxOpts(client, registrant, "0.001Ether")
 	require.Nil(t, err, "Failed to generate transaction options")
 	tx, err := name.ExtendRegistration(opts)
 	assert.Nil(t, err, "Failed to send transaction")
@@ -224,32 +224,32 @@ func TestNameExtension(t *testing.T) {
 }
 
 func TestNameExtensionLowValue(t *testing.T) {
-	owner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
 
-	opts, err := generateTxOpts(client, owner, "1 wei")
+	opts, err := generateTxOpts(client, registrant, "1 wei")
 	require.Nil(t, err, "Failed to generate transaction options")
 	_, err = name.ExtendRegistration(opts)
 	assert.Equal(t, err.Error(), "not enough funds to extend the registration")
 }
 
 func TestNameExtensionNotRegistered(t *testing.T) {
-	owner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	domain := unregisteredDomain(client)
 	name, err := NewName(client, domain)
 	require.Nil(t, err, "Failed to create name")
 
-	opts, err := generateTxOpts(client, owner, "0.001Ether")
+	opts, err := generateTxOpts(client, registrant, "0.001Ether")
 	require.Nil(t, err, "Failed to generate transaction options")
 	_, err = name.ExtendRegistration(opts)
 	assert.Equal(t, err.Error(), "name is not registered")
 }
 
 func TestNameSubdomainCreate(t *testing.T) {
-	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
@@ -258,26 +258,26 @@ func TestNameSubdomainCreate(t *testing.T) {
 	sub := unregisteredDomain(client)
 	sub = strings.TrimSuffix(sub, ".eth")
 
-	opts, err := generateTxOpts(client, dsOwner, "0")
+	opts, err := generateTxOpts(client, dsRegistrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
 
-	tx, err := name.CreateSubdomain(sub, dsOwner, opts)
+	tx, err := name.CreateSubdomain(sub, dsRegistrant, opts)
 	require.Nil(t, err, "Failed to send transaction")
 	// Wait until mined
 	waitForTransaction(client, tx.Hash())
 
-	// Confirm ownership of the subdomain
+	// Confirm registrantship of the subdomain
 	subdomain := fmt.Sprintf("%s.foobar5.eth", sub)
 
 	registry, err := NewRegistry(client)
 	require.Nil(t, err, "Failed to create registry")
-	owner, err := registry.Owner(subdomain)
-	require.Nil(t, err, "Failed to obtain subname's owner")
-	assert.Equal(t, dsOwner, owner, "Unexpected owner for %s", subdomain)
+	controller, err := registry.Owner(subdomain)
+	require.Nil(t, err, "Failed to obtain subname's controller")
+	assert.Equal(t, dsRegistrant, controller, "Unexpected controller for %s", subdomain)
 }
 
 func TestNameSubdomainCreateAlreadyExists(t *testing.T) {
-	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
@@ -285,189 +285,189 @@ func TestNameSubdomainCreateAlreadyExists(t *testing.T) {
 
 	sub := "go-ens-test-1331354196"
 
-	opts, err := generateTxOpts(client, dsOwner, "0")
+	opts, err := generateTxOpts(client, dsRegistrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
 
-	_, err = name.CreateSubdomain(sub, dsOwner, opts)
+	_, err = name.CreateSubdomain(sub, dsRegistrant, opts)
 	require.NotNil(t, err, "Failed to error when it should")
 	assert.Equal(t, "that subdomain already exists", err.Error())
 }
 
-func TestSetAdministrator(t *testing.T) {
-	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
-	dsAdministrator := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+func TestSetController(t *testing.T) {
+	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsController := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
 
-	// Ensure that the owner starts out as the administrator
-	administrator, err := name.Administrator()
-	require.Nil(t, err, "Failed to obtain administrator")
-	require.Equal(t, dsOwner, administrator, "Initial administrator incorrect")
+	// Ensure that the registrant starts out as the controller
+	controller, err := name.Controller()
+	require.Nil(t, err, "Failed to obtain controller")
+	require.Equal(t, dsRegistrant, controller, "Initial controller incorrect")
 
-	// Set the administrator
-	opts, err := generateTxOpts(client, dsOwner, "0")
+	// Set the controller
+	opts, err := generateTxOpts(client, dsRegistrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err := name.SetAdministrator(dsAdministrator, opts)
+	tx, err := name.SetController(dsController, opts)
 	require.Nil(t, err, "Failed to generate transaction")
 	waitForTransaction(client, tx.Hash())
 
-	// Confirm the administrator is set
-	administrator, err = name.Administrator()
-	require.Nil(t, err, "Failed to obtain administrator (2)")
-	require.Equal(t, dsAdministrator, administrator, "Updated administrator incorrect")
+	// Confirm the controller is set
+	controller, err = name.Controller()
+	require.Nil(t, err, "Failed to obtain controller (2)")
+	require.Equal(t, dsController, controller, "Updated controller incorrect")
 
-	// Reset the administrator role
-	opts, err = generateTxOpts(client, dsOwner, "0")
+	// Reset the controller role
+	opts, err = generateTxOpts(client, dsRegistrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err = name.SetAdministrator(dsOwner, opts)
+	tx, err = name.SetController(dsRegistrant, opts)
 	require.Nil(t, err, "Failed to generate transaction (2)")
 	waitForTransaction(client, tx.Hash())
 
-	// Confirm the administrator is reset
-	administrator, err = name.Administrator()
-	require.Nil(t, err, "Failed to obtain administrator (3)")
-	require.Equal(t, dsOwner, administrator, "Reset administrator incorrect")
+	// Confirm the controller is reset
+	controller, err = name.Controller()
+	require.Nil(t, err, "Failed to obtain controller (3)")
+	require.Equal(t, dsRegistrant, controller, "Reset controller incorrect")
 }
 
-func TestSetAdministratorUnauthorised(t *testing.T) {
-	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+func TestSetControllerUnauthorised(t *testing.T) {
+	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	dsThief := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
 
-	// Ensure that the owner starts out as the administrator
-	administrator, err := name.Administrator()
-	require.Nil(t, err, "Failed to obtain administrator")
-	require.Equal(t, dsOwner, administrator, "Initial administrator incorrect")
+	// Ensure that the registrant starts out as the controller
+	controller, err := name.Controller()
+	require.Nil(t, err, "Failed to obtain controller")
+	require.Equal(t, dsRegistrant, controller, "Initial controller incorrect")
 
-	// Try to set the administrator
+	// Try to set the controller
 	opts, err := generateTxOpts(client, dsThief, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	_, err = name.SetAdministrator(dsOwner, opts)
+	_, err = name.SetController(dsRegistrant, opts)
 	require.NotNil(t, err, "Failed to error when it should")
-	assert.Equal(t, "not authorised to change the administrator", err.Error())
+	assert.Equal(t, "not authorised to change the controller", err.Error())
 }
 
 func TestReclaim(t *testing.T) {
-	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
-	dsAdministrator := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsController := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
 
-	// Ensure that the owner starts out as the administrator
-	administrator, err := name.Administrator()
-	require.Nil(t, err, "Failed to obtain administrator")
-	require.Equal(t, dsOwner, administrator, "Initial administrator incorrect")
+	// Ensure that the registrant starts out as the controller
+	controller, err := name.Controller()
+	require.Nil(t, err, "Failed to obtain controller")
+	require.Equal(t, dsRegistrant, controller, "Initial controller incorrect")
 
-	// Set the administrator
-	opts, err := generateTxOpts(client, dsOwner, "0")
+	// Set the controller
+	opts, err := generateTxOpts(client, dsRegistrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err := name.SetAdministrator(dsAdministrator, opts)
+	tx, err := name.SetController(dsController, opts)
 	require.Nil(t, err, "Failed to generate transaction")
 	waitForTransaction(client, tx.Hash())
 
-	// Confirm the administrator is set
-	administrator, err = name.Administrator()
-	require.Nil(t, err, "Failed to obtain administrator (2)")
-	require.Equal(t, dsAdministrator, administrator, "Updated administrator incorrect")
+	// Confirm the controller is set
+	controller, err = name.Controller()
+	require.Nil(t, err, "Failed to obtain controller (2)")
+	require.Equal(t, dsController, controller, "Updated controller incorrect")
 
-	// Set the administrator role
-	opts, err = generateTxOpts(client, dsOwner, "0")
+	// Set the controller role
+	opts, err = generateTxOpts(client, dsRegistrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
 	tx, err = name.Reclaim(opts)
 	require.Nil(t, err, "Failed to generate transaction (2)")
 	waitForTransaction(client, tx.Hash())
 
-	// Confirm the administrator is reset
-	administrator, err = name.Administrator()
-	require.Nil(t, err, "Failed to obtain administrator (3)")
-	require.Equal(t, dsOwner, administrator, "Reset administrator incorrect")
+	// Confirm the controller is reset
+	controller, err = name.Controller()
+	require.Nil(t, err, "Failed to obtain controller (3)")
+	require.Equal(t, dsRegistrant, controller, "Reset controller incorrect")
 }
 
 func TestReclaimUnauthorised(t *testing.T) {
-	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	dsThief := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
 
-	// Ensure that the owner starts out as the administrator
-	administrator, err := name.Administrator()
-	require.Nil(t, err, "Failed to obtain administrator")
-	require.Equal(t, dsOwner, administrator, "Initial administrator incorrect")
+	// Ensure that the registrant starts out as the controller
+	controller, err := name.Controller()
+	require.Nil(t, err, "Failed to obtain controller")
+	require.Equal(t, dsRegistrant, controller, "Initial controller incorrect")
 
 	// Try to reclaim
 	opts, err := generateTxOpts(client, dsThief, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
 	_, err = name.Reclaim(opts)
 	require.NotNil(t, err, "Failed to error when it should")
-	assert.Equal(t, "not the owner", err.Error())
+	assert.Equal(t, "not the current registrant", err.Error())
 }
 
-func TestSetOwner(t *testing.T) {
-	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
-	dsNewOwner := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+func TestTransfer(t *testing.T) {
+	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	dsNewRegistrant := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
 
-	// Ensure the existing owner is correct
-	owner, err := name.Owner()
-	require.Nil(t, err, "Failed to obtain owner")
-	require.Equal(t, dsOwner, owner, "Initial owner incorrect")
+	// Ensure the existing registrant is correct
+	registrant, err := name.Registrant()
+	require.Nil(t, err, "Failed to obtain registrant")
+	require.Equal(t, dsRegistrant, registrant, "Initial registrant incorrect")
 
-	// Set the owner
-	opts, err := generateTxOpts(client, dsOwner, "0")
+	// Set the registrant
+	opts, err := generateTxOpts(client, dsRegistrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err := name.SetOwner(dsNewOwner, opts)
+	tx, err := name.Transfer(dsNewRegistrant, opts)
 	require.Nil(t, err, "Failed to generate transaction")
 	waitForTransaction(client, tx.Hash())
 
-	// Confirm the new owner is set
-	owner, err = name.Owner()
-	require.Nil(t, err, "Failed to obtain owner (2)")
-	require.Equal(t, dsNewOwner, owner, "Updated owner incorrect")
+	// Confirm the new registrant is set
+	registrant, err = name.Registrant()
+	require.Nil(t, err, "Failed to obtain registrant (2)")
+	require.Equal(t, dsNewRegistrant, registrant, "Updated registrant incorrect")
 
-	// Reset the owner
-	opts, err = generateTxOpts(client, dsNewOwner, "0")
+	// Reset the registrant
+	opts, err = generateTxOpts(client, dsNewRegistrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err = name.SetOwner(dsOwner, opts)
+	tx, err = name.Transfer(dsRegistrant, opts)
 	require.Nil(t, err, "Failed to generate transaction (2)")
 	waitForTransaction(client, tx.Hash())
 
-	// Confirm the owner is reset
-	owner, err = name.Owner()
-	require.Nil(t, err, "Failed to obtain owner (3)")
-	require.Equal(t, dsOwner, owner, "Reset owner incorrect")
+	// Confirm the registrant is reset
+	registrant, err = name.Registrant()
+	require.Nil(t, err, "Failed to obtain registrant (3)")
+	require.Equal(t, dsRegistrant, registrant, "Reset registrant incorrect")
 }
 
-func TestSetOwnerUnauthorised(t *testing.T) {
-	dsOwner := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+func TestTransferUnauthorised(t *testing.T) {
+	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	dsThief := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
 
-	// Ensure that the owner starts out as the administrator
-	owner, err := name.Owner()
-	require.Nil(t, err, "Failed to obtain owner")
-	require.Equal(t, dsOwner, owner, "Initial owner incorrect")
+	// Ensure that the registrant starts out as the controller
+	registrant, err := name.Registrant()
+	require.Nil(t, err, "Failed to obtain registrant")
+	require.Equal(t, dsRegistrant, registrant, "Initial registrant incorrect")
 
 	// Try to steal
 	opts, err := generateTxOpts(client, dsThief, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	_, err = name.SetOwner(dsThief, opts)
+	_, err = name.Transfer(dsThief, opts)
 	require.NotNil(t, err, "Failed to error when it should")
-	assert.Equal(t, "not the owner", err.Error())
+	assert.Equal(t, "not the registrant", err.Error())
 }
 
 func generateTxOpts(client *ethclient.Client, sender common.Address, valueStr string) (*bind.TransactOpts, error) {
@@ -527,8 +527,8 @@ func unregisteredDomain(client *ethclient.Client) string {
 	registry, _ := NewRegistry(client)
 	for {
 		domain := fmt.Sprintf("go-ens-test-%d.eth", rand.Int31())
-		owner, _ := registry.Owner(domain)
-		if owner == UnknownAddress {
+		controller, _ := registry.Owner(domain)
+		if controller == UnknownAddress {
 			return domain
 		}
 	}
