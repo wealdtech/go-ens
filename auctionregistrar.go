@@ -30,7 +30,7 @@ import (
 type AuctionRegistrar struct {
 	client   *ethclient.Client
 	domain   string
-	contract *auctionregistrar.Contract
+	Contract *auctionregistrar.Contract
 }
 
 // AuctionEntry is an auction entry
@@ -61,7 +61,7 @@ func NewAuctionRegistrarAt(client *ethclient.Client, domain string, address comm
 	return &AuctionRegistrar{
 		client:   client,
 		domain:   domain,
-		contract: contract,
+		Contract: contract,
 	}, nil
 }
 
@@ -78,7 +78,7 @@ func (r *AuctionRegistrar) Entry(domain string) (*AuctionEntry, error) {
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	status, deedAddress, registration, value, highestBid, err := r.contract.Entries(nil, LabelHash(name))
+	status, deedAddress, registration, value, highestBid, err := r.Contract.Entries(nil, LabelHash(name))
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func (r *AuctionRegistrar) Migrate(opts *bind.TransactOpts, domain string) (*typ
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	return r.contract.TransferRegistrars(opts, LabelHash(name))
+	return r.Contract.TransferRegistrars(opts, LabelHash(name))
 }
 
 // Release releases a domain
@@ -141,7 +141,7 @@ func (r *AuctionRegistrar) Release(opts *bind.TransactOpts, domain string) (*typ
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	return r.contract.ReleaseDeed(opts, LabelHash(name))
+	return r.Contract.ReleaseDeed(opts, LabelHash(name))
 }
 
 // Owner obtains the owner of the deed that represents the name.
@@ -170,10 +170,10 @@ func (r *AuctionRegistrar) SetOwner(opts *bind.TransactOpts, domain string, addr
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	return r.contract.Transfer(opts, LabelHash(name), address)
+	return r.Contract.Transfer(opts, LabelHash(name), address)
 }
 
 // ShaBid calculates the hash for a bid.
 func (r *AuctionRegistrar) ShaBid(hash [32]byte, address common.Address, value *big.Int, salt [32]byte) ([32]byte, error) {
-	return r.contract.ShaBid(nil, hash, address, value, salt)
+	return r.Contract.ShaBid(nil, hash, address, value, salt)
 }

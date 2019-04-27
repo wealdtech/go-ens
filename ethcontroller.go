@@ -30,7 +30,7 @@ import (
 // ETHController is the structure for the .eth controller contract
 type ETHController struct {
 	client   *ethclient.Client
-	contract *ethcontroller.Contract
+	Contract *ethcontroller.Contract
 	domain   string
 }
 
@@ -62,7 +62,7 @@ func NewETHControllerAt(client *ethclient.Client, domain string, address common.
 	}
 	return &ETHController{
 		client:   client,
-		contract: contract,
+		Contract: contract,
 		domain:   domain,
 	}, nil
 }
@@ -73,7 +73,7 @@ func (c *ETHController) IsValid(domain string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("invalid name %s", domain)
 	}
-	return c.contract.Valid(nil, name)
+	return c.Contract.Valid(nil, name)
 }
 
 // IsAvailable returns true if the domain is available for registration.
@@ -82,12 +82,12 @@ func (c *ETHController) IsAvailable(domain string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("invalid name %s", domain)
 	}
-	return c.contract.Available(nil, name)
+	return c.Contract.Available(nil, name)
 }
 
 // MinRegistrationDuration returns the minimum duration for which a name can be registered
 func (c *ETHController) MinRegistrationDuration() (time.Duration, error) {
-	tmp, err := c.contract.MINREGISTRATIONDURATION(nil)
+	tmp, err := c.Contract.MINREGISTRATIONDURATION(nil)
 	if err != nil {
 		return 0 * time.Second, err
 	}
@@ -101,17 +101,17 @@ func (c *ETHController) RentCost(domain string) (*big.Int, error) {
 	if err != nil {
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
-	return c.contract.RentPrice(nil, name, big.NewInt(1))
+	return c.Contract.RentPrice(nil, name, big.NewInt(1))
 }
 
 // MinCommitmentInterval returns the minimum time that has to pass between a commit and reveal
 func (c *ETHController) MinCommitmentInterval() (*big.Int, error) {
-	return c.contract.MinCommitmentAge(nil)
+	return c.Contract.MinCommitmentAge(nil)
 }
 
 // MaxCommitmentInterval returns the maximum time that has to pass between a commit and reveal
 func (c *ETHController) MaxCommitmentInterval() (*big.Int, error) {
-	return c.contract.MaxCommitmentAge(nil)
+	return c.Contract.MaxCommitmentAge(nil)
 }
 
 // CommitmentHash returns the commitment hash for a label/owner/secret tuple
@@ -121,7 +121,7 @@ func (c *ETHController) CommitmentHash(domain string, owner common.Address, secr
 		return common.BytesToHash([]byte{}), fmt.Errorf("invalid name %s", domain)
 	}
 
-	commitment, err := c.contract.MakeCommitment(nil, name, owner, secret)
+	commitment, err := c.Contract.MakeCommitment(nil, name, owner, secret)
 	if err != nil {
 		return common.BytesToHash([]byte{}), err
 	}
@@ -136,7 +136,7 @@ func (c *ETHController) CommitmentTime(domain string, owner common.Address, secr
 		return nil, err
 	}
 
-	return c.contract.Commitments(nil, hash)
+	return c.Contract.Commitments(nil, hash)
 }
 
 // Commit sends a commitment to register a domain.
@@ -146,7 +146,7 @@ func (c *ETHController) Commit(opts *bind.TransactOpts, domain string, owner com
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	commitment, err := c.contract.MakeCommitment(nil, name, owner, secret)
+	commitment, err := c.Contract.MakeCommitment(nil, name, owner, secret)
 	if err != nil {
 		return nil, errors.New("failed to create commitment")
 	}
@@ -155,7 +155,7 @@ func (c *ETHController) Commit(opts *bind.TransactOpts, domain string, owner com
 		return nil, errors.New("commitment should have 0 value")
 	}
 
-	return c.contract.Commit(opts, commitment)
+	return c.Contract.Commit(opts, commitment)
 }
 
 // Reveal reveals a commitment to register a domain.
@@ -217,7 +217,7 @@ func (c *ETHController) Reveal(opts *bind.TransactOpts, domain string, owner com
 		return nil, fmt.Errorf("not enough funds to cover minimum duration of %v", minDuration)
 	}
 
-	return c.contract.Register(opts, name, owner, duration, secret)
+	return c.Contract.Register(opts, name, owner, duration, secret)
 }
 
 // Renew renews a registered domain.
@@ -247,5 +247,5 @@ func (c *ETHController) Renew(opts *bind.TransactOpts, domain string) (*types.Tr
 	}
 	duration := new(big.Int).Div(opts.Value, costPerSecond)
 
-	return c.contract.Renew(opts, name, duration)
+	return c.Contract.Renew(opts, name, duration)
 }

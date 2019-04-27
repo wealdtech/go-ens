@@ -32,7 +32,7 @@ import (
 type BaseRegistrar struct {
 	client   *ethclient.Client
 	domain   string
-	contract *baseregistrar.Contract
+	Contract *baseregistrar.Contract
 }
 
 // NewBaseRegistrar obtains the registrar contract for a given domain
@@ -71,13 +71,13 @@ func NewBaseRegistrar(client *ethclient.Client, domain string) (*BaseRegistrar, 
 	return &BaseRegistrar{
 		client:   client,
 		domain:   domain,
-		contract: contract,
+		Contract: contract,
 	}, nil
 }
 
 // PriorAuctionContract obtains the previous (auction) registrar contract
 func (r *BaseRegistrar) PriorAuctionContract() (*AuctionRegistrar, error) {
-	address, err := r.contract.PreviousRegistrar(nil)
+	address, err := r.Contract.PreviousRegistrar(nil)
 	if err != nil {
 		return nil, errors.New("no prior auction contract")
 	}
@@ -157,7 +157,7 @@ func (r *BaseRegistrar) Owner(domain string) (common.Address, error) {
 		return UnknownAddress, err
 	}
 	hash := LabelHash(name)
-	owner, err := r.contract.OwnerOf(nil, new(big.Int).SetBytes(hash[:]))
+	owner, err := r.Contract.OwnerOf(nil, new(big.Int).SetBytes(hash[:]))
 	// Registrar reverts rather than provide a 0 owner, so...
 	if err != nil && err.Error() == "abi: unmarshalling empty output" {
 		return UnknownAddress, nil
@@ -177,7 +177,7 @@ func (r *BaseRegistrar) SetOwner(opts *bind.TransactOpts, domain string, newOwne
 	}
 	hash := LabelHash(name)
 	id := new(big.Int).SetBytes(hash[:])
-	return r.contract.TransferFrom(opts, owner, newOwner, id)
+	return r.Contract.TransferFrom(opts, owner, newOwner, id)
 }
 
 // Expiry obtains the unix timestamp at which the registration expires.
@@ -188,7 +188,7 @@ func (r *BaseRegistrar) Expiry(domain string) (*big.Int, error) {
 	}
 	hash := LabelHash(name)
 	id := new(big.Int).SetBytes(hash[:])
-	return r.contract.NameExpires(nil, id)
+	return r.Contract.NameExpires(nil, id)
 }
 
 // Reclaim reclaims a domain by the owner
@@ -199,5 +199,5 @@ func (r *BaseRegistrar) Reclaim(opts *bind.TransactOpts, domain string) (*types.
 	}
 	hash := LabelHash(name)
 	id := new(big.Int).SetBytes(hash[:])
-	return r.contract.Reclaim(opts, id)
+	return r.Contract.Reclaim(opts, id)
 }

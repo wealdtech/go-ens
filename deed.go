@@ -24,7 +24,7 @@ import (
 
 // Deed is the structure for the deed
 type Deed struct {
-	contract *deed.Contract
+	Contract *deed.Contract
 }
 
 // NewDeed obtains the deed contract for a given domain
@@ -52,21 +52,21 @@ func NewDeedAt(client *ethclient.Client, address common.Address) (*Deed, error) 
 	}
 
 	return &Deed{
-		contract: contract,
+		Contract: contract,
 	}, nil
 }
 
 // Owner obtains the owner of the deed
 func (c *Deed) Owner() (common.Address, error) {
-	return c.contract.Owner(nil)
+	return c.Contract.Owner(nil)
 }
 
 // PreviousOwner obtains the previous owner of the deed
 func (c *Deed) PreviousOwner() (common.Address, error) {
-	return c.contract.PreviousOwner(nil)
+	return c.Contract.PreviousOwner(nil)
 }
 
 // SetOwner sets the owner of the deed
 func (c *Deed) SetOwner(opts *bind.TransactOpts, address common.Address) (*types.Transaction, error) {
-	return c.contract.SetOwner(opts, address)
+	return c.Contract.SetOwner(opts, address)
 }
