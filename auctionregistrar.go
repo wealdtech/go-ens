@@ -28,9 +28,10 @@ import (
 
 // AuctionRegistrar is the structure for the auction registrar contract
 type AuctionRegistrar struct {
-	client   *ethclient.Client
-	domain   string
-	Contract *auctionregistrar.Contract
+	client       *ethclient.Client
+	domain       string
+	Contract     *auctionregistrar.Contract
+	ContractAddr common.Address
 }
 
 // AuctionEntry is an auction entry
@@ -59,9 +60,10 @@ func NewAuctionRegistrarAt(client *ethclient.Client, domain string, address comm
 		return nil, err
 	}
 	return &AuctionRegistrar{
-		client:   client,
-		domain:   domain,
-		Contract: contract,
+		client:       client,
+		domain:       domain,
+		Contract:     contract,
+		ContractAddr: address,
 	}, nil
 }
 

@@ -37,8 +37,9 @@ var UnknownAddress = common.HexToAddress("00")
 
 // Resolver is the structure for the resolver contract
 type Resolver struct {
-	Contract *resolver.Contract
-	domain   string
+	Contract     *resolver.Contract
+	ContractAddr common.Address
+	domain       string
 }
 
 // NewResolver obtains an ENS resolver for a given domain
@@ -82,19 +83,15 @@ func NewResolverAt(client *ethclient.Client, domain string, address common.Addre
 	}
 
 	return &Resolver{
-		Contract: contract,
-		domain:   domain,
+		Contract:     contract,
+		ContractAddr: address,
+		domain:       domain,
 	}, nil
 }
 
 // PublicResolverAddress obtains the address of the public resolver for a chain
 func PublicResolverAddress(client *ethclient.Client) (common.Address, error) {
 	return Resolve(client, "resolver.eth")
-	//	registry, err := NewRegistry(client)
-	//	if err != nil {
-	//		return UnknownAddress, err
-	//	}
-	//	return registry.ResolverAddress("eth")
 }
 
 // Address returns the address of the domain

@@ -26,7 +26,8 @@ import (
 
 // ReverseRegistrar is the structure for the reverse registrar
 type ReverseRegistrar struct {
-	contract *reverseregistrar.Contract
+	Contract     *reverseregistrar.Contract
+	ContractAddr common.Address
 }
 
 // NewReverseRegistrar obtains the reverse registrar
@@ -54,16 +55,17 @@ func NewReverseRegistrarAt(client *ethclient.Client, address common.Address) (*R
 		return nil, err
 	}
 	return &ReverseRegistrar{
-		contract: contract,
+		Contract:     contract,
+		ContractAddr: address,
 	}, nil
 }
 
 // SetName sets the name
 func (r *ReverseRegistrar) SetName(opts *bind.TransactOpts, name string) (tx *types.Transaction, err error) {
-	return r.contract.SetName(opts, name)
+	return r.Contract.SetName(opts, name)
 }
 
 // DefaultResolverAddress obtains the default resolver address
 func (r *ReverseRegistrar) DefaultResolverAddress() (common.Address, error) {
-	return r.contract.DefaultResolver(nil)
+	return r.Contract.DefaultResolver(nil)
 }

@@ -30,9 +30,10 @@ import (
 
 // BaseRegistrar is the structure for the registrar
 type BaseRegistrar struct {
-	client   *ethclient.Client
-	domain   string
-	Contract *baseregistrar.Contract
+	client       *ethclient.Client
+	domain       string
+	Contract     *baseregistrar.Contract
+	ContractAddr common.Address
 }
 
 // NewBaseRegistrar obtains the registrar contract for a given domain
@@ -69,9 +70,10 @@ func NewBaseRegistrar(client *ethclient.Client, domain string) (*BaseRegistrar, 
 	}
 
 	return &BaseRegistrar{
-		client:   client,
-		domain:   domain,
-		Contract: contract,
+		client:       client,
+		domain:       domain,
+		Contract:     contract,
+		ContractAddr: address,
 	}, nil
 }
 

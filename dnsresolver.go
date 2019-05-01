@@ -28,9 +28,10 @@ import (
 
 // DNSResolver is the structure for the DNS resolver contract
 type DNSResolver struct {
-	client   *ethclient.Client
-	domain   string
-	contract *dnsresolver.Contract
+	client       *ethclient.Client
+	domain       string
+	Contract     *dnsresolver.Contract
+	ContractAddr common.Address
 }
 
 // NewDNSResolver creates a new DNS resolver for a given domain
@@ -64,25 +65,26 @@ func NewDNSResolverAt(client *ethclient.Client, domain string, address common.Ad
 	}
 
 	return &DNSResolver{
-		client:   client,
-		domain:   domain,
-		contract: contract,
+		client:       client,
+		domain:       domain,
+		Contract:     contract,
+		ContractAddr: address,
 	}, nil
 }
 
 // Record obtains an RRSet for a name
 func (r *DNSResolver) Record(name string, rrType uint16) ([]byte, error) {
-	return r.contract.DnsRecord(nil, NameHash(r.domain), DNSWireFormatDomainHash(name), rrType)
+	return r.Contract.DnsRecord(nil, NameHash(r.domain), DNSWireFormatDomainHash(name), rrType)
 }
 
 // SetRecords sets one or more RRSets
 func (r *DNSResolver) SetRecords(opts *bind.TransactOpts, data []byte) (*types.Transaction, error) {
-	return r.contract.SetDNSRecords(opts, NameHash(r.domain), data)
+	return r.Contract.SetDNSRecords(opts, NameHash(r.domain), data)
 }
 
 // ClearDNSZone clears all records in the zone
 func (r *DNSResolver) ClearDNSZone(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return r.contract.ClearDNSZone(opts, NameHash(r.domain))
+	return r.Contract.ClearDNSZone(opts, NameHash(r.domain))
 }
 
 // DNSWireFormatDomainHash hashes a domain name in wire format

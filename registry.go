@@ -34,8 +34,9 @@ import (
 
 // Registry is the structure for the registry contract
 type Registry struct {
-	client   *ethclient.Client
-	Contract *registry.Contract
+	client       *ethclient.Client
+	Contract     *registry.Contract
+	ContractAddr common.Address
 }
 
 // NewRegistry obtains the ENS registry
@@ -54,8 +55,9 @@ func NewRegistryAt(client *ethclient.Client, address common.Address) (*Registry,
 		return nil, err
 	}
 	return &Registry{
-		client:   client,
-		Contract: contract,
+		client:       client,
+		Contract:     contract,
+		ContractAddr: address,
 	}, nil
 }
 

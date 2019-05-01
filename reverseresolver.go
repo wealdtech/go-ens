@@ -25,7 +25,8 @@ import (
 
 // ReverseResolver is the structure for the reverse resolver contract
 type ReverseResolver struct {
-	contract *reverseresolver.Contract
+	Contract     *reverseresolver.Contract
+	ContractAddr common.Address
 }
 
 // NewReverseResolver obtains the reverse resolver
@@ -59,13 +60,14 @@ func NewReverseResolverAt(client *ethclient.Client, address common.Address) (*Re
 	}
 
 	return &ReverseResolver{
-		contract: contract,
+		Contract:     contract,
+		ContractAddr: address,
 	}, nil
 }
 
 // Name obtains the name for an address
 func (r *ReverseResolver) Name(address common.Address) (string, error) {
-	return r.contract.Name(nil, NameHash(fmt.Sprintf("%s.addr.reverse", address.Hex()[2:])))
+	return r.Contract.Name(nil, NameHash(fmt.Sprintf("%s.addr.reverse", address.Hex()[2:])))
 }
 
 // Format provides a string version of an address, reverse resolving it if possible

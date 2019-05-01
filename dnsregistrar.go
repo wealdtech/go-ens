@@ -17,15 +17,17 @@ package ens
 import (
 	"fmt"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/dnsregistrar"
 )
 
 // DNSRegistrar is the structure for the registrar
 type DNSRegistrar struct {
-	client   *ethclient.Client
-	domain   string
-	Contract *dnsregistrar.Contract
+	client       *ethclient.Client
+	domain       string
+	Contract     *dnsregistrar.Contract
+	ContractAddr common.Address
 }
 
 // NewDNSRegistrar obtains the registrar contract for a given domain
@@ -55,9 +57,10 @@ func NewDNSRegistrar(client *ethclient.Client, domain string) (*DNSRegistrar, er
 	}
 
 	return &DNSRegistrar{
-		client:   client,
-		domain:   domain,
-		Contract: contract,
+		client:       client,
+		domain:       domain,
+		Contract:     contract,
+		ContractAddr: address,
 	}, nil
 }
 

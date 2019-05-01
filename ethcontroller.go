@@ -29,9 +29,10 @@ import (
 
 // ETHController is the structure for the .eth controller contract
 type ETHController struct {
-	client   *ethclient.Client
-	Contract *ethcontroller.Contract
-	domain   string
+	client       *ethclient.Client
+	Contract     *ethcontroller.Contract
+	ContractAddr common.Address
+	domain       string
 }
 
 // NewETHController creates a new controller for a given domain
@@ -61,9 +62,10 @@ func NewETHControllerAt(client *ethclient.Client, domain string, address common.
 		return nil, err
 	}
 	return &ETHController{
-		client:   client,
-		Contract: contract,
-		domain:   domain,
+		client:       client,
+		Contract:     contract,
+		ContractAddr: address,
+		domain:       domain,
 	}, nil
 }
 
