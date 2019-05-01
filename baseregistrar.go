@@ -60,7 +60,7 @@ func NewBaseRegistrar(client *ethclient.Client, domain string) (*BaseRegistrar, 
 	if !supported {
 		return nil, fmt.Errorf("purported registrar for domain %s does not support nametoken functionality", domain)
 	}
-	supported, err = contract.SupportsInterface(nil, [4]byte{0x2d, 0xab, 0xbe, 0xed})
+	supported, err = contract.SupportsInterface(nil, [4]byte{0x28, 0xed, 0x4f, 0x6c})
 	if err != nil {
 		return nil, err
 	}
@@ -192,12 +192,12 @@ func (r *BaseRegistrar) Expiry(domain string) (*big.Int, error) {
 }
 
 // Reclaim reclaims a domain by the owner
-func (r *BaseRegistrar) Reclaim(opts *bind.TransactOpts, domain string) (*types.Transaction, error) {
+func (r *BaseRegistrar) Reclaim(opts *bind.TransactOpts, domain string, newOwner common.Address) (*types.Transaction, error) {
 	name, err := UnqualifiedName(domain, r.domain)
 	if err != nil {
 		return nil, err
 	}
 	hash := LabelHash(name)
 	id := new(big.Int).SetBytes(hash[:])
-	return r.Contract.Reclaim(opts, id)
+	return r.Contract.Reclaim(opts, id, newOwner)
 }

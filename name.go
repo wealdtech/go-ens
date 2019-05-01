@@ -240,7 +240,7 @@ func (n *Name) Reclaim(opts *bind.TransactOpts) (*types.Transaction, error) {
 	if registrant != opts.From {
 		return nil, errors.New("not the registrant")
 	}
-	return n.registrar.Reclaim(opts, n.Name)
+	return n.registrar.Reclaim(opts, n.Name, registrant)
 }
 
 // Registrant obtains the registrant for this name.
