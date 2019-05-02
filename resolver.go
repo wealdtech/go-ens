@@ -95,8 +95,8 @@ func PublicResolverAddress(client *ethclient.Client) (common.Address, error) {
 }
 
 // Address returns the address of the domain
-func (r *Resolver) Address(domain string) (common.Address, error) {
-	return r.Contract.Addr(nil, NameHash(domain))
+func (r *Resolver) Address() (common.Address, error) {
+	return r.Contract.Addr(nil, NameHash(r.domain))
 }
 
 // SetAddress sets the address of the domain
@@ -155,7 +155,7 @@ func resolveHash(client *ethclient.Client, domain string) (address common.Addres
 	}
 
 	// Resolve the domain
-	address, err = resolver.Address(domain)
+	address, err = resolver.Address()
 	if err != nil {
 		return UnknownAddress, err
 	}
