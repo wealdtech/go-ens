@@ -77,6 +77,11 @@ func (r *DNSResolver) Record(name string, rrType uint16) ([]byte, error) {
 	return r.Contract.DnsRecord(nil, NameHash(r.domain), DNSWireFormatDomainHash(name), rrType)
 }
 
+// HasRecords returns true if the given name has any RRsets
+func (r *DNSResolver) HasRecords(name string) (bool, error) {
+	return r.Contract.HasDNSRecords(nil, NameHash(r.domain), DNSWireFormatDomainHash(name))
+}
+
 // SetRecords sets one or more RRSets
 func (r *DNSResolver) SetRecords(opts *bind.TransactOpts, data []byte) (*types.Transaction, error) {
 	return r.Contract.SetDNSRecords(opts, NameHash(r.domain), data)
