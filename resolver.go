@@ -166,8 +166,18 @@ func resolveHash(client *ethclient.Client, domain string) (address common.Addres
 	return
 }
 
-// SetAbi sets the ABI associated with a name
-func SetAbi(session *resolver.ContractSession, name string, abi string, contentType *big.Int) (tx *types.Transaction, err error) {
+// SetText sets the text associated with a name
+func (r *Resolver) SetText(opts *bind.TransactOpts, name string, value string) (*types.Transaction, error) {
+	return r.Contract.SetText(opts, NameHash(r.domain), name, value)
+}
+
+// Text obtains the text associated with a name
+func (r *Resolver) Text(name string) (string, error) {
+	return r.Contract.Text(nil, NameHash(r.domain), name)
+}
+
+// SetABI sets the ABI associated with a name
+func (r *Resolver) SetABI(opts *bind.TransactOpts, name string, abi string, contentType *big.Int) (*types.Transaction, error) {
 	var data []byte
 	if contentType.Cmp(big.NewInt(1)) == 0 {
 		// Uncompressed JSON
@@ -180,19 +190,17 @@ func SetAbi(session *resolver.ContractSession, name string, abi string, contentT
 		w.Close()
 		data = b.Bytes()
 	} else {
-		err = errors.New("Unsupported content type")
+		return nil, errors.New("Unsupported content type")
 	}
-	// Gas cost is around 50000 + 64 per byte; add 10000 headroom to be safe
-	//session.TransactOpts.GasLimit = big.NewInt(int64(600000 + len(data)*64))
-	tx, err = session.SetABI(NameHash(name), contentType, data)
 
-	return
+	return r.Contract.SetABI(opts, NameHash(r.domain), contentType, data)
 }
 
-// Abi returns the ABI associated with a name
-func Abi(resolver *resolver.Contract, name string) (abi string, err error) {
+// ABI returns the ABI associated with a name
+func (r *Resolver) ABI(name string) (string, error) {
 	contentTypes := big.NewInt(3)
-	contentType, data, err := resolver.ABI(nil, NameHash(name), contentTypes)
+	contentType, data, err := r.Contract.ABI(nil, NameHash(name), contentTypes)
+	var abi string
 	if err == nil {
 		if contentType.Cmp(big.NewInt(1)) == 0 {
 			// Uncompressed JSON
@@ -203,7 +211,7 @@ func Abi(resolver *resolver.Contract, name string) (abi string, err error) {
 			var z io.ReadCloser
 			z, err = zlib.NewReader(b)
 			if err != nil {
-				return
+				return "", err
 			}
 			defer z.Close()
 			var uncompressed []byte
@@ -211,5 +219,5 @@ func Abi(resolver *resolver.Contract, name string) (abi string, err error) {
 			abi = string(uncompressed)
 		}
 	}
-	return
+	return abi, nil
 }
