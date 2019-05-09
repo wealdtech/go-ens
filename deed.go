@@ -18,7 +18,6 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/deed"
 )
 
@@ -28,10 +27,10 @@ type Deed struct {
 }
 
 // NewDeed obtains the deed contract for a given domain
-func NewDeed(client *ethclient.Client, domain string) (*Deed, error) {
+func NewDeed(backend bind.ContractBackend, domain string) (*Deed, error) {
 
 	// Obtain the auction registrar for the deed
-	auctionRegistrar, err := NewAuctionRegistrar(client, domain)
+	auctionRegistrar, err := NewAuctionRegistrar(backend, domain)
 	if err != nil {
 		return nil, err
 	}
@@ -41,12 +40,12 @@ func NewDeed(client *ethclient.Client, domain string) (*Deed, error) {
 		return nil, err
 	}
 
-	return NewDeedAt(client, entry.Deed)
+	return NewDeedAt(backend, entry.Deed)
 }
 
 // NewDeedAt creates a deed contract at a given address
-func NewDeedAt(client *ethclient.Client, address common.Address) (*Deed, error) {
-	contract, err := deed.NewContract(address, client)
+func NewDeedAt(backend bind.ContractBackend, address common.Address) (*Deed, error) {
+	contract, err := deed.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}

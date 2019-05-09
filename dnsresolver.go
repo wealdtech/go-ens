@@ -21,22 +21,21 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/dnsresolver"
 	"golang.org/x/crypto/sha3"
 )
 
 // DNSResolver is the structure for the DNS resolver contract
 type DNSResolver struct {
-	client       *ethclient.Client
+	backend      bind.ContractBackend
 	domain       string
 	Contract     *dnsresolver.Contract
 	ContractAddr common.Address
 }
 
 // NewDNSResolver creates a new DNS resolver for a given domain
-func NewDNSResolver(client *ethclient.Client, domain string) (*DNSResolver, error) {
-	registry, err := NewRegistry(client)
+func NewDNSResolver(backend bind.ContractBackend, domain string) (*DNSResolver, error) {
+	registry, err := NewRegistry(backend)
 	if err != nil {
 		return nil, err
 	}
@@ -45,12 +44,12 @@ func NewDNSResolver(client *ethclient.Client, domain string) (*DNSResolver, erro
 		return nil, err
 	}
 
-	return NewDNSResolverAt(client, domain, address)
+	return NewDNSResolverAt(backend, domain, address)
 }
 
 // NewDNSResolverAt creates a new DNS resolver for a given domain at a given address
-func NewDNSResolverAt(client *ethclient.Client, domain string, address common.Address) (*DNSResolver, error) {
-	contract, err := dnsresolver.NewContract(address, client)
+func NewDNSResolverAt(backend bind.ContractBackend, domain string, address common.Address) (*DNSResolver, error) {
+	contract, err := dnsresolver.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +64,7 @@ func NewDNSResolverAt(client *ethclient.Client, domain string, address common.Ad
 	}
 
 	return &DNSResolver{
-		client:       client,
+		backend:      backend,
 		domain:       domain,
 		Contract:     contract,
 		ContractAddr: address,

@@ -20,7 +20,6 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/reverseregistrar"
 )
 
@@ -31,8 +30,8 @@ type ReverseRegistrar struct {
 }
 
 // NewReverseRegistrar obtains the reverse registrar
-func NewReverseRegistrar(client *ethclient.Client) (*ReverseRegistrar, error) {
-	registry, err := NewRegistry(client)
+func NewReverseRegistrar(backend bind.ContractBackend) (*ReverseRegistrar, error) {
+	registry, err := NewRegistry(backend)
 	if err != nil {
 		return nil, err
 	}
@@ -45,12 +44,12 @@ func NewReverseRegistrar(client *ethclient.Client) (*ReverseRegistrar, error) {
 	if address == UnknownAddress {
 		return nil, errors.New("no registrar for that network")
 	}
-	return NewReverseRegistrarAt(client, address)
+	return NewReverseRegistrarAt(backend, address)
 }
 
 // NewReverseRegistrarAt obtains the reverse registrar at a given address
-func NewReverseRegistrarAt(client *ethclient.Client, address common.Address) (*ReverseRegistrar, error) {
-	contract, err := reverseregistrar.NewContract(address, client)
+func NewReverseRegistrarAt(backend bind.ContractBackend, address common.Address) (*ReverseRegistrar, error) {
+	contract, err := reverseregistrar.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}

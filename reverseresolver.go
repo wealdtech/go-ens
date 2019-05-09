@@ -18,8 +18,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/reverseresolver"
 )
 
@@ -30,8 +30,8 @@ type ReverseResolver struct {
 }
 
 // NewReverseResolver obtains the reverse resolver
-func NewReverseResolver(client *ethclient.Client) (*ReverseResolver, error) {
-	reverseRegistrar, err := NewReverseRegistrar(client)
+func NewReverseResolver(backend bind.ContractBackend) (*ReverseResolver, error) {
+	reverseRegistrar, err := NewReverseRegistrar(backend)
 	if err != nil {
 		return nil, err
 	}
@@ -42,13 +42,13 @@ func NewReverseResolver(client *ethclient.Client) (*ReverseResolver, error) {
 		return nil, err
 	}
 
-	return NewReverseResolverAt(client, address)
+	return NewReverseResolverAt(backend, address)
 }
 
 // NewReverseResolverAt obtains the reverse resolver at a given address
-func NewReverseResolverAt(client *ethclient.Client, address common.Address) (*ReverseResolver, error) {
+func NewReverseResolverAt(backend bind.ContractBackend, address common.Address) (*ReverseResolver, error) {
 	// Instantiate the reverse registrar contract
-	contract, err := reverseresolver.NewContract(address, client)
+	contract, err := reverseresolver.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
@@ -71,8 +71,8 @@ func (r *ReverseResolver) Name(address common.Address) (string, error) {
 }
 
 // Format provides a string version of an address, reverse resolving it if possible
-func Format(client *ethclient.Client, address common.Address) string {
-	result, err := ReverseResolve(client, address)
+func Format(backend bind.ContractBackend, address common.Address) string {
+	result, err := ReverseResolve(backend, address)
 	if err != nil {
 		result = fmt.Sprintf("%s", address.Hex())
 	}
@@ -81,8 +81,8 @@ func Format(client *ethclient.Client, address common.Address) string {
 
 // ReverseResolve resolves an address in to an ENS name
 // This will return an error if the name is not found or otherwise 0
-func ReverseResolve(client *ethclient.Client, address common.Address) (string, error) {
-	resolver, err := NewReverseResolver(client)
+func ReverseResolve(backend bind.ContractBackend, address common.Address) (string, error) {
+	resolver, err := NewReverseResolver(backend)
 	if err != nil {
 		return "", err
 	}

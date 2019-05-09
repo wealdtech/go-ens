@@ -23,21 +23,20 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/ethcontroller"
 )
 
 // ETHController is the structure for the .eth controller contract
 type ETHController struct {
-	client       *ethclient.Client
+	backend      bind.ContractBackend
 	Contract     *ethcontroller.Contract
 	ContractAddr common.Address
 	domain       string
 }
 
 // NewETHController creates a new controller for a given domain
-func NewETHController(client *ethclient.Client, domain string) (*ETHController, error) {
-	registry, err := NewRegistry(client)
+func NewETHController(backend bind.ContractBackend, domain string) (*ETHController, error) {
+	registry, err := NewRegistry(backend)
 	if err != nil {
 		return nil, err
 	}
@@ -52,17 +51,17 @@ func NewETHController(client *ethclient.Client, domain string) (*ETHController, 
 		return nil, err
 	}
 
-	return NewETHControllerAt(client, domain, controllerAddress)
+	return NewETHControllerAt(backend, domain, controllerAddress)
 }
 
 // NewETHControllerAt creates a .eth controller at a given address
-func NewETHControllerAt(client *ethclient.Client, domain string, address common.Address) (*ETHController, error) {
-	contract, err := ethcontroller.NewContract(address, client)
+func NewETHControllerAt(backend bind.ContractBackend, domain string, address common.Address) (*ETHController, error) {
+	contract, err := ethcontroller.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
 	return &ETHController{
-		client:       client,
+		backend:      backend,
 		Contract:     contract,
 		ContractAddr: address,
 		domain:       domain,
@@ -230,7 +229,7 @@ func (c *ETHController) Renew(opts *bind.TransactOpts, domain string) (*types.Tr
 	}
 
 	// See if we're registered at all - fetch the owner to find out
-	registry, err := NewRegistry(c.client)
+	registry, err := NewRegistry(c.backend)
 	if err != nil {
 		return nil, err
 	}

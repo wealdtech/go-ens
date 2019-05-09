@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"reflect"
 	"time"
 
 	"github.com/ethereum/go-ethereum/accounts"
@@ -34,28 +35,28 @@ import (
 
 // Registry is the structure for the registry contract
 type Registry struct {
-	client       *ethclient.Client
+	backend      bind.ContractBackend
 	Contract     *registry.Contract
 	ContractAddr common.Address
 }
 
 // NewRegistry obtains the ENS registry
-func NewRegistry(client *ethclient.Client) (*Registry, error) {
-	address, err := RegistryContractAddress(client)
+func NewRegistry(backend bind.ContractBackend) (*Registry, error) {
+	address, err := RegistryContractAddress(backend)
 	if err != nil {
 		return nil, err
 	}
-	return NewRegistryAt(client, address)
+	return NewRegistryAt(backend, address)
 }
 
 // NewRegistryAt obtains the ENS registry at a given address
-func NewRegistryAt(client *ethclient.Client, address common.Address) (*Registry, error) {
-	contract, err := registry.NewContract(address, client)
+func NewRegistryAt(backend bind.ContractBackend, address common.Address) (*Registry, error) {
+	contract, err := registry.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
 	return &Registry{
-		client:       client,
+		backend:      backend,
 		Contract:     contract,
 		ContractAddr: address,
 	}, nil
@@ -82,7 +83,7 @@ func (r *Registry) Resolver(name string) (*Resolver, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NewResolverAt(r.client, name, address)
+	return NewResolverAt(r.backend, name, address)
 }
 
 // SetOwner sets the ownership of a domain
@@ -96,12 +97,16 @@ func (r *Registry) SetSubdomainOwner(opts *bind.TransactOpts, name string, subna
 }
 
 // RegistryContractAddress obtains the address of the registry contract for a chain
-func RegistryContractAddress(client *ethclient.Client) (common.Address, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	chainID, err := client.NetworkID(ctx)
-	if err != nil {
-		return UnknownAddress, err
+func RegistryContractAddress(backend bind.ContractBackend) (common.Address, error) {
+	chainID := big.NewInt(0)
+	if reflect.TypeOf(backend).String() == "*ethclient.Client" {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		var err error
+		chainID, err = backend.(*ethclient.Client).NetworkID(ctx)
+		if err != nil {
+			return UnknownAddress, err
+		}
 	}
 
 	// Instantiate the registry contract
@@ -121,19 +126,19 @@ func RegistryContractAddress(client *ethclient.Client) (common.Address, error) {
 }
 
 //// RegistryContract obtains the registry contract for a chain
-//func RegistryContract(client *ethclient.Client) (*registry.RegistryContract, error) {
-//	address, err := RegistryContractAddress(client)
+//func RegistryContract(backend bind.ContractBackend) (*registry.RegistryContract, error) {
+//	address, err := RegistryContractAddress(backend)
 //	if err != nil {
 //		return nil, err
 //	}
 //
 //	// Instantiate the registry contract
-//	return registry.NewRegistryContract(address, client)
+//	return registry.NewRegistryContract(address, backend)
 //}
 
 // RegistryContractFromRegistrar obtains the registry contract given an
 // existing registrar contract
-func RegistryContractFromRegistrar(client *ethclient.Client, registrar *auctionregistrar.Contract) (*registry.RegistryContract, error) {
+func RegistryContractFromRegistrar(backend bind.ContractBackend, registrar *auctionregistrar.Contract) (*registry.RegistryContract, error) {
 	if registrar == nil {
 		return nil, errors.New("no registrar contract")
 	}
@@ -141,7 +146,7 @@ func RegistryContractFromRegistrar(client *ethclient.Client, registrar *auctionr
 	if err != nil {
 		return nil, err
 	}
-	return registry.NewRegistryContract(registryAddress, client)
+	return registry.NewRegistryContract(registryAddress, backend)
 }
 
 //// Resolver obtains the address of the resolver for a .eth name

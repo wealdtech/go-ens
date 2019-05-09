@@ -23,22 +23,21 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/baseregistrar"
 	"golang.org/x/crypto/sha3"
 )
 
 // BaseRegistrar is the structure for the registrar
 type BaseRegistrar struct {
-	client       *ethclient.Client
+	backend      bind.ContractBackend
 	domain       string
 	Contract     *baseregistrar.Contract
 	ContractAddr common.Address
 }
 
 // NewBaseRegistrar obtains the registrar contract for a given domain
-func NewBaseRegistrar(client *ethclient.Client, domain string) (*BaseRegistrar, error) {
-	address, err := RegistrarContractAddress(client, domain)
+func NewBaseRegistrar(backend bind.ContractBackend, domain string) (*BaseRegistrar, error) {
+	address, err := RegistrarContractAddress(backend, domain)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +46,7 @@ func NewBaseRegistrar(client *ethclient.Client, domain string) (*BaseRegistrar, 
 		return nil, fmt.Errorf("no registrar for domain %s", domain)
 	}
 
-	contract, err := baseregistrar.NewContract(address, client)
+	contract, err := baseregistrar.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +69,7 @@ func NewBaseRegistrar(client *ethclient.Client, domain string) (*BaseRegistrar, 
 	}
 
 	return &BaseRegistrar{
-		client:       client,
+		backend:      backend,
 		domain:       domain,
 		Contract:     contract,
 		ContractAddr: address,
@@ -83,7 +82,7 @@ func (r *BaseRegistrar) PriorAuctionContract() (*AuctionRegistrar, error) {
 	if err != nil {
 		return nil, errors.New("no prior auction contract")
 	}
-	auctionContract, err := NewAuctionRegistrarAt(r.client, r.domain, address)
+	auctionContract, err := NewAuctionRegistrarAt(r.backend, r.domain, address)
 	if err != nil {
 		return nil, errors.New("failed to instantiate prior auction contract")
 	}
@@ -118,7 +117,7 @@ func (r *BaseRegistrar) RegisteredWith(domain string) (string, error) {
 		return "", err
 	}
 	// See if we're registered at all - fetch the owner to find out
-	registry, err := NewRegistry(r.client)
+	registry, err := NewRegistry(r.backend)
 	if err != nil {
 		return "", err
 	}

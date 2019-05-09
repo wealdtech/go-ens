@@ -26,7 +26,6 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/resolver"
 )
 
@@ -43,8 +42,8 @@ type Resolver struct {
 }
 
 // NewResolver obtains an ENS resolver for a given domain
-func NewResolver(client *ethclient.Client, domain string) (*Resolver, error) {
-	registry, err := NewRegistry(client)
+func NewResolver(backend bind.ContractBackend, domain string) (*Resolver, error) {
+	registry, err := NewRegistry(backend)
 	if err != nil {
 		return nil, err
 	}
@@ -63,12 +62,12 @@ func NewResolver(client *ethclient.Client, domain string) (*Resolver, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NewResolverAt(client, domain, resolver)
+	return NewResolverAt(backend, domain, resolver)
 }
 
 // NewResolverAt obtains an ENS resolver at a given address
-func NewResolverAt(client *ethclient.Client, domain string, address common.Address) (*Resolver, error) {
-	contract, err := resolver.NewContract(address, client)
+func NewResolverAt(backend bind.ContractBackend, domain string, address common.Address) (*Resolver, error) {
+	contract, err := resolver.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
@@ -90,8 +89,8 @@ func NewResolverAt(client *ethclient.Client, domain string, address common.Addre
 }
 
 // PublicResolverAddress obtains the address of the public resolver for a chain
-func PublicResolverAddress(client *ethclient.Client) (common.Address, error) {
-	return Resolve(client, "resolver.eth")
+func PublicResolverAddress(backend bind.ContractBackend) (common.Address, error) {
+	return Resolve(backend, "resolver.eth")
 }
 
 // Address returns the address of the domain
@@ -121,9 +120,9 @@ func (r *Resolver) InterfaceImplementer(interfaceID [4]byte) (common.Address, er
 
 // Resolve resolves an ENS name in to an Etheruem address
 // This will return an error if the name is not found or otherwise 0
-func Resolve(client *ethclient.Client, input string) (address common.Address, err error) {
+func Resolve(backend bind.ContractBackend, input string) (address common.Address, err error) {
 	if strings.Contains(input, ".") {
-		return resolveName(client, input)
+		return resolveName(backend, input)
 	}
 	if (strings.HasPrefix(input, "0x") && len(input) > 42) || (!strings.HasPrefix(input, "0x") && len(input) > 40) {
 		err = errors.New("address too long")
@@ -137,19 +136,19 @@ func Resolve(client *ethclient.Client, input string) (address common.Address, er
 	return
 }
 
-func resolveName(client *ethclient.Client, input string) (address common.Address, err error) {
+func resolveName(backend bind.ContractBackend, input string) (address common.Address, err error) {
 	var nameHash [32]byte
 	nameHash = NameHash(input)
 	if bytes.Compare(nameHash[:], zeroHash) == 0 {
 		err = errors.New("Bad name")
 	} else {
-		address, err = resolveHash(client, input)
+		address, err = resolveHash(backend, input)
 	}
 	return
 }
 
-func resolveHash(client *ethclient.Client, domain string) (address common.Address, err error) {
-	resolver, err := NewResolver(client, domain)
+func resolveHash(backend bind.ContractBackend, domain string) (address common.Address, err error) {
+	resolver, err := NewResolver(backend, domain)
 	if err != nil {
 		return UnknownAddress, err
 	}

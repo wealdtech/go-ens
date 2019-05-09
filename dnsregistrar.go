@@ -17,22 +17,22 @@ package ens
 import (
 	"fmt"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/dnsregistrar"
 )
 
 // DNSRegistrar is the structure for the registrar
 type DNSRegistrar struct {
-	client       *ethclient.Client
+	backend      bind.ContractBackend
 	domain       string
 	Contract     *dnsregistrar.Contract
 	ContractAddr common.Address
 }
 
 // NewDNSRegistrar obtains the registrar contract for a given domain
-func NewDNSRegistrar(client *ethclient.Client, domain string) (*DNSRegistrar, error) {
-	address, err := RegistrarContractAddress(client, domain)
+func NewDNSRegistrar(backend bind.ContractBackend, domain string) (*DNSRegistrar, error) {
+	address, err := RegistrarContractAddress(backend, domain)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func NewDNSRegistrar(client *ethclient.Client, domain string) (*DNSRegistrar, er
 		return nil, fmt.Errorf("no registrar for domain %s", domain)
 	}
 
-	contract, err := dnsregistrar.NewContract(address, client)
+	contract, err := dnsregistrar.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func NewDNSRegistrar(client *ethclient.Client, domain string) (*DNSRegistrar, er
 	}
 
 	return &DNSRegistrar{
-		client:       client,
+		backend:      backend,
 		domain:       domain,
 		Contract:     contract,
 		ContractAddr: address,

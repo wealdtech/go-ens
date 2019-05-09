@@ -22,13 +22,12 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/auctionregistrar"
 )
 
 // AuctionRegistrar is the structure for the auction registrar contract
 type AuctionRegistrar struct {
-	client       *ethclient.Client
+	backend      bind.ContractBackend
 	domain       string
 	Contract     *auctionregistrar.Contract
 	ContractAddr common.Address
@@ -44,23 +43,23 @@ type AuctionEntry struct {
 }
 
 // NewAuctionRegistrar creates a new auction registrar for a given domain
-func NewAuctionRegistrar(client *ethclient.Client, domain string) (*AuctionRegistrar, error) {
-	address, err := RegistrarContractAddress(client, domain)
+func NewAuctionRegistrar(backend bind.ContractBackend, domain string) (*AuctionRegistrar, error) {
+	address, err := RegistrarContractAddress(backend, domain)
 	if err != nil {
 		return nil, err
 	}
 
-	return NewAuctionRegistrarAt(client, domain, address)
+	return NewAuctionRegistrarAt(backend, domain, address)
 }
 
 // NewAuctionRegistrarAt creates an auction registrar for a given domain at a given address
-func NewAuctionRegistrarAt(client *ethclient.Client, domain string, address common.Address) (*AuctionRegistrar, error) {
-	contract, err := auctionregistrar.NewContract(address, client)
+func NewAuctionRegistrarAt(backend bind.ContractBackend, domain string, address common.Address) (*AuctionRegistrar, error) {
+	contract, err := auctionregistrar.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
 	return &AuctionRegistrar{
-		client:       client,
+		backend:      backend,
 		domain:       domain,
 		Contract:     contract,
 		ContractAddr: address,
@@ -98,7 +97,7 @@ func (r *AuctionRegistrar) Entry(domain string) (*AuctionEntry, error) {
 		entry.State = "Bidding"
 	case 2:
 		// Might be won or owned
-		registry, err := NewRegistry(r.client)
+		registry, err := NewRegistry(r.backend)
 		if err != nil {
 			return nil, err
 		}
@@ -158,7 +157,7 @@ func (r *AuctionRegistrar) Owner(domain string) (common.Address, error) {
 		return UnknownAddress, err
 	}
 
-	deed, err := NewDeedAt(r.client, entry.Deed)
+	deed, err := NewDeedAt(r.backend, entry.Deed)
 	if err != nil {
 		return UnknownAddress, err
 	}

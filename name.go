@@ -24,12 +24,11 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 // Name represents an ENS name, for example 'foo.bar.eth'.
 type Name struct {
-	client *ethclient.Client
+	backend bind.ContractBackend
 	// Name is the fully-qualified name of an ENS domain e.g. foo.bar.eth
 	Name string
 	// Domain is the domain of an ENS domain e.g. bar.eth
@@ -44,7 +43,7 @@ type Name struct {
 
 // NewName creates an ENS name structure.
 // Note that this does not create the name on-chain.
-func NewName(client *ethclient.Client, name string) (*Name, error) {
+func NewName(backend bind.ContractBackend, name string) (*Name, error) {
 	name = NormaliseDomain(name)
 	domain := Domain(name)
 	label, err := DomainPart(name, 1)
@@ -52,15 +51,15 @@ func NewName(client *ethclient.Client, name string) (*Name, error) {
 		return nil, err
 	}
 
-	registry, err := NewRegistry(client)
+	registry, err := NewRegistry(backend)
 	if err != nil {
 		return nil, err
 	}
-	registrar, err := NewBaseRegistrar(client, domain)
+	registrar, err := NewBaseRegistrar(backend, domain)
 	if err != nil {
 		return nil, err
 	}
-	controller, err := NewETHController(client, domain)
+	controller, err := NewETHController(backend, domain)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +73,7 @@ func NewName(client *ethclient.Client, name string) (*Name, error) {
 	}
 
 	return &Name{
-		client:     client,
+		backend:    backend,
 		Name:       name,
 		Domain:     domain,
 		Label:      label,

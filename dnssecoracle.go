@@ -15,22 +15,22 @@
 package ens
 
 import (
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/wealdtech/go-ens/v2/contracts/dnssecoracle"
 )
 
 // DNSSECOracle is the structure for the DNSSEC oracle
 type DNSSECOracle struct {
-	client       *ethclient.Client
+	backend      bind.ContractBackend
 	domain       string
 	Contract     *dnssecoracle.Contract
 	ContractAddr common.Address
 }
 
 // NewDNSSECOracle obtains the DNSSEC oracle contract for a given domain
-func NewDNSSECOracle(client *ethclient.Client, domain string) (*DNSSECOracle, error) {
-	registrar, err := NewDNSRegistrar(client, domain)
+func NewDNSSECOracle(backend bind.ContractBackend, domain string) (*DNSSECOracle, error) {
+	registrar, err := NewDNSRegistrar(backend, domain)
 	if err != nil {
 		return nil, err
 	}
@@ -40,13 +40,13 @@ func NewDNSSECOracle(client *ethclient.Client, domain string) (*DNSSECOracle, er
 		return nil, err
 	}
 
-	contract, err := dnssecoracle.NewContract(address, client)
+	contract, err := dnssecoracle.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
 
 	return &DNSSECOracle{
-		client:       client,
+		backend:      backend,
 		domain:       domain,
 		Contract:     contract,
 		ContractAddr: address,

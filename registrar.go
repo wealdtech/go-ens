@@ -17,14 +17,14 @@ package ens
 import (
 	"fmt"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 // RegistrarContractAddress obtains the registrar contract address for a given domain
-func RegistrarContractAddress(client *ethclient.Client, domain string) (common.Address, error) {
+func RegistrarContractAddress(backend bind.ContractBackend, domain string) (common.Address, error) {
 	// Obtain a registry contract
-	registry, err := NewRegistry(client)
+	registry, err := NewRegistry(backend)
 	if err != nil {
 		return UnknownAddress, err
 	}
