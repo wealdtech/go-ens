@@ -215,6 +215,9 @@ func (r *Resolver) ABI(name string) (string, error) {
 			defer z.Close()
 			var uncompressed []byte
 			uncompressed, err = ioutil.ReadAll(z)
+			if err != nil {
+				return "", err
+			}
 			abi = string(uncompressed)
 		}
 	}

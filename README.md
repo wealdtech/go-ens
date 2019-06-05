@@ -5,6 +5,7 @@
 [![GoDoc](https://godoc.org/github.com/wealdtech/go-ens?status.svg)](https://godoc.org/github.com/wealdtech/go-ens)
 [![Travis CI](https://img.shields.io/travis/wealdtech/go-ens.svg)](https://travis-ci.org/wealdtech/go-ens)
 [![codecov.io](https://img.shields.io/codecov/c/github/wealdtech/go-ens.svg)](https://codecov.io/github/wealdtech/go-ens)
+[![Go Report Card](https://goreportcard.com/badge/github.com/wealdtech/go-ens)](https://goreportcard.com/report/github.com/wealdtech/go-ens)
 
 Go module to simplify interacting with the [Ethereum Name Service](https://ens.domains/) contracts.
 

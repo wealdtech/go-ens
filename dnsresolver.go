@@ -60,7 +60,7 @@ func NewDNSResolverAt(backend bind.ContractBackend, domain string, address commo
 		return nil, err
 	}
 	if !supported {
-		err = fmt.Errorf("%s is not a DNS resolver contract", address.Hex())
+		return nil, fmt.Errorf("%s is not a DNS resolver contract", address.Hex())
 	}
 
 	return &DNSResolver{
