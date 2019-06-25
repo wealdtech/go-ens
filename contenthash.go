@@ -34,10 +34,10 @@ func StringToContenthash(text string) ([]byte, error) {
 	data := make([]byte, 0)
 	switch bits[1] {
 	case "ipfs":
-		// Codec
+		// Namespace
 		ipfsNum, err := multicodec.ID("ipfs-ns")
 		if err != nil {
-			return nil, errors.New("failed to obtain IPFS codec value")
+			return nil, errors.New("failed to obtain IPFS namespace value")
 		}
 		buf := make([]byte, binary.MaxVarintLen64)
 		size := binary.PutUvarint(buf, ipfsNum)
@@ -45,7 +45,7 @@ func StringToContenthash(text string) ([]byte, error) {
 		// CID
 		size = binary.PutUvarint(buf, 1)
 		data = append(data, buf[0:size]...)
-		// Subcodec
+		// Codec
 		dagNum, err := multicodec.ID("dag-pb")
 		if err != nil {
 			return nil, errors.New("failed to obtain IPFS codec value")
@@ -58,11 +58,42 @@ func StringToContenthash(text string) ([]byte, error) {
 			return nil, errors.New("failed to obtain IPFS hash")
 		}
 		data = append(data, []byte(hash)...)
-	case "swarm":
+	case "ipns":
+		// Namespace
+		ipfsNum, err := multicodec.ID("ipns-ns")
+		if err != nil {
+			return nil, errors.New("failed to obtain IPNS namespace value")
+		}
+		buf := make([]byte, binary.MaxVarintLen64)
+		size := binary.PutUvarint(buf, ipfsNum)
+		data = append(data, buf[0:size]...)
+		// CID
+		size = binary.PutUvarint(buf, 1)
+		data = append(data, buf[0:size]...)
 		// Codec
+		dagNum, err := multicodec.ID("dag-pb")
+		if err != nil {
+			return nil, errors.New("failed to obtain IPNS codec value")
+		}
+		size = binary.PutUvarint(buf, dagNum)
+		data = append(data, buf[0:size]...)
+		// Assume it's a multihash to begin with
+		hash, err := multihash.FromB58String(bits[2])
+		if err == nil {
+			data = append(data, []byte(hash)...)
+		} else {
+			// Wasn't a multihash; pass along as identity
+			encoded, err := multihash.Encode([]byte(bits[2]), multihash.ID)
+			if err != nil {
+				return nil, err
+			}
+			data = append(data, encoded...)
+		}
+	case "swarm":
+		// Namespace
 		swarmNum, err := multicodec.ID("swarm-ns")
 		if err != nil {
-			return nil, errors.New("failed to obtain swarm codec value")
+			return nil, errors.New("failed to obtain swarm namespace value")
 		}
 		buf := make([]byte, binary.MaxVarintLen64)
 		size := binary.PutUvarint(buf, swarmNum)
@@ -70,7 +101,7 @@ func StringToContenthash(text string) ([]byte, error) {
 		// CID
 		size = binary.PutUvarint(buf, 1)
 		data = append(data, buf[0:size]...)
-		// Subcodec
+		// Codec
 		manifestNum, err := multicodec.ID("swarm-manifest")
 		if err != nil {
 			return nil, errors.New("failed to obtain swarm manifest codec value")
@@ -116,16 +147,29 @@ func ContenthashToString(bytes []byte) (string, error) {
 		return "", err
 	}
 
+	mHash, err := multihash.Cast(data)
+	if err != nil {
+		return "", err
+	}
+	decodedMHash, err := multihash.Decode(data)
+	if err != nil {
+		return "", err
+	}
 	switch codecName {
 	case "ipfs-ns":
-		mHash := multihash.Multihash(data)
 		return fmt.Sprintf("/ipfs/%s", mHash.B58String()), nil
+	case "ipns-ns":
+		switch decodedMHash.Code {
+		case multihash.ID:
+			return fmt.Sprintf("/ipns/%s", string(decodedMHash.Digest)), nil
+		default:
+			return fmt.Sprintf("/ipns/%s", mHash.B58String()), nil
+		}
 	case "swarm-ns":
-		hash, err := multihash.Decode(data)
 		if err != nil {
 			return "", err
 		}
-		return fmt.Sprintf("/swarm/%x", hash.Digest), nil
+		return fmt.Sprintf("/swarm/%x", decodedMHash.Digest), nil
 	default:
 		return "", fmt.Errorf("unknown codec %s", codecName)
 	}

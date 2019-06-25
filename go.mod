@@ -24,7 +24,7 @@ require (
 	github.com/rs/cors v1.6.0 // indirect
 	github.com/stretchr/testify v1.3.0
 	github.com/syndtr/goleveldb v1.0.0 // indirect
-	github.com/wealdtech/go-multicodec v1.1.0
+	github.com/wealdtech/go-multicodec v1.2.0
 	github.com/wealdtech/go-string2eth v1.0.0
 	golang.org/x/crypto v0.0.0-20190426145343-a29dc8fdc734
 	golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3
