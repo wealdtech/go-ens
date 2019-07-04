@@ -60,12 +60,12 @@ func StringToContenthash(text string) ([]byte, error) {
 		data = append(data, []byte(hash)...)
 	case "ipns":
 		// Namespace
-		ipfsNum, err := multicodec.ID("ipns-ns")
+		ipnsNum, err := multicodec.ID("ipns-ns")
 		if err != nil {
 			return nil, errors.New("failed to obtain IPNS namespace value")
 		}
 		buf := make([]byte, binary.MaxVarintLen64)
-		size := binary.PutUvarint(buf, ipfsNum)
+		size := binary.PutUvarint(buf, ipnsNum)
 		data = append(data, buf[0:size]...)
 		// CID
 		size = binary.PutUvarint(buf, 1)
