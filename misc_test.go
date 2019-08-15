@@ -26,7 +26,7 @@ func TestNormaliseDomain(t *testing.T) {
 		{"subdomain.wealdtech.eth", "subdomain.wealdtech.eth", nil},
 		{"*.wealdtech.eth", "*.wealdtech.eth", nil},
 		{"omg.thetoken.eth", "omg.thetoken.eth", nil},
-		{"_underscore.thetoken.eth", "", errors.New("idna: disallowed rune U+005F")},
+		{"_underscore.thetoken.eth", "_underscore.thetoken.eth", nil},
 		{"點看.eth", "點看.eth", nil},
 	}
 
@@ -52,7 +52,7 @@ func TestNormaliseDomain(t *testing.T) {
 	}
 }
 
-func TestNormaliseForHashing(t *testing.T) {
+func TestNormaliseDomainStrict(t *testing.T) {
 	tests := []struct {
 		input  string
 		output string
@@ -67,15 +67,15 @@ func TestNormaliseForHashing(t *testing.T) {
 		{"wealdtech.eth", "wealdtech.eth", nil},
 		{".wealdtech.eth", ".wealdtech.eth", nil},
 		{"subdomain.wealdtech.eth", "subdomain.wealdtech.eth", nil},
-		{"*.wealdtech.eth", "*.wealdtech.eth", errors.New("idna: disallowed rune U+002A")},
+		{"*.wealdtech.eth", "*.wealdtech.eth", nil},
 		{"omg.thetoken.eth", "omg.thetoken.eth", nil},
 		{"_underscore.thetoken.eth", "", errors.New("idna: disallowed rune U+005F")},
-		{"點看.eth", "xn--c1yn36f.eth", nil},
+		{"點看.eth", "點看.eth", nil},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.input, func(t *testing.T) {
-			result, err := normalizeForHashing(tt.input)
+			result, err := NormaliseDomainStrict(tt.input)
 			if tt.err != nil {
 				if err == nil {
 					t.Fatalf("missing expected error")

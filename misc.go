@@ -37,6 +37,31 @@ func NormaliseDomain(domain string) (string, error) {
 	return output, nil
 }
 
+// NormaliseDomainStrict turns ENS domain in to normal form, using strict DNS
+// rules (e.g. no underscores)
+func NormaliseDomainStrict(domain string) (string, error) {
+	wildcard := false
+	if strings.HasPrefix(domain, "*.") {
+		wildcard = true
+		domain = domain[2:]
+	}
+	output, err := pStrict.ToUnicode(strings.ToLower(domain))
+	if err != nil {
+		return "", err
+	}
+
+	// ToUnicode() removes leading periods.  Replace them
+	if strings.HasPrefix(domain, ".") && !strings.HasPrefix(output, ".") {
+		output = "." + output
+	}
+
+	// If we removed a wildcard then add it back
+	if wildcard {
+		output = "*." + output
+	}
+	return output, nil
+}
+
 // Tld obtains the top-level domain of an ENS name
 func Tld(domain string) string {
 	domain, err := NormaliseDomain(domain)

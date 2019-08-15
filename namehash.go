@@ -22,7 +22,8 @@ import (
 	"golang.org/x/crypto/sha3"
 )
 
-var p = idna.New(idna.MapForLookup(), idna.StrictDomainName(true), idna.Transitional(false))
+var p = idna.New(idna.MapForLookup(), idna.StrictDomainName(false), idna.Transitional(false))
+var pStrict = idna.New(idna.MapForLookup(), idna.StrictDomainName(true), idna.Transitional(false))
 
 // Normalize normalizes a name according to the ENS rules
 func Normalize(input string) (output string, err error) {
@@ -37,22 +38,9 @@ func Normalize(input string) (output string, err error) {
 	return
 }
 
-// normalizeForHashing turns the input into a valid punycode string
-func normalizeForHashing(input string) (output string, err error) {
-	output, err = p.ToASCII(input)
-	if err != nil {
-		return
-	}
-	// If the name started with a period then ToASCII() removes it, but we want to keep it
-	if strings.HasPrefix(input, ".") && !strings.HasPrefix(output, ".") {
-		output = "." + output
-	}
-	return
-}
-
 // LabelHash generates a simple hash for a piece of a name.
 func LabelHash(label string) (hash [32]byte, err error) {
-	normalizedLabel, err := normalizeForHashing(label)
+	normalizedLabel, err := Normalize(label)
 	if err != nil {
 		return
 	}
@@ -69,7 +57,7 @@ func NameHash(name string) (hash [32]byte, err error) {
 	if name == "" {
 		return
 	}
-	normalizedName, err := normalizeForHashing(name)
+	normalizedName, err := Normalize(name)
 	if err != nil {
 		return
 	}
