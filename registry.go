@@ -64,17 +64,29 @@ func NewRegistryAt(backend bind.ContractBackend, address common.Address) (*Regis
 
 // Owner returns the address of the owner of a name
 func (r *Registry) Owner(name string) (common.Address, error) {
-	return r.Contract.Owner(nil, NameHash(name))
+	nameHash, err := NameHash(name)
+	if err != nil {
+		return UnknownAddress, err
+	}
+	return r.Contract.Owner(nil, nameHash)
 }
 
 // ResolverAddress returns the address of the resolver for a name
 func (r *Registry) ResolverAddress(name string) (common.Address, error) {
-	return r.Contract.Resolver(nil, NameHash(name))
+	nameHash, err := NameHash(name)
+	if err != nil {
+		return UnknownAddress, err
+	}
+	return r.Contract.Resolver(nil, nameHash)
 }
 
 // SetResolver sets the resolver for a name
 func (r *Registry) SetResolver(opts *bind.TransactOpts, name string, address common.Address) (*types.Transaction, error) {
-	return r.Contract.SetResolver(opts, NameHash(name), address)
+	nameHash, err := NameHash(name)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.SetResolver(opts, nameHash, address)
 }
 
 // Resolver returns the resolver for a name
@@ -88,12 +100,24 @@ func (r *Registry) Resolver(name string) (*Resolver, error) {
 
 // SetOwner sets the ownership of a domain
 func (r *Registry) SetOwner(opts *bind.TransactOpts, name string, address common.Address) (*types.Transaction, error) {
-	return r.Contract.SetOwner(opts, NameHash(name), address)
+	nameHash, err := NameHash(name)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.SetOwner(opts, nameHash, address)
 }
 
 // SetSubdomainOwner sets the ownership of a subdomain, potentially creating it in the process
 func (r *Registry) SetSubdomainOwner(opts *bind.TransactOpts, name string, subname string, address common.Address) (*types.Transaction, error) {
-	return r.Contract.SetSubnodeOwner(opts, NameHash(name), LabelHash(subname), address)
+	nameHash, err := NameHash(name)
+	if err != nil {
+		return nil, err
+	}
+	labelHash, err := LabelHash(subname)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.SetSubnodeOwner(opts, nameHash, labelHash, address)
 }
 
 // RegistryContractAddress obtains the address of the registry contract for a chain
@@ -163,12 +187,24 @@ func RegistryContractFromRegistrar(backend bind.ContractBackend, registrar *auct
 
 // SetResolver sets the resolver for a name
 func SetResolver(session *registry.RegistryContractSession, name string, resolverAddr *common.Address) (*types.Transaction, error) {
-	return session.SetResolver(NameHash(name), *resolverAddr)
+	nameHash, err := NameHash(name)
+	if err != nil {
+		return nil, err
+	}
+	return session.SetResolver(nameHash, *resolverAddr)
 }
 
 // SetSubdomainOwner sets the owner for a subdomain of a name
 func SetSubdomainOwner(session *registry.RegistryContractSession, name string, subdomain string, ownerAddr *common.Address) (*types.Transaction, error) {
-	return session.SetSubnodeOwner(NameHash(name), LabelHash(subdomain), *ownerAddr)
+	nameHash, err := NameHash(name)
+	if err != nil {
+		return nil, err
+	}
+	labelHash, err := LabelHash(subdomain)
+	if err != nil {
+		return nil, err
+	}
+	return session.SetSubnodeOwner(nameHash, labelHash, *ownerAddr)
 }
 
 // CreateRegistrySession creates a session suitable for multiple calls

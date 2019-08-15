@@ -40,7 +40,7 @@ func TestName(t *testing.T) {
 	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	dsController := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	dsResolver := common.HexToAddress("4c641fb9bad9b60ef180c31f56051ce826d21a9a")
-	dsExpiry := time.Unix(1585591488, 0)
+	dsExpiry := time.Unix(1628927810, 0)
 	dsRegistrationInterval := 60 * time.Second
 
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
@@ -57,6 +57,7 @@ func TestName(t *testing.T) {
 
 	expiry, err := name.Expires()
 	require.Nil(t, err, "Failed to obtain expiry")
+
 	assert.Equal(t, dsExpiry, expiry, "Failed to obtain correct expiry")
 
 	registrationInterval, err := name.RegistrationInterval()
@@ -79,6 +80,9 @@ func TestNameExpiry(t *testing.T) {
 
 func TestNameReRegistration(t *testing.T) {
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(registrant) {
+		t.Skip()
+	}
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	name, err := NewName(client, "domainsale.eth")
 	require.Nil(t, err, "Failed to create name")
@@ -99,6 +103,9 @@ func TestInvalidName(t *testing.T) {
 func TestNameRegistration(t *testing.T) {
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(registrant) {
+		t.Skip()
+	}
 	domain := unregisteredDomain(client)
 	name, err := NewName(client, domain)
 	require.Nil(t, err, "Failed to create name")
@@ -135,6 +142,9 @@ func TestNameRegistration(t *testing.T) {
 func TestNameRegistrationStageTwoNoStageOne(t *testing.T) {
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(registrant) {
+		t.Skip()
+	}
 	domain := unregisteredDomain(client)
 
 	name, err := NewName(client, domain)
@@ -151,6 +161,9 @@ func TestNameRegistrationStageTwoNoStageOne(t *testing.T) {
 func TestNameRegistrationNoValue(t *testing.T) {
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(registrant) {
+		t.Skip()
+	}
 	domain := unregisteredDomain(client)
 
 	name, err := NewName(client, domain)
@@ -181,6 +194,9 @@ func TestNameRegistrationNoValue(t *testing.T) {
 func TestNameRegistrationNoInterval(t *testing.T) {
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(registrant) {
+		t.Skip()
+	}
 	domain := unregisteredDomain(client)
 
 	name, err := NewName(client, domain)
@@ -204,6 +220,9 @@ func TestNameRegistrationNoInterval(t *testing.T) {
 
 func TestNameExtension(t *testing.T) {
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(registrant) {
+		t.Skip()
+	}
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
@@ -225,6 +244,9 @@ func TestNameExtension(t *testing.T) {
 
 func TestNameExtensionLowValue(t *testing.T) {
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(registrant) {
+		t.Skip()
+	}
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
@@ -237,6 +259,9 @@ func TestNameExtensionLowValue(t *testing.T) {
 
 func TestNameExtensionNotRegistered(t *testing.T) {
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(registrant) {
+		t.Skip()
+	}
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	domain := unregisteredDomain(client)
 	name, err := NewName(client, domain)
@@ -250,6 +275,9 @@ func TestNameExtensionNotRegistered(t *testing.T) {
 
 func TestNameSubdomainCreate(t *testing.T) {
 	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(dsRegistrant) {
+		t.Skip()
+	}
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
@@ -278,6 +306,9 @@ func TestNameSubdomainCreate(t *testing.T) {
 
 func TestNameSubdomainCreateAlreadyExists(t *testing.T) {
 	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(dsRegistrant) {
+		t.Skip()
+	}
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
@@ -295,6 +326,9 @@ func TestNameSubdomainCreateAlreadyExists(t *testing.T) {
 
 func TestSetController(t *testing.T) {
 	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(dsRegistrant) {
+		t.Skip()
+	}
 	dsController := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
@@ -333,7 +367,13 @@ func TestSetController(t *testing.T) {
 
 func TestSetControllerUnauthorised(t *testing.T) {
 	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(dsRegistrant) {
+		t.Skip()
+	}
 	dsThief := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+	if !hasPrivateKey(dsThief) {
+		t.Skip()
+	}
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
@@ -354,6 +394,9 @@ func TestSetControllerUnauthorised(t *testing.T) {
 
 func TestReclaim(t *testing.T) {
 	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(dsRegistrant) {
+		t.Skip()
+	}
 	dsController := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
@@ -393,6 +436,9 @@ func TestReclaim(t *testing.T) {
 func TestReclaimUnauthorised(t *testing.T) {
 	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	dsThief := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+	if !hasPrivateKey(dsThief) {
+		t.Skip()
+	}
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
@@ -413,7 +459,13 @@ func TestReclaimUnauthorised(t *testing.T) {
 
 func TestTransfer(t *testing.T) {
 	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
+	if !hasPrivateKey(dsRegistrant) {
+		t.Skip()
+	}
 	dsNewRegistrant := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+	if !hasPrivateKey(dsNewRegistrant) {
+		t.Skip()
+	}
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
@@ -452,6 +504,9 @@ func TestTransfer(t *testing.T) {
 func TestTransferUnauthorised(t *testing.T) {
 	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	dsThief := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
+	if !hasPrivateKey(dsThief) {
+		t.Skip()
+	}
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
@@ -532,4 +587,9 @@ func unregisteredDomain(client *ethclient.Client) string {
 			return domain
 		}
 	}
+}
+
+func hasPrivateKey(address common.Address) bool {
+	_, err := crypto.HexToECDSA(os.Getenv(fmt.Sprintf("PRIVATE_KEY_%x", address)))
+	return err == nil
 }

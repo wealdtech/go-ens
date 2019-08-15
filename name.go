@@ -44,7 +44,10 @@ type Name struct {
 // NewName creates an ENS name structure.
 // Note that this does not create the name on-chain.
 func NewName(backend bind.ContractBackend, name string) (*Name, error) {
-	name = NormaliseDomain(name)
+	name, err := NormaliseDomain(name)
+	if err != nil {
+		return nil, err
+	}
 	domain := Domain(name)
 	label, err := DomainPart(name, 1)
 	if err != nil {

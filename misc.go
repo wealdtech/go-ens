@@ -14,7 +14,7 @@ func DomainLevel(name string) (level int) {
 }
 
 // NormaliseDomain turns ENS domain in to normal form
-func NormaliseDomain(domain string) string {
+func NormaliseDomain(domain string) (string, error) {
 	wildcard := false
 	if strings.HasPrefix(domain, "*.") {
 		wildcard = true
@@ -22,7 +22,7 @@ func NormaliseDomain(domain string) string {
 	}
 	output, err := p.ToUnicode(strings.ToLower(domain))
 	if err != nil {
-		panic("ENS domain normalisation failed")
+		return "", err
 	}
 
 	// ToUnicode() removes leading periods.  Replace them
@@ -34,12 +34,15 @@ func NormaliseDomain(domain string) string {
 	if wildcard {
 		output = "*." + output
 	}
-	return output
+	return output, nil
 }
 
 // Tld obtains the top-level domain of an ENS name
 func Tld(domain string) string {
-	domain = NormaliseDomain(domain)
+	domain, err := NormaliseDomain(domain)
+	if err != nil {
+		return domain
+	}
 	tld, err := DomainPart(domain, -1)
 	if err != nil {
 		return domain
@@ -75,7 +78,10 @@ func DomainPart(domain string, part int) (string, error) {
 	if part == 0 {
 		return "", fmt.Errorf("Invalid part")
 	}
-	domain = NormaliseDomain(domain)
+	domain, err := NormaliseDomain(domain)
+	if err != nil {
+		return "", err
+	}
 	parts := strings.Split(domain, ".")
 	if len(parts) < abs(part) {
 		return "", fmt.Errorf("Not enough parts")

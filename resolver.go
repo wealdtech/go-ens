@@ -73,7 +73,11 @@ func NewResolverAt(backend bind.ContractBackend, domain string, address common.A
 	}
 
 	// Ensure this really is a resolver contract
-	_, err = contract.Addr(nil, NameHash("test.eth"))
+	nameHash, err := NameHash("test.eth")
+	if err != nil {
+		return nil, err
+	}
+	_, err = contract.Addr(nil, nameHash)
 	if err != nil {
 		if err.Error() == "no contract code at given address" {
 			return nil, errors.New("no resolver")
@@ -95,27 +99,47 @@ func PublicResolverAddress(backend bind.ContractBackend) (common.Address, error)
 
 // Address returns the address of the domain
 func (r *Resolver) Address() (common.Address, error) {
-	return r.Contract.Addr(nil, NameHash(r.domain))
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return UnknownAddress, err
+	}
+	return r.Contract.Addr(nil, nameHash)
 }
 
 // SetAddress sets the address of the domain
 func (r *Resolver) SetAddress(opts *bind.TransactOpts, address common.Address) (*types.Transaction, error) {
-	return r.Contract.SetAddr(opts, NameHash(r.domain), address)
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.SetAddr(opts, nameHash, address)
 }
 
 // Contenthash returns the content hash of the domain
 func (r *Resolver) Contenthash() ([]byte, error) {
-	return r.Contract.Contenthash(nil, NameHash(r.domain))
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.Contenthash(nil, nameHash)
 }
 
 // SetContenthash sets the content hash of the domain
 func (r *Resolver) SetContenthash(opts *bind.TransactOpts, contenthash []byte) (*types.Transaction, error) {
-	return r.Contract.SetContenthash(opts, NameHash(r.domain), contenthash)
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.SetContenthash(opts, nameHash, contenthash)
 }
 
 // InterfaceImplementer returns the address of the contract that implements the given interface for the given domain
 func (r *Resolver) InterfaceImplementer(interfaceID [4]byte) (common.Address, error) {
-	return r.Contract.InterfaceImplementer(nil, NameHash(r.domain), interfaceID)
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return UnknownAddress, err
+	}
+	return r.Contract.InterfaceImplementer(nil, nameHash, interfaceID)
 }
 
 // Resolve resolves an ENS name in to an Etheruem address
@@ -137,8 +161,10 @@ func Resolve(backend bind.ContractBackend, input string) (address common.Address
 }
 
 func resolveName(backend bind.ContractBackend, input string) (address common.Address, err error) {
-	var nameHash [32]byte
-	nameHash = NameHash(input)
+	nameHash, err := NameHash(input)
+	if err != nil {
+		return UnknownAddress, err
+	}
 	if bytes.Compare(nameHash[:], zeroHash) == 0 {
 		err = errors.New("Bad name")
 	} else {
@@ -167,12 +193,20 @@ func resolveHash(backend bind.ContractBackend, domain string) (address common.Ad
 
 // SetText sets the text associated with a name
 func (r *Resolver) SetText(opts *bind.TransactOpts, name string, value string) (*types.Transaction, error) {
-	return r.Contract.SetText(opts, NameHash(r.domain), name, value)
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.SetText(opts, nameHash, name, value)
 }
 
 // Text obtains the text associated with a name
 func (r *Resolver) Text(name string) (string, error) {
-	return r.Contract.Text(nil, NameHash(r.domain), name)
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return "", err
+	}
+	return r.Contract.Text(nil, nameHash, name)
 }
 
 // SetABI sets the ABI associated with a name
@@ -192,13 +226,21 @@ func (r *Resolver) SetABI(opts *bind.TransactOpts, name string, abi string, cont
 		return nil, errors.New("Unsupported content type")
 	}
 
-	return r.Contract.SetABI(opts, NameHash(r.domain), contentType, data)
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.SetABI(opts, nameHash, contentType, data)
 }
 
 // ABI returns the ABI associated with a name
 func (r *Resolver) ABI(name string) (string, error) {
 	contentTypes := big.NewInt(3)
-	contentType, data, err := r.Contract.ABI(nil, NameHash(name), contentTypes)
+	nameHash, err := NameHash(name)
+	if err != nil {
+		return "", err
+	}
+	contentType, data, err := r.Contract.ABI(nil, nameHash, contentTypes)
 	var abi string
 	if err == nil {
 		if contentType.Cmp(big.NewInt(1)) == 0 {

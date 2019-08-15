@@ -25,11 +25,10 @@ import (
 var p = idna.New(idna.MapForLookup(), idna.StrictDomainName(true), idna.Transitional(false))
 
 // Normalize normalizes a name according to the ENS rules
-func Normalize(input string) (output string) {
-	output, err := p.ToUnicode(input)
+func Normalize(input string) (output string, err error) {
+	output, err = p.ToUnicode(input)
 	if err != nil {
-		// TODO find out why ToUnicode() might fail and handle it here
-		output = input
+		return
 	}
 	// If the name started with a period then ToUnicode() removes it, but we want to keep it
 	if strings.HasPrefix(input, ".") && !strings.HasPrefix(output, ".") {
@@ -38,9 +37,25 @@ func Normalize(input string) (output string) {
 	return
 }
 
+// normalizeForHashing turns the input into a valid punycode string
+func normalizeForHashing(input string) (output string, err error) {
+	output, err = p.ToASCII(input)
+	if err != nil {
+		return
+	}
+	// If the name started with a period then ToASCII() removes it, but we want to keep it
+	if strings.HasPrefix(input, ".") && !strings.HasPrefix(output, ".") {
+		output = "." + output
+	}
+	return
+}
+
 // LabelHash generates a simple hash for a piece of a name.
-func LabelHash(label string) (hash [32]byte) {
-	normalizedLabel := NormaliseDomain(label)
+func LabelHash(label string) (hash [32]byte, err error) {
+	normalizedLabel, err := normalizeForHashing(label)
+	if err != nil {
+		return
+	}
 
 	sha := sha3.NewLegacyKeccak256()
 	sha.Write([]byte(normalizedLabel))
@@ -50,11 +65,14 @@ func LabelHash(label string) (hash [32]byte) {
 
 // NameHash generates a hash from a name that can be used to
 // look up the name in ENS
-func NameHash(name string) (hash [32]byte) {
+func NameHash(name string) (hash [32]byte, err error) {
 	if name == "" {
 		return
 	}
-	normalizedName := NormaliseDomain(name)
+	normalizedName, err := normalizeForHashing(name)
+	if err != nil {
+		return
+	}
 	parts := strings.Split(normalizedName, ".")
 	for i := len(parts) - 1; i >= 0; i-- {
 		hash = nameHashPart(hash, parts[i])

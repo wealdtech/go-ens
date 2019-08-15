@@ -1,6 +1,7 @@
 package ens
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -12,25 +13,85 @@ func TestNormaliseDomain(t *testing.T) {
 	tests := []struct {
 		input  string
 		output string
+		err    error
 	}{
-		{"", ""},
-		{".", "."},
-		{"eth", "eth"},
-		{"ETH", "eth"},
-		{".eth", ".eth"},
-		{".eth.", ".eth."},
-		{"wealdtech.eth", "wealdtech.eth"},
-		{".wealdtech.eth", ".wealdtech.eth"},
-		{"subdomain.wealdtech.eth", "subdomain.wealdtech.eth"},
-		{"*.wealdtech.eth", "*.wealdtech.eth"},
-		{"omg.thetoken.eth", "omg.thetoken.eth"},
+		{"", "", nil},
+		{".", ".", nil},
+		{"eth", "eth", nil},
+		{"ETH", "eth", nil},
+		{".eth", ".eth", nil},
+		{".eth.", ".eth.", nil},
+		{"wealdtech.eth", "wealdtech.eth", nil},
+		{".wealdtech.eth", ".wealdtech.eth", nil},
+		{"subdomain.wealdtech.eth", "subdomain.wealdtech.eth", nil},
+		{"*.wealdtech.eth", "*.wealdtech.eth", nil},
+		{"omg.thetoken.eth", "omg.thetoken.eth", nil},
+		{"_underscore.thetoken.eth", "", errors.New("idna: disallowed rune U+005F")},
+		{"點看.eth", "點看.eth", nil},
 	}
 
 	for _, tt := range tests {
-		result := NormaliseDomain(tt.input)
-		if tt.output != result {
-			t.Errorf("Failure: %v => %v (expected %v)\n", tt.input, result, tt.output)
-		}
+		t.Run(tt.input, func(t *testing.T) {
+			result, err := NormaliseDomain(tt.input)
+			if tt.err != nil {
+				if err == nil {
+					t.Fatalf("missing expected error")
+				}
+				if tt.err.Error() != err.Error() {
+					t.Errorf("unexpected error value %v", err)
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("unexpected error %v", err)
+				}
+				if tt.output != result {
+					t.Errorf("%v => %v (expected %v)", tt.input, result, tt.output)
+				}
+			}
+		})
+	}
+}
+
+func TestNormaliseForHashing(t *testing.T) {
+	tests := []struct {
+		input  string
+		output string
+		err    error
+	}{
+		{"", "", nil},
+		{".", ".", nil},
+		{"eth", "eth", nil},
+		{"ETH", "eth", nil},
+		{".eth", ".eth", nil},
+		{".eth.", ".eth.", nil},
+		{"wealdtech.eth", "wealdtech.eth", nil},
+		{".wealdtech.eth", ".wealdtech.eth", nil},
+		{"subdomain.wealdtech.eth", "subdomain.wealdtech.eth", nil},
+		{"*.wealdtech.eth", "*.wealdtech.eth", errors.New("idna: disallowed rune U+002A")},
+		{"omg.thetoken.eth", "omg.thetoken.eth", nil},
+		{"_underscore.thetoken.eth", "", errors.New("idna: disallowed rune U+005F")},
+		{"點看.eth", "xn--c1yn36f.eth", nil},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			result, err := normalizeForHashing(tt.input)
+			if tt.err != nil {
+				if err == nil {
+					t.Fatalf("missing expected error")
+				}
+				if tt.err.Error() != err.Error() {
+					t.Errorf("unexpected error value %v", err)
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("unexpected error %v", err)
+				}
+				if tt.output != result {
+					t.Errorf("%v => %v (expected %v)", tt.input, result, tt.output)
+				}
+			}
+		})
 	}
 }
 

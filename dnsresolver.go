@@ -73,22 +73,38 @@ func NewDNSResolverAt(backend bind.ContractBackend, domain string, address commo
 
 // Record obtains an RRSet for a name
 func (r *DNSResolver) Record(name string, rrType uint16) ([]byte, error) {
-	return r.Contract.DnsRecord(nil, NameHash(r.domain), DNSWireFormatDomainHash(name), rrType)
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.DnsRecord(nil, nameHash, DNSWireFormatDomainHash(name), rrType)
 }
 
 // HasRecords returns true if the given name has any RRsets
 func (r *DNSResolver) HasRecords(name string) (bool, error) {
-	return r.Contract.HasDNSRecords(nil, NameHash(r.domain), DNSWireFormatDomainHash(name))
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return false, err
+	}
+	return r.Contract.HasDNSRecords(nil, nameHash, DNSWireFormatDomainHash(name))
 }
 
 // SetRecords sets one or more RRSets
 func (r *DNSResolver) SetRecords(opts *bind.TransactOpts, data []byte) (*types.Transaction, error) {
-	return r.Contract.SetDNSRecords(opts, NameHash(r.domain), data)
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.SetDNSRecords(opts, nameHash, data)
 }
 
 // ClearDNSZone clears all records in the zone
 func (r *DNSResolver) ClearDNSZone(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return r.Contract.ClearDNSZone(opts, NameHash(r.domain))
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.ClearDNSZone(opts, nameHash)
 }
 
 // DNSWireFormatDomainHash hashes a domain name in wire format

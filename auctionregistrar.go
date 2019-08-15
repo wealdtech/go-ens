@@ -79,7 +79,11 @@ func (r *AuctionRegistrar) Entry(domain string) (*AuctionEntry, error) {
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	status, deedAddress, registration, value, highestBid, err := r.Contract.Entries(nil, LabelHash(name))
+	labelHash, err := LabelHash(name)
+	if err != nil {
+		return nil, err
+	}
+	status, deedAddress, registration, value, highestBid, err := r.Contract.Entries(nil, labelHash)
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +136,11 @@ func (r *AuctionRegistrar) Migrate(opts *bind.TransactOpts, domain string) (*typ
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	return r.Contract.TransferRegistrars(opts, LabelHash(name))
+	labelHash, err := LabelHash(name)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.TransferRegistrars(opts, labelHash)
 }
 
 // Release releases a domain
@@ -142,7 +150,11 @@ func (r *AuctionRegistrar) Release(opts *bind.TransactOpts, domain string) (*typ
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	return r.Contract.ReleaseDeed(opts, LabelHash(name))
+	labelHash, err := LabelHash(name)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.ReleaseDeed(opts, labelHash)
 }
 
 // Owner obtains the owner of the deed that represents the name.
@@ -171,7 +183,11 @@ func (r *AuctionRegistrar) SetOwner(opts *bind.TransactOpts, domain string, addr
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	return r.Contract.Transfer(opts, LabelHash(name), address)
+	labelHash, err := LabelHash(name)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.Transfer(opts, labelHash, address)
 }
 
 // ShaBid calculates the hash for a bid.

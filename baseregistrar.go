@@ -157,8 +157,11 @@ func (r *BaseRegistrar) Owner(domain string) (common.Address, error) {
 	if err != nil {
 		return UnknownAddress, err
 	}
-	hash := LabelHash(name)
-	owner, err := r.Contract.OwnerOf(nil, new(big.Int).SetBytes(hash[:]))
+	labelHash, err := LabelHash(name)
+	if err != nil {
+		return UnknownAddress, err
+	}
+	owner, err := r.Contract.OwnerOf(nil, new(big.Int).SetBytes(labelHash[:]))
 	// Registrar reverts rather than provide a 0 owner, so...
 	if err != nil && err.Error() == "abi: unmarshalling empty output" {
 		return UnknownAddress, nil
@@ -176,8 +179,11 @@ func (r *BaseRegistrar) SetOwner(opts *bind.TransactOpts, domain string, newOwne
 	if err != nil {
 		return nil, err
 	}
-	hash := LabelHash(name)
-	id := new(big.Int).SetBytes(hash[:])
+	labelHash, err := LabelHash(name)
+	if err != nil {
+		return nil, err
+	}
+	id := new(big.Int).SetBytes(labelHash[:])
 	return r.Contract.TransferFrom(opts, owner, newOwner, id)
 }
 
@@ -187,8 +193,11 @@ func (r *BaseRegistrar) Expiry(domain string) (*big.Int, error) {
 	if err != nil {
 		return nil, err
 	}
-	hash := LabelHash(name)
-	id := new(big.Int).SetBytes(hash[:])
+	labelHash, err := LabelHash(name)
+	if err != nil {
+		return nil, err
+	}
+	id := new(big.Int).SetBytes(labelHash[:])
 	return r.Contract.NameExpires(nil, id)
 }
 
@@ -198,7 +207,10 @@ func (r *BaseRegistrar) Reclaim(opts *bind.TransactOpts, domain string, newOwner
 	if err != nil {
 		return nil, err
 	}
-	hash := LabelHash(name)
-	id := new(big.Int).SetBytes(hash[:])
+	labelHash, err := LabelHash(name)
+	if err != nil {
+		return nil, err
+	}
+	id := new(big.Int).SetBytes(labelHash[:])
 	return r.Contract.Reclaim(opts, id, newOwner)
 }

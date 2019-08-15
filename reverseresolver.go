@@ -54,7 +54,11 @@ func NewReverseResolverAt(backend bind.ContractBackend, address common.Address) 
 	}
 
 	// Ensure the contract is a resolver
-	_, err = contract.Name(nil, NameHash("0.addr.reverse"))
+	nameHash, err := NameHash("0.addr.reverse")
+	if err != nil {
+		return nil, err
+	}
+	_, err = contract.Name(nil, nameHash)
 	if err != nil && err.Error() == "no contract code at given address" {
 		return nil, fmt.Errorf("not a resolver")
 	}
@@ -67,7 +71,11 @@ func NewReverseResolverAt(backend bind.ContractBackend, address common.Address) 
 
 // Name obtains the name for an address
 func (r *ReverseResolver) Name(address common.Address) (string, error) {
-	return r.Contract.Name(nil, NameHash(fmt.Sprintf("%s.addr.reverse", address.Hex()[2:])))
+	nameHash, err := NameHash(fmt.Sprintf("%s.addr.reverse", address.Hex()[2:]))
+	if err != nil {
+		return "", err
+	}
+	return r.Contract.Name(nil, nameHash)
 }
 
 // Format provides a string version of an address, reverse resolving it if possible
