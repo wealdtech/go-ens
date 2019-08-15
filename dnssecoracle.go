@@ -17,7 +17,7 @@ package ens
 import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/wealdtech/go-ens/v2/contracts/dnssecoracle"
+	"github.com/wealdtech/go-ens/v3/contracts/dnssecoracle"
 )
 
 // DNSSECOracle is the structure for the DNSSEC oracle

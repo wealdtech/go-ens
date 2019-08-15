@@ -22,7 +22,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/wealdtech/go-ens/v2/contracts/auctionregistrar"
+	"github.com/wealdtech/go-ens/v3/contracts/auctionregistrar"
 )
 
 // AuctionRegistrar is the structure for the auction registrar contract
