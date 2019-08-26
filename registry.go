@@ -140,9 +140,7 @@ func RegistryContractAddress(backend bind.ContractBackend) (common.Address, erro
 		return common.HexToAddress("112234455c3a32fd11230c42e7bccd4a84e02010"), nil
 	} else if chainID.Cmp(params.RinkebyChainConfig.ChainID) == 0 {
 		return common.HexToAddress("e7410170f87102DF0055eB195163A03B7F2Bff4A"), nil
-		// } else if chainID.Cmp(params.GoerliChainConfig.ChainID) == 0 {
-		// Currently hard-coding Goerli network ID; fix when 1.9 is released
-	} else if chainID.Cmp(big.NewInt(5)) == 0 {
+	} else if chainID.Cmp(params.GoerliChainConfig.ChainID) == 0 {
 		return common.HexToAddress("112234455c3a32fd11230c42e7bccd4a84e02010"), nil
 	} else {
 		return UnknownAddress, fmt.Errorf("No contract for network ID %v", chainID)
