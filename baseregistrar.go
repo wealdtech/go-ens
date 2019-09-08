@@ -125,9 +125,6 @@ func (r *BaseRegistrar) RegisteredWith(domain string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if owner == UnknownAddress {
-		return "", fmt.Errorf("%s not registered", domain)
-	}
 
 	// Fetch the temporary registrar and see if we're registered there
 	auctionRegistrar, err := r.PriorAuctionContract()
