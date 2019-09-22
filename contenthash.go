@@ -28,10 +28,10 @@ import (
 // StringToContenthash turns EIP-1577 text format in to EIP-1577 binary format
 func StringToContenthash(text string) ([]byte, error) {
 	bits := strings.Split(text, "/")
+	data := make([]byte, 0)
 	if len(bits) != 3 {
 		return nil, fmt.Errorf("invalid content hash")
 	}
-	data := make([]byte, 0)
 	switch bits[1] {
 	case "ipfs":
 		// Namespace
@@ -118,6 +118,36 @@ func StringToContenthash(text string) ([]byte, error) {
 			return nil, errors.New("failed to obtain swarm content hash")
 		}
 		data = append(data, []byte(hash)...)
+	case "onion":
+		// Codec
+		onionNum, err := multicodec.ID("onion")
+		if err != nil {
+			return nil, errors.New("failed to obtain onion codec value")
+		}
+		buf := make([]byte, binary.MaxVarintLen64)
+		size := binary.PutUvarint(buf, onionNum)
+		data = append(data, buf[0:size]...)
+
+		// Address
+		if len(bits[2]) != 16 {
+			return nil, errors.New("onion address should be 16 characters")
+		}
+		data = append(data, []byte(bits[2])...)
+	case "onion3":
+		// Codec
+		onionNum, err := multicodec.ID("onion3")
+		if err != nil {
+			return nil, errors.New("failed to obtain onion3 codec value")
+		}
+		buf := make([]byte, binary.MaxVarintLen64)
+		size := binary.PutUvarint(buf, onionNum)
+		data = append(data, buf[0:size]...)
+
+		// Address
+		if len(bits[2]) != 56 {
+			return nil, errors.New("onion3 address should be 56 characters")
+		}
+		data = append(data, []byte(bits[2])...)
 	default:
 		return nil, fmt.Errorf("unknown codec %s", bits[1])
 	}
@@ -138,22 +168,27 @@ func ContenthashToString(bytes []byte) (string, error) {
 	if id == 0 {
 		return "", fmt.Errorf("unknown CID")
 	}
-	data, subCodec, err := multicodec.RemoveCodec(data[offset:])
-	if err != nil {
-		return "", err
-	}
-	_, err = multicodec.Name(subCodec)
-	if err != nil {
-		return "", err
-	}
+	var subCodec uint64
+	var mHash multihash.Multihash
+	var decodedMHash *multihash.DecodedMultihash
+	if strings.HasSuffix(codecName, "-ns") {
+		data, subCodec, err = multicodec.RemoveCodec(data[offset:])
+		if err != nil {
+			return "", err
+		}
+		_, err = multicodec.Name(subCodec)
+		if err != nil {
+			return "", err
+		}
 
-	mHash, err := multihash.Cast(data)
-	if err != nil {
-		return "", err
-	}
-	decodedMHash, err := multihash.Decode(data)
-	if err != nil {
-		return "", err
+		mHash, err = multihash.Cast(data)
+		if err != nil {
+			return "", err
+		}
+		decodedMHash, err = multihash.Decode(data)
+		if err != nil {
+			return "", err
+		}
 	}
 	switch codecName {
 	case "ipfs-ns":
@@ -166,10 +201,11 @@ func ContenthashToString(bytes []byte) (string, error) {
 			return fmt.Sprintf("/ipns/%s", mHash.B58String()), nil
 		}
 	case "swarm-ns":
-		if err != nil {
-			return "", err
-		}
 		return fmt.Sprintf("/swarm/%x", decodedMHash.Digest), nil
+	case "onion":
+		return fmt.Sprintf("/onion/%s", string(data)), nil
+	case "onion3":
+		return fmt.Sprintf("/onion3/%s", string(data)), nil
 	default:
 		return "", fmt.Errorf("unknown codec %s", codecName)
 	}
