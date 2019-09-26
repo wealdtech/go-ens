@@ -115,6 +115,25 @@ func (r *Resolver) SetAddress(opts *bind.TransactOpts, address common.Address) (
 	return r.Contract.SetAddr(opts, nameHash, address)
 }
 
+// PubKey returns the public key of the domain
+func (r *Resolver) PubKey() ([32]byte, [32]byte, error) {
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return [32]byte{}, [32]byte{}, err
+	}
+	res, err := r.Contract.Pubkey(nil, nameHash)
+	return res.X, res.Y, err
+}
+
+// SetPubKey sets the public key of the domain
+func (r *Resolver) SetPubKey(opts *bind.TransactOpts, x [32]byte, y [32]byte) (*types.Transaction, error) {
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.SetPubkey(opts, nameHash, x, y)
+}
+
 // Contenthash returns the content hash of the domain
 func (r *Resolver) Contenthash() ([]byte, error) {
 	nameHash, err := NameHash(r.domain)
@@ -207,6 +226,24 @@ func (r *Resolver) Text(name string) (string, error) {
 		return "", err
 	}
 	return r.Contract.Text(nil, nameHash, name)
+}
+
+// SetData sets the text associated with a name
+func (r *Resolver) SetData(opts *bind.TransactOpts, name string, value []byte) (*types.Transaction, error) {
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.SetData(opts, nameHash, name, value)
+}
+
+// Data obtains the text associated with a name
+func (r *Resolver) Data(name string) ([]byte, error) {
+	nameHash, err := NameHash(r.domain)
+	if err != nil {
+		return nil, err
+	}
+	return r.Contract.Data(nil, nameHash, name)
 }
 
 // SetABI sets the ABI associated with a name
