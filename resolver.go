@@ -228,23 +228,23 @@ func (r *Resolver) Text(name string) (string, error) {
 	return r.Contract.Text(nil, nameHash, name)
 }
 
-// SetData sets the text associated with a name
-func (r *Resolver) SetData(opts *bind.TransactOpts, name string, value []byte) (*types.Transaction, error) {
-	nameHash, err := NameHash(r.domain)
-	if err != nil {
-		return nil, err
-	}
-	return r.Contract.SetData(opts, nameHash, name, value)
-}
-
-// Data obtains the text associated with a name
-func (r *Resolver) Data(name string) ([]byte, error) {
-	nameHash, err := NameHash(r.domain)
-	if err != nil {
-		return nil, err
-	}
-	return r.Contract.Data(nil, nameHash, name)
-}
+//// SetData sets the text associated with a name
+//func (r *Resolver) SetData(opts *bind.TransactOpts, name string, value []byte) (*types.Transaction, error) {
+//	nameHash, err := NameHash(r.domain)
+//	if err != nil {
+//		return nil, err
+//	}
+//	return r.Contract.SetData(opts, nameHash, name, value)
+//}
+//
+//// Data obtains the text associated with a name
+//func (r *Resolver) Data(name string) ([]byte, error) {
+//	nameHash, err := NameHash(r.domain)
+//	if err != nil {
+//		return nil, err
+//	}
+//	return r.Contract.Data(nil, nameHash, name)
+//}
 
 // SetABI sets the ABI associated with a name
 func (r *Resolver) SetABI(opts *bind.TransactOpts, name string, abi string, contentType *big.Int) (*types.Transaction, error) {
