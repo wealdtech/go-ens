@@ -91,18 +91,26 @@ func (r *BaseRegistrar) PriorAuctionContract() (*AuctionRegistrar, error) {
 	var shaBid [32]byte
 	var emptyHash [32]byte
 	sha := sha3.NewLegacyKeccak256()
-	sha.Write(emptyHash[:])
-	sha.Write(UnknownAddress.Bytes())
+	if _, err := sha.Write(emptyHash[:]); err != nil {
+		return nil, err
+	}
+	if _, err := sha.Write(UnknownAddress.Bytes()); err != nil {
+		return nil, err
+	}
 	var amountBytes [32]byte
-	sha.Write(amountBytes[:])
-	sha.Write(emptyHash[:])
+	if _, err := sha.Write(amountBytes[:]); err != nil {
+		return nil, err
+	}
+	if _, err := sha.Write(emptyHash[:]); err != nil {
+		return nil, err
+	}
 	sha.Sum(shaBid[:0])
 
 	contractShaBid, err := auctionContract.ShaBid(emptyHash, UnknownAddress, big.NewInt(0), emptyHash)
 	if err != nil {
 		return nil, errors.New("failed to confirm auction contract")
 	}
-	if bytes.Compare(contractShaBid[:], shaBid[:]) != 0 {
+	if !bytes.Equal(contractShaBid[:], shaBid[:]) {
 		return nil, errors.New("failed to confirm auction contract")
 	}
 

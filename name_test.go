@@ -96,7 +96,7 @@ func TestNameReRegistration(t *testing.T) {
 
 func TestInvalidName(t *testing.T) {
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
-	_, err := NewName(client, "foo.eth")
+	_, err := NewName(client, "ab.eth")
 	require.Equal(t, err.Error(), "name is not valid according to the rules of the registrar (too short, invalid characters, etc.)")
 }
 
@@ -187,7 +187,7 @@ func TestNameRegistrationNoValue(t *testing.T) {
 	// Register stage 2 - no value
 	opts, err = generateTxOpts(client, registrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err = name.RegisterStageTwo(registrant, secret, opts)
+	_, err = name.RegisterStageTwo(registrant, secret, opts)
 	assert.Equal(t, err.Error(), "not enough funds to cover minimum duration of 672h0m0s")
 }
 
@@ -213,7 +213,7 @@ func TestNameRegistrationNoInterval(t *testing.T) {
 	// Register stage 2 immediately - should fail
 	opts, err = generateTxOpts(client, registrant, "0.1 Ether")
 	require.Nil(t, err, "Failed to generate transaction options")
-	tx, err = name.RegisterStageTwo(registrant, secret, opts)
+	_, err = name.RegisterStageTwo(registrant, secret, opts)
 	require.NotNil(t, err, "No error when trying to register stage 2 immediately")
 	assert.Equal(t, err.Error(), "too early to send second transaction")
 }
