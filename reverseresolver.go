@@ -29,6 +29,21 @@ type ReverseResolver struct {
 	ContractAddr common.Address
 }
 
+func NewReverseResolverFor(backend bind.ContractBackend, address common.Address) (*ReverseResolver, error) {
+	registry, err := NewRegistry(backend)
+	if err != nil {
+		return nil, err
+	}
+
+	// Now fetch the resolver.
+	domain := fmt.Sprintf("%x.addr.reverse", address.Bytes())
+	contractAddress, err := registry.ResolverAddress(domain)
+	if err != nil {
+		return nil, err
+	}
+	return NewReverseResolverAt(backend, contractAddress)
+}
+
 // NewReverseResolver obtains the reverse resolver
 func NewReverseResolver(backend bind.ContractBackend) (*ReverseResolver, error) {
 	reverseRegistrar, err := NewReverseRegistrar(backend)
@@ -90,7 +105,7 @@ func Format(backend bind.ContractBackend, address common.Address) string {
 // ReverseResolve resolves an address in to an ENS name
 // This will return an error if the name is not found or otherwise 0
 func ReverseResolve(backend bind.ContractBackend, address common.Address) (string, error) {
-	resolver, err := NewReverseResolver(backend)
+	resolver, err := NewReverseResolverFor(backend, address)
 	if err != nil {
 		return "", err
 	}
