@@ -137,11 +137,11 @@ func RegistryContractAddress(backend bind.ContractBackend) (common.Address, erro
 	if chainID.Cmp(params.MainnetChainConfig.ChainID) == 0 {
 		return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
 	} else if chainID.Cmp(params.TestnetChainConfig.ChainID) == 0 {
-		return common.HexToAddress("112234455c3a32fd11230c42e7bccd4a84e02010"), nil
+		return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
 	} else if chainID.Cmp(params.RinkebyChainConfig.ChainID) == 0 {
-		return common.HexToAddress("e7410170f87102DF0055eB195163A03B7F2Bff4A"), nil
+		return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
 	} else if chainID.Cmp(params.GoerliChainConfig.ChainID) == 0 {
-		return common.HexToAddress("112234455c3a32fd11230c42e7bccd4a84e02010"), nil
+		return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
 	} else {
 		return UnknownAddress, fmt.Errorf("No contract for network ID %v", chainID)
 	}
