@@ -15,19 +15,13 @@
 package ens
 
 import (
-	"context"
 	"errors"
-	"fmt"
 	"math/big"
-	"reflect"
-	"time"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/params"
 	"github.com/wealdtech/go-ens/v3/contracts/auctionregistrar"
 	"github.com/wealdtech/go-ens/v3/contracts/registry"
 	"github.com/wealdtech/go-ens/v3/util"
@@ -120,31 +114,33 @@ func (r *Registry) SetSubdomainOwner(opts *bind.TransactOpts, name string, subna
 	return r.Contract.SetSubnodeOwner(opts, nameHash, labelHash, address)
 }
 
-// RegistryContractAddress obtains the address of the registry contract for a chain
+// RegistryContractAddress obtains the address of the registry contract for a chain.
+// This is (currently) the same for all chains.
 func RegistryContractAddress(backend bind.ContractBackend) (common.Address, error) {
-	chainID := big.NewInt(0)
-	if reflect.TypeOf(backend).String() == "*ethclient.Client" {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		var err error
-		chainID, err = backend.(*ethclient.Client).NetworkID(ctx)
-		if err != nil {
-			return UnknownAddress, err
-		}
-	}
+	//	chainID := big.NewInt(0)
+	//	if reflect.TypeOf(backend).String() == "*ethclient.Client" {
+	//		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	//		defer cancel()
+	//		var err error
+	//		chainID, err = backend.(*ethclient.Client).NetworkID(ctx)
+	//		if err != nil {
+	//			return UnknownAddress, err
+	//		}
+	//	}
 
-	// Instantiate the registry contract
-	if chainID.Cmp(params.MainnetChainConfig.ChainID) == 0 {
-		return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
-	} else if chainID.Cmp(params.TestnetChainConfig.ChainID) == 0 {
-		return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
-	} else if chainID.Cmp(params.RinkebyChainConfig.ChainID) == 0 {
-		return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
-	} else if chainID.Cmp(params.GoerliChainConfig.ChainID) == 0 {
-		return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
-	} else {
-		return UnknownAddress, fmt.Errorf("No contract for network ID %v", chainID)
-	}
+	// Instantiate the registry contract.  The same for all chains.
+	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
+	// if chainID.Cmp(params.MainnetChainConfig.ChainID) == 0 {
+	// 	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
+	// } else if chainID.Cmp(params.RopstenChainConfig.ChainID) == 0 {
+	// 	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
+	// } else if chainID.Cmp(params.RinkebyChainConfig.ChainID) == 0 {
+	// 	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
+	// } else if chainID.Cmp(params.GoerliChainConfig.ChainID) == 0 {
+	// 	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
+	// } else {
+	// 	return UnknownAddress, fmt.Errorf("No contract for network ID %v", chainID)
+	// }
 }
 
 //// RegistryContract obtains the registry contract for a chain
