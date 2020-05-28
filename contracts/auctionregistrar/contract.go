@@ -20,7 +20,6 @@ var (
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
-	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -174,7 +173,7 @@ func (_Contract *ContractTransactorRaw) Transact(opts *bind.TransactOpts, method
 
 // Ens is a free data retrieval call binding the contract method 0x3f15457f.
 //
-// Solidity: function ens() constant returns(address)
+// Solidity: function ens() returns(address)
 func (_Contract *ContractCaller) Ens(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -186,21 +185,21 @@ func (_Contract *ContractCaller) Ens(opts *bind.CallOpts) (common.Address, error
 
 // Ens is a free data retrieval call binding the contract method 0x3f15457f.
 //
-// Solidity: function ens() constant returns(address)
+// Solidity: function ens() returns(address)
 func (_Contract *ContractSession) Ens() (common.Address, error) {
 	return _Contract.Contract.Ens(&_Contract.CallOpts)
 }
 
 // Ens is a free data retrieval call binding the contract method 0x3f15457f.
 //
-// Solidity: function ens() constant returns(address)
+// Solidity: function ens() returns(address)
 func (_Contract *ContractCallerSession) Ens() (common.Address, error) {
 	return _Contract.Contract.Ens(&_Contract.CallOpts)
 }
 
 // Entries is a free data retrieval call binding the contract method 0x267b6922.
 //
-// Solidity: function entries(bytes32 _hash) constant returns(uint8, address, uint256, uint256, uint256)
+// Solidity: function entries(bytes32 _hash) returns(uint8, address, uint256, uint256, uint256)
 func (_Contract *ContractCaller) Entries(opts *bind.CallOpts, _hash [32]byte) (uint8, common.Address, *big.Int, *big.Int, *big.Int, error) {
 	var (
 		ret0 = new(uint8)
@@ -222,21 +221,21 @@ func (_Contract *ContractCaller) Entries(opts *bind.CallOpts, _hash [32]byte) (u
 
 // Entries is a free data retrieval call binding the contract method 0x267b6922.
 //
-// Solidity: function entries(bytes32 _hash) constant returns(uint8, address, uint256, uint256, uint256)
+// Solidity: function entries(bytes32 _hash) returns(uint8, address, uint256, uint256, uint256)
 func (_Contract *ContractSession) Entries(_hash [32]byte) (uint8, common.Address, *big.Int, *big.Int, *big.Int, error) {
 	return _Contract.Contract.Entries(&_Contract.CallOpts, _hash)
 }
 
 // Entries is a free data retrieval call binding the contract method 0x267b6922.
 //
-// Solidity: function entries(bytes32 _hash) constant returns(uint8, address, uint256, uint256, uint256)
+// Solidity: function entries(bytes32 _hash) returns(uint8, address, uint256, uint256, uint256)
 func (_Contract *ContractCallerSession) Entries(_hash [32]byte) (uint8, common.Address, *big.Int, *big.Int, *big.Int, error) {
 	return _Contract.Contract.Entries(&_Contract.CallOpts, _hash)
 }
 
 // GetAllowedTime is a free data retrieval call binding the contract method 0x13c89a8f.
 //
-// Solidity: function getAllowedTime(bytes32 _hash) constant returns(uint256 timestamp)
+// Solidity: function getAllowedTime(bytes32 _hash) returns(uint256 timestamp)
 func (_Contract *ContractCaller) GetAllowedTime(opts *bind.CallOpts, _hash [32]byte) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -248,21 +247,21 @@ func (_Contract *ContractCaller) GetAllowedTime(opts *bind.CallOpts, _hash [32]b
 
 // GetAllowedTime is a free data retrieval call binding the contract method 0x13c89a8f.
 //
-// Solidity: function getAllowedTime(bytes32 _hash) constant returns(uint256 timestamp)
+// Solidity: function getAllowedTime(bytes32 _hash) returns(uint256 timestamp)
 func (_Contract *ContractSession) GetAllowedTime(_hash [32]byte) (*big.Int, error) {
 	return _Contract.Contract.GetAllowedTime(&_Contract.CallOpts, _hash)
 }
 
 // GetAllowedTime is a free data retrieval call binding the contract method 0x13c89a8f.
 //
-// Solidity: function getAllowedTime(bytes32 _hash) constant returns(uint256 timestamp)
+// Solidity: function getAllowedTime(bytes32 _hash) returns(uint256 timestamp)
 func (_Contract *ContractCallerSession) GetAllowedTime(_hash [32]byte) (*big.Int, error) {
 	return _Contract.Contract.GetAllowedTime(&_Contract.CallOpts, _hash)
 }
 
 // IsAllowed is a free data retrieval call binding the contract method 0x93503337.
 //
-// Solidity: function isAllowed(bytes32 _hash, uint256 _timestamp) constant returns(bool allowed)
+// Solidity: function isAllowed(bytes32 _hash, uint256 _timestamp) returns(bool allowed)
 func (_Contract *ContractCaller) IsAllowed(opts *bind.CallOpts, _hash [32]byte, _timestamp *big.Int) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -274,21 +273,21 @@ func (_Contract *ContractCaller) IsAllowed(opts *bind.CallOpts, _hash [32]byte, 
 
 // IsAllowed is a free data retrieval call binding the contract method 0x93503337.
 //
-// Solidity: function isAllowed(bytes32 _hash, uint256 _timestamp) constant returns(bool allowed)
+// Solidity: function isAllowed(bytes32 _hash, uint256 _timestamp) returns(bool allowed)
 func (_Contract *ContractSession) IsAllowed(_hash [32]byte, _timestamp *big.Int) (bool, error) {
 	return _Contract.Contract.IsAllowed(&_Contract.CallOpts, _hash, _timestamp)
 }
 
 // IsAllowed is a free data retrieval call binding the contract method 0x93503337.
 //
-// Solidity: function isAllowed(bytes32 _hash, uint256 _timestamp) constant returns(bool allowed)
+// Solidity: function isAllowed(bytes32 _hash, uint256 _timestamp) returns(bool allowed)
 func (_Contract *ContractCallerSession) IsAllowed(_hash [32]byte, _timestamp *big.Int) (bool, error) {
 	return _Contract.Contract.IsAllowed(&_Contract.CallOpts, _hash, _timestamp)
 }
 
 // LaunchLength is a free data retrieval call binding the contract method 0xae1a0b0c.
 //
-// Solidity: function launchLength() constant returns(uint32)
+// Solidity: function launchLength() returns(uint32)
 func (_Contract *ContractCaller) LaunchLength(opts *bind.CallOpts) (uint32, error) {
 	var (
 		ret0 = new(uint32)
@@ -300,21 +299,21 @@ func (_Contract *ContractCaller) LaunchLength(opts *bind.CallOpts) (uint32, erro
 
 // LaunchLength is a free data retrieval call binding the contract method 0xae1a0b0c.
 //
-// Solidity: function launchLength() constant returns(uint32)
+// Solidity: function launchLength() returns(uint32)
 func (_Contract *ContractSession) LaunchLength() (uint32, error) {
 	return _Contract.Contract.LaunchLength(&_Contract.CallOpts)
 }
 
 // LaunchLength is a free data retrieval call binding the contract method 0xae1a0b0c.
 //
-// Solidity: function launchLength() constant returns(uint32)
+// Solidity: function launchLength() returns(uint32)
 func (_Contract *ContractCallerSession) LaunchLength() (uint32, error) {
 	return _Contract.Contract.LaunchLength(&_Contract.CallOpts)
 }
 
 // RegistryStarted is a free data retrieval call binding the contract method 0x9c67f06f.
 //
-// Solidity: function registryStarted() constant returns(uint256)
+// Solidity: function registryStarted() returns(uint256)
 func (_Contract *ContractCaller) RegistryStarted(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -326,21 +325,21 @@ func (_Contract *ContractCaller) RegistryStarted(opts *bind.CallOpts) (*big.Int,
 
 // RegistryStarted is a free data retrieval call binding the contract method 0x9c67f06f.
 //
-// Solidity: function registryStarted() constant returns(uint256)
+// Solidity: function registryStarted() returns(uint256)
 func (_Contract *ContractSession) RegistryStarted() (*big.Int, error) {
 	return _Contract.Contract.RegistryStarted(&_Contract.CallOpts)
 }
 
 // RegistryStarted is a free data retrieval call binding the contract method 0x9c67f06f.
 //
-// Solidity: function registryStarted() constant returns(uint256)
+// Solidity: function registryStarted() returns(uint256)
 func (_Contract *ContractCallerSession) RegistryStarted() (*big.Int, error) {
 	return _Contract.Contract.RegistryStarted(&_Contract.CallOpts)
 }
 
 // RootNode is a free data retrieval call binding the contract method 0xfaff50a8.
 //
-// Solidity: function rootNode() constant returns(bytes32)
+// Solidity: function rootNode() returns(bytes32)
 func (_Contract *ContractCaller) RootNode(opts *bind.CallOpts) ([32]byte, error) {
 	var (
 		ret0 = new([32]byte)
@@ -352,21 +351,21 @@ func (_Contract *ContractCaller) RootNode(opts *bind.CallOpts) ([32]byte, error)
 
 // RootNode is a free data retrieval call binding the contract method 0xfaff50a8.
 //
-// Solidity: function rootNode() constant returns(bytes32)
+// Solidity: function rootNode() returns(bytes32)
 func (_Contract *ContractSession) RootNode() ([32]byte, error) {
 	return _Contract.Contract.RootNode(&_Contract.CallOpts)
 }
 
 // RootNode is a free data retrieval call binding the contract method 0xfaff50a8.
 //
-// Solidity: function rootNode() constant returns(bytes32)
+// Solidity: function rootNode() returns(bytes32)
 func (_Contract *ContractCallerSession) RootNode() ([32]byte, error) {
 	return _Contract.Contract.RootNode(&_Contract.CallOpts)
 }
 
 // SealedBids is a free data retrieval call binding the contract method 0x5e431709.
 //
-// Solidity: function sealedBids(address , bytes32 ) constant returns(address)
+// Solidity: function sealedBids(address , bytes32 ) returns(address)
 func (_Contract *ContractCaller) SealedBids(opts *bind.CallOpts, arg0 common.Address, arg1 [32]byte) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -378,21 +377,21 @@ func (_Contract *ContractCaller) SealedBids(opts *bind.CallOpts, arg0 common.Add
 
 // SealedBids is a free data retrieval call binding the contract method 0x5e431709.
 //
-// Solidity: function sealedBids(address , bytes32 ) constant returns(address)
+// Solidity: function sealedBids(address , bytes32 ) returns(address)
 func (_Contract *ContractSession) SealedBids(arg0 common.Address, arg1 [32]byte) (common.Address, error) {
 	return _Contract.Contract.SealedBids(&_Contract.CallOpts, arg0, arg1)
 }
 
 // SealedBids is a free data retrieval call binding the contract method 0x5e431709.
 //
-// Solidity: function sealedBids(address , bytes32 ) constant returns(address)
+// Solidity: function sealedBids(address , bytes32 ) returns(address)
 func (_Contract *ContractCallerSession) SealedBids(arg0 common.Address, arg1 [32]byte) (common.Address, error) {
 	return _Contract.Contract.SealedBids(&_Contract.CallOpts, arg0, arg1)
 }
 
 // ShaBid is a free data retrieval call binding the contract method 0x22ec1244.
 //
-// Solidity: function shaBid(bytes32 hash, address owner, uint256 value, bytes32 salt) constant returns(bytes32 sealedBid)
+// Solidity: function shaBid(bytes32 hash, address owner, uint256 value, bytes32 salt) returns(bytes32 sealedBid)
 func (_Contract *ContractCaller) ShaBid(opts *bind.CallOpts, hash [32]byte, owner common.Address, value *big.Int, salt [32]byte) ([32]byte, error) {
 	var (
 		ret0 = new([32]byte)
@@ -404,21 +403,21 @@ func (_Contract *ContractCaller) ShaBid(opts *bind.CallOpts, hash [32]byte, owne
 
 // ShaBid is a free data retrieval call binding the contract method 0x22ec1244.
 //
-// Solidity: function shaBid(bytes32 hash, address owner, uint256 value, bytes32 salt) constant returns(bytes32 sealedBid)
+// Solidity: function shaBid(bytes32 hash, address owner, uint256 value, bytes32 salt) returns(bytes32 sealedBid)
 func (_Contract *ContractSession) ShaBid(hash [32]byte, owner common.Address, value *big.Int, salt [32]byte) ([32]byte, error) {
 	return _Contract.Contract.ShaBid(&_Contract.CallOpts, hash, owner, value, salt)
 }
 
 // ShaBid is a free data retrieval call binding the contract method 0x22ec1244.
 //
-// Solidity: function shaBid(bytes32 hash, address owner, uint256 value, bytes32 salt) constant returns(bytes32 sealedBid)
+// Solidity: function shaBid(bytes32 hash, address owner, uint256 value, bytes32 salt) returns(bytes32 sealedBid)
 func (_Contract *ContractCallerSession) ShaBid(hash [32]byte, owner common.Address, value *big.Int, salt [32]byte) ([32]byte, error) {
 	return _Contract.Contract.ShaBid(&_Contract.CallOpts, hash, owner, value, salt)
 }
 
 // State is a free data retrieval call binding the contract method 0x61d585da.
 //
-// Solidity: function state(bytes32 _hash) constant returns(uint8)
+// Solidity: function state(bytes32 _hash) returns(uint8)
 func (_Contract *ContractCaller) State(opts *bind.CallOpts, _hash [32]byte) (uint8, error) {
 	var (
 		ret0 = new(uint8)
@@ -430,14 +429,14 @@ func (_Contract *ContractCaller) State(opts *bind.CallOpts, _hash [32]byte) (uin
 
 // State is a free data retrieval call binding the contract method 0x61d585da.
 //
-// Solidity: function state(bytes32 _hash) constant returns(uint8)
+// Solidity: function state(bytes32 _hash) returns(uint8)
 func (_Contract *ContractSession) State(_hash [32]byte) (uint8, error) {
 	return _Contract.Contract.State(&_Contract.CallOpts, _hash)
 }
 
 // State is a free data retrieval call binding the contract method 0x61d585da.
 //
-// Solidity: function state(bytes32 _hash) constant returns(uint8)
+// Solidity: function state(bytes32 _hash) returns(uint8)
 func (_Contract *ContractCallerSession) State(_hash [32]byte) (uint8, error) {
 	return _Contract.Contract.State(&_Contract.CallOpts, _hash)
 }
@@ -848,6 +847,17 @@ func (_Contract *ContractFilterer) WatchAuctionStarted(opts *bind.WatchOpts, sin
 	}), nil
 }
 
+// ParseAuctionStarted is a log parse operation binding the contract event 0x87e97e825a1d1fa0c54e1d36c7506c1dea8b1efd451fe68b000cf96f7cf40003.
+//
+// Solidity: event AuctionStarted(bytes32 indexed hash, uint256 registrationDate)
+func (_Contract *ContractFilterer) ParseAuctionStarted(log types.Log) (*ContractAuctionStarted, error) {
+	event := new(ContractAuctionStarted)
+	if err := _Contract.contract.UnpackLog(event, "AuctionStarted", log); err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
 // ContractBidRevealedIterator is returned from FilterBidRevealed and is used to iterate over the raw logs and unpacked data for BidRevealed events raised by the Contract contract.
 type ContractBidRevealedIterator struct {
 	Event *ContractBidRevealed // Event containing the contract specifics and raw log
@@ -989,6 +999,17 @@ func (_Contract *ContractFilterer) WatchBidRevealed(opts *bind.WatchOpts, sink c
 			}
 		}
 	}), nil
+}
+
+// ParseBidRevealed is a log parse operation binding the contract event 0x7b6c4b278d165a6b33958f8ea5dfb00c8c9d4d0acf1985bef5d10786898bc3e7.
+//
+// Solidity: event BidRevealed(bytes32 indexed hash, address indexed owner, uint256 value, uint8 status)
+func (_Contract *ContractFilterer) ParseBidRevealed(log types.Log) (*ContractBidRevealed, error) {
+	event := new(ContractBidRevealed)
+	if err := _Contract.contract.UnpackLog(event, "BidRevealed", log); err != nil {
+		return nil, err
+	}
+	return event, nil
 }
 
 // ContractHashInvalidatedIterator is returned from FilterHashInvalidated and is used to iterate over the raw logs and unpacked data for HashInvalidated events raised by the Contract contract.
@@ -1134,6 +1155,17 @@ func (_Contract *ContractFilterer) WatchHashInvalidated(opts *bind.WatchOpts, si
 	}), nil
 }
 
+// ParseHashInvalidated is a log parse operation binding the contract event 0x1f9c649fe47e58bb60f4e52f0d90e4c47a526c9f90c5113df842c025970b66ad.
+//
+// Solidity: event HashInvalidated(bytes32 indexed hash, string indexed name, uint256 value, uint256 registrationDate)
+func (_Contract *ContractFilterer) ParseHashInvalidated(log types.Log) (*ContractHashInvalidated, error) {
+	event := new(ContractHashInvalidated)
+	if err := _Contract.contract.UnpackLog(event, "HashInvalidated", log); err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
 // ContractHashRegisteredIterator is returned from FilterHashRegistered and is used to iterate over the raw logs and unpacked data for HashRegistered events raised by the Contract contract.
 type ContractHashRegisteredIterator struct {
 	Event *ContractHashRegistered // Event containing the contract specifics and raw log
@@ -1277,6 +1309,17 @@ func (_Contract *ContractFilterer) WatchHashRegistered(opts *bind.WatchOpts, sin
 	}), nil
 }
 
+// ParseHashRegistered is a log parse operation binding the contract event 0x0f0c27adfd84b60b6f456b0e87cdccb1e5fb9603991588d87fa99f5b6b61e670.
+//
+// Solidity: event HashRegistered(bytes32 indexed hash, address indexed owner, uint256 value, uint256 registrationDate)
+func (_Contract *ContractFilterer) ParseHashRegistered(log types.Log) (*ContractHashRegistered, error) {
+	event := new(ContractHashRegistered)
+	if err := _Contract.contract.UnpackLog(event, "HashRegistered", log); err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
 // ContractHashReleasedIterator is returned from FilterHashReleased and is used to iterate over the raw logs and unpacked data for HashReleased events raised by the Contract contract.
 type ContractHashReleasedIterator struct {
 	Event *ContractHashReleased // Event containing the contract specifics and raw log
@@ -1408,6 +1451,17 @@ func (_Contract *ContractFilterer) WatchHashReleased(opts *bind.WatchOpts, sink 
 			}
 		}
 	}), nil
+}
+
+// ParseHashReleased is a log parse operation binding the contract event 0x292b79b9246fa2c8e77d3fe195b251f9cb839d7d038e667c069ee7708c631e16.
+//
+// Solidity: event HashReleased(bytes32 indexed hash, uint256 value)
+func (_Contract *ContractFilterer) ParseHashReleased(log types.Log) (*ContractHashReleased, error) {
+	event := new(ContractHashReleased)
+	if err := _Contract.contract.UnpackLog(event, "HashReleased", log); err != nil {
+		return nil, err
+	}
+	return event, nil
 }
 
 // ContractNewBidIterator is returned from FilterNewBid and is used to iterate over the raw logs and unpacked data for NewBid events raised by the Contract contract.
@@ -1550,4 +1604,15 @@ func (_Contract *ContractFilterer) WatchNewBid(opts *bind.WatchOpts, sink chan<-
 			}
 		}
 	}), nil
+}
+
+// ParseNewBid is a log parse operation binding the contract event 0xb556ff269c1b6714f432c36431e2041d28436a73b6c3f19c021827bbdc6bfc29.
+//
+// Solidity: event NewBid(bytes32 indexed hash, address indexed bidder, uint256 deposit)
+func (_Contract *ContractFilterer) ParseNewBid(log types.Log) (*ContractNewBid, error) {
+	event := new(ContractNewBid)
+	if err := _Contract.contract.UnpackLog(event, "NewBid", log); err != nil {
+		return nil, err
+	}
+	return event, nil
 }

@@ -20,7 +20,6 @@ var (
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
-	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -174,7 +173,7 @@ func (_Contract *ContractTransactorRaw) Transact(opts *bind.TransactOpts, method
 
 // Ens is a free data retrieval call binding the contract method 0x3f15457f.
 //
-// Solidity: function ens() constant returns(address)
+// Solidity: function ens() returns(address)
 func (_Contract *ContractCaller) Ens(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -186,21 +185,21 @@ func (_Contract *ContractCaller) Ens(opts *bind.CallOpts) (common.Address, error
 
 // Ens is a free data retrieval call binding the contract method 0x3f15457f.
 //
-// Solidity: function ens() constant returns(address)
+// Solidity: function ens() returns(address)
 func (_Contract *ContractSession) Ens() (common.Address, error) {
 	return _Contract.Contract.Ens(&_Contract.CallOpts)
 }
 
 // Ens is a free data retrieval call binding the contract method 0x3f15457f.
 //
-// Solidity: function ens() constant returns(address)
+// Solidity: function ens() returns(address)
 func (_Contract *ContractCallerSession) Ens() (common.Address, error) {
 	return _Contract.Contract.Ens(&_Contract.CallOpts)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(bytes32 ) constant returns(string)
+// Solidity: function name(bytes32 ) returns(string)
 func (_Contract *ContractCaller) Name(opts *bind.CallOpts, arg0 [32]byte) (string, error) {
 	var (
 		ret0 = new(string)
@@ -212,14 +211,14 @@ func (_Contract *ContractCaller) Name(opts *bind.CallOpts, arg0 [32]byte) (strin
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(bytes32 ) constant returns(string)
+// Solidity: function name(bytes32 ) returns(string)
 func (_Contract *ContractSession) Name(arg0 [32]byte) (string, error) {
 	return _Contract.Contract.Name(&_Contract.CallOpts, arg0)
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.
 //
-// Solidity: function name(bytes32 ) constant returns(string)
+// Solidity: function name(bytes32 ) returns(string)
 func (_Contract *ContractCallerSession) Name(arg0 [32]byte) (string, error) {
 	return _Contract.Contract.Name(&_Contract.CallOpts, arg0)
 }

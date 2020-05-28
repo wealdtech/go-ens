@@ -62,7 +62,7 @@ func TestResolveTestEnsTest(t *testing.T) {
 }
 
 func TestResolveResolverEth(t *testing.T) {
-	expected := "12299799a50340fb860d276805e78550cbad3de3"
+	expected := "42d63ae25990889e35f215bc95884039ba354115"
 	actual, err := Resolve(client, "resolver.eth")
 	require.Nil(t, err, "Error resolving name")
 	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")

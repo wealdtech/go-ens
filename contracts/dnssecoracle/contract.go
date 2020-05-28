@@ -20,7 +20,6 @@ var (
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
-	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -174,7 +173,7 @@ func (_Contract *ContractTransactorRaw) Transact(opts *bind.TransactOpts, method
 
 // Rrdata is a free data retrieval call binding the contract method 0x087991bc.
 //
-// Solidity: function rrdata(uint16 dnstype, bytes name) constant returns(uint32, uint64, bytes20)
+// Solidity: function rrdata(uint16 dnstype, bytes name) view returns(uint32, uint64, bytes20)
 func (_Contract *ContractCaller) Rrdata(opts *bind.CallOpts, dnstype uint16, name []byte) (uint32, uint64, [20]byte, error) {
 	var (
 		ret0 = new(uint32)
@@ -192,14 +191,14 @@ func (_Contract *ContractCaller) Rrdata(opts *bind.CallOpts, dnstype uint16, nam
 
 // Rrdata is a free data retrieval call binding the contract method 0x087991bc.
 //
-// Solidity: function rrdata(uint16 dnstype, bytes name) constant returns(uint32, uint64, bytes20)
+// Solidity: function rrdata(uint16 dnstype, bytes name) view returns(uint32, uint64, bytes20)
 func (_Contract *ContractSession) Rrdata(dnstype uint16, name []byte) (uint32, uint64, [20]byte, error) {
 	return _Contract.Contract.Rrdata(&_Contract.CallOpts, dnstype, name)
 }
 
 // Rrdata is a free data retrieval call binding the contract method 0x087991bc.
 //
-// Solidity: function rrdata(uint16 dnstype, bytes name) constant returns(uint32, uint64, bytes20)
+// Solidity: function rrdata(uint16 dnstype, bytes name) view returns(uint32, uint64, bytes20)
 func (_Contract *ContractCallerSession) Rrdata(dnstype uint16, name []byte) (uint32, uint64, [20]byte, error) {
 	return _Contract.Contract.Rrdata(&_Contract.CallOpts, dnstype, name)
 }
@@ -390,6 +389,17 @@ func (_Contract *ContractFilterer) WatchAlgorithmUpdated(opts *bind.WatchOpts, s
 	}), nil
 }
 
+// ParseAlgorithmUpdated is a log parse operation binding the contract event 0xf73c3c226af96b7f1ba666a21b3ceaf2be3ee6a365e3178fd9cd1eaae0075aa8.
+//
+// Solidity: event AlgorithmUpdated(uint8 id, address addr)
+func (_Contract *ContractFilterer) ParseAlgorithmUpdated(log types.Log) (*ContractAlgorithmUpdated, error) {
+	event := new(ContractAlgorithmUpdated)
+	if err := _Contract.contract.UnpackLog(event, "AlgorithmUpdated", log); err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
 // ContractDigestUpdatedIterator is returned from FilterDigestUpdated and is used to iterate over the raw logs and unpacked data for DigestUpdated events raised by the Contract contract.
 type ContractDigestUpdatedIterator struct {
 	Event *ContractDigestUpdated // Event containing the contract specifics and raw log
@@ -511,6 +521,17 @@ func (_Contract *ContractFilterer) WatchDigestUpdated(opts *bind.WatchOpts, sink
 			}
 		}
 	}), nil
+}
+
+// ParseDigestUpdated is a log parse operation binding the contract event 0x2fcc274c3b72dd483ab201bfa87295e3817e8b9b10693219873b722ca1af00c7.
+//
+// Solidity: event DigestUpdated(uint8 id, address addr)
+func (_Contract *ContractFilterer) ParseDigestUpdated(log types.Log) (*ContractDigestUpdated, error) {
+	event := new(ContractDigestUpdated)
+	if err := _Contract.contract.UnpackLog(event, "DigestUpdated", log); err != nil {
+		return nil, err
+	}
+	return event, nil
 }
 
 // ContractNSEC3DigestUpdatedIterator is returned from FilterNSEC3DigestUpdated and is used to iterate over the raw logs and unpacked data for NSEC3DigestUpdated events raised by the Contract contract.
@@ -636,6 +657,17 @@ func (_Contract *ContractFilterer) WatchNSEC3DigestUpdated(opts *bind.WatchOpts,
 	}), nil
 }
 
+// ParseNSEC3DigestUpdated is a log parse operation binding the contract event 0xc7eec866a7a1386188cc3ca20ffea75b71bd3e90a60b6791b1d3f0971145118d.
+//
+// Solidity: event NSEC3DigestUpdated(uint8 id, address addr)
+func (_Contract *ContractFilterer) ParseNSEC3DigestUpdated(log types.Log) (*ContractNSEC3DigestUpdated, error) {
+	event := new(ContractNSEC3DigestUpdated)
+	if err := _Contract.contract.UnpackLog(event, "NSEC3DigestUpdated", log); err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
 // ContractRRSetUpdatedIterator is returned from FilterRRSetUpdated and is used to iterate over the raw logs and unpacked data for RRSetUpdated events raised by the Contract contract.
 type ContractRRSetUpdatedIterator struct {
 	Event *ContractRRSetUpdated // Event containing the contract specifics and raw log
@@ -757,4 +789,15 @@ func (_Contract *ContractFilterer) WatchRRSetUpdated(opts *bind.WatchOpts, sink 
 			}
 		}
 	}), nil
+}
+
+// ParseRRSetUpdated is a log parse operation binding the contract event 0x55ced933cdd5a34dd03eb5d4bef19ec6ebb251dcd7a988eee0c1b9a13baaa88b.
+//
+// Solidity: event RRSetUpdated(bytes name, bytes rrset)
+func (_Contract *ContractFilterer) ParseRRSetUpdated(log types.Log) (*ContractRRSetUpdated, error) {
+	event := new(ContractRRSetUpdated)
+	if err := _Contract.contract.UnpackLog(event, "RRSetUpdated", log); err != nil {
+		return nil, err
+	}
+	return event, nil
 }

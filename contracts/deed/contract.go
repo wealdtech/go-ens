@@ -20,7 +20,6 @@ var (
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
-	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -174,7 +173,7 @@ func (_Contract *ContractTransactorRaw) Transact(opts *bind.TransactOpts, method
 
 // CreationDate is a free data retrieval call binding the contract method 0x05b34410.
 //
-// Solidity: function creationDate() constant returns(uint256)
+// Solidity: function creationDate() returns(uint256)
 func (_Contract *ContractCaller) CreationDate(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -186,21 +185,21 @@ func (_Contract *ContractCaller) CreationDate(opts *bind.CallOpts) (*big.Int, er
 
 // CreationDate is a free data retrieval call binding the contract method 0x05b34410.
 //
-// Solidity: function creationDate() constant returns(uint256)
+// Solidity: function creationDate() returns(uint256)
 func (_Contract *ContractSession) CreationDate() (*big.Int, error) {
 	return _Contract.Contract.CreationDate(&_Contract.CallOpts)
 }
 
 // CreationDate is a free data retrieval call binding the contract method 0x05b34410.
 //
-// Solidity: function creationDate() constant returns(uint256)
+// Solidity: function creationDate() returns(uint256)
 func (_Contract *ContractCallerSession) CreationDate() (*big.Int, error) {
 	return _Contract.Contract.CreationDate(&_Contract.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() constant returns(address)
+// Solidity: function owner() returns(address)
 func (_Contract *ContractCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -212,21 +211,21 @@ func (_Contract *ContractCaller) Owner(opts *bind.CallOpts) (common.Address, err
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() constant returns(address)
+// Solidity: function owner() returns(address)
 func (_Contract *ContractSession) Owner() (common.Address, error) {
 	return _Contract.Contract.Owner(&_Contract.CallOpts)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
-// Solidity: function owner() constant returns(address)
+// Solidity: function owner() returns(address)
 func (_Contract *ContractCallerSession) Owner() (common.Address, error) {
 	return _Contract.Contract.Owner(&_Contract.CallOpts)
 }
 
 // PreviousOwner is a free data retrieval call binding the contract method 0x674f220f.
 //
-// Solidity: function previousOwner() constant returns(address)
+// Solidity: function previousOwner() returns(address)
 func (_Contract *ContractCaller) PreviousOwner(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -238,21 +237,21 @@ func (_Contract *ContractCaller) PreviousOwner(opts *bind.CallOpts) (common.Addr
 
 // PreviousOwner is a free data retrieval call binding the contract method 0x674f220f.
 //
-// Solidity: function previousOwner() constant returns(address)
+// Solidity: function previousOwner() returns(address)
 func (_Contract *ContractSession) PreviousOwner() (common.Address, error) {
 	return _Contract.Contract.PreviousOwner(&_Contract.CallOpts)
 }
 
 // PreviousOwner is a free data retrieval call binding the contract method 0x674f220f.
 //
-// Solidity: function previousOwner() constant returns(address)
+// Solidity: function previousOwner() returns(address)
 func (_Contract *ContractCallerSession) PreviousOwner() (common.Address, error) {
 	return _Contract.Contract.PreviousOwner(&_Contract.CallOpts)
 }
 
 // Registrar is a free data retrieval call binding the contract method 0x2b20e397.
 //
-// Solidity: function registrar() constant returns(address)
+// Solidity: function registrar() returns(address)
 func (_Contract *ContractCaller) Registrar(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -264,21 +263,21 @@ func (_Contract *ContractCaller) Registrar(opts *bind.CallOpts) (common.Address,
 
 // Registrar is a free data retrieval call binding the contract method 0x2b20e397.
 //
-// Solidity: function registrar() constant returns(address)
+// Solidity: function registrar() returns(address)
 func (_Contract *ContractSession) Registrar() (common.Address, error) {
 	return _Contract.Contract.Registrar(&_Contract.CallOpts)
 }
 
 // Registrar is a free data retrieval call binding the contract method 0x2b20e397.
 //
-// Solidity: function registrar() constant returns(address)
+// Solidity: function registrar() returns(address)
 func (_Contract *ContractCallerSession) Registrar() (common.Address, error) {
 	return _Contract.Contract.Registrar(&_Contract.CallOpts)
 }
 
 // Value is a free data retrieval call binding the contract method 0x3fa4f245.
 //
-// Solidity: function value() constant returns(uint256)
+// Solidity: function value() returns(uint256)
 func (_Contract *ContractCaller) Value(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -290,14 +289,14 @@ func (_Contract *ContractCaller) Value(opts *bind.CallOpts) (*big.Int, error) {
 
 // Value is a free data retrieval call binding the contract method 0x3fa4f245.
 //
-// Solidity: function value() constant returns(uint256)
+// Solidity: function value() returns(uint256)
 func (_Contract *ContractSession) Value() (*big.Int, error) {
 	return _Contract.Contract.Value(&_Contract.CallOpts)
 }
 
 // Value is a free data retrieval call binding the contract method 0x3fa4f245.
 //
-// Solidity: function value() constant returns(uint256)
+// Solidity: function value() returns(uint256)
 func (_Contract *ContractCallerSession) Value() (*big.Int, error) {
 	return _Contract.Contract.Value(&_Contract.CallOpts)
 }
@@ -528,6 +527,17 @@ func (_Contract *ContractFilterer) WatchDeedClosed(opts *bind.WatchOpts, sink ch
 	}), nil
 }
 
+// ParseDeedClosed is a log parse operation binding the contract event 0xbb2ce2f51803bba16bc85282b47deeea9a5c6223eabea1077be696b3f265cf13.
+//
+// Solidity: event DeedClosed()
+func (_Contract *ContractFilterer) ParseDeedClosed(log types.Log) (*ContractDeedClosed, error) {
+	event := new(ContractDeedClosed)
+	if err := _Contract.contract.UnpackLog(event, "DeedClosed", log); err != nil {
+		return nil, err
+	}
+	return event, nil
+}
+
 // ContractOwnerChangedIterator is returned from FilterOwnerChanged and is used to iterate over the raw logs and unpacked data for OwnerChanged events raised by the Contract contract.
 type ContractOwnerChangedIterator struct {
 	Event *ContractOwnerChanged // Event containing the contract specifics and raw log
@@ -648,4 +658,15 @@ func (_Contract *ContractFilterer) WatchOwnerChanged(opts *bind.WatchOpts, sink 
 			}
 		}
 	}), nil
+}
+
+// ParseOwnerChanged is a log parse operation binding the contract event 0xa2ea9883a321a3e97b8266c2b078bfeec6d50c711ed71f874a90d500ae2eaf36.
+//
+// Solidity: event OwnerChanged(address newOwner)
+func (_Contract *ContractFilterer) ParseOwnerChanged(log types.Log) (*ContractOwnerChanged, error) {
+	event := new(ContractOwnerChanged)
+	if err := _Contract.contract.UnpackLog(event, "OwnerChanged", log); err != nil {
+		return nil, err
+	}
+	return event, nil
 }

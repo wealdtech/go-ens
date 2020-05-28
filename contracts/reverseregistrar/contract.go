@@ -20,7 +20,6 @@ var (
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
-	_ = abi.U256
 	_ = bind.Bind
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -174,7 +173,7 @@ func (_Contract *ContractTransactorRaw) Transact(opts *bind.TransactOpts, method
 
 // DefaultResolver is a free data retrieval call binding the contract method 0x828eab0e.
 //
-// Solidity: function defaultResolver() constant returns(address)
+// Solidity: function defaultResolver() returns(address)
 func (_Contract *ContractCaller) DefaultResolver(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -186,21 +185,21 @@ func (_Contract *ContractCaller) DefaultResolver(opts *bind.CallOpts) (common.Ad
 
 // DefaultResolver is a free data retrieval call binding the contract method 0x828eab0e.
 //
-// Solidity: function defaultResolver() constant returns(address)
+// Solidity: function defaultResolver() returns(address)
 func (_Contract *ContractSession) DefaultResolver() (common.Address, error) {
 	return _Contract.Contract.DefaultResolver(&_Contract.CallOpts)
 }
 
 // DefaultResolver is a free data retrieval call binding the contract method 0x828eab0e.
 //
-// Solidity: function defaultResolver() constant returns(address)
+// Solidity: function defaultResolver() returns(address)
 func (_Contract *ContractCallerSession) DefaultResolver() (common.Address, error) {
 	return _Contract.Contract.DefaultResolver(&_Contract.CallOpts)
 }
 
 // Ens is a free data retrieval call binding the contract method 0x3f15457f.
 //
-// Solidity: function ens() constant returns(address)
+// Solidity: function ens() returns(address)
 func (_Contract *ContractCaller) Ens(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -212,21 +211,21 @@ func (_Contract *ContractCaller) Ens(opts *bind.CallOpts) (common.Address, error
 
 // Ens is a free data retrieval call binding the contract method 0x3f15457f.
 //
-// Solidity: function ens() constant returns(address)
+// Solidity: function ens() returns(address)
 func (_Contract *ContractSession) Ens() (common.Address, error) {
 	return _Contract.Contract.Ens(&_Contract.CallOpts)
 }
 
 // Ens is a free data retrieval call binding the contract method 0x3f15457f.
 //
-// Solidity: function ens() constant returns(address)
+// Solidity: function ens() returns(address)
 func (_Contract *ContractCallerSession) Ens() (common.Address, error) {
 	return _Contract.Contract.Ens(&_Contract.CallOpts)
 }
 
 // Node is a free data retrieval call binding the contract method 0xbffbe61c.
 //
-// Solidity: function node(address addr) constant returns(bytes32 ret)
+// Solidity: function node(address addr) returns(bytes32 ret)
 func (_Contract *ContractCaller) Node(opts *bind.CallOpts, addr common.Address) ([32]byte, error) {
 	var (
 		ret0 = new([32]byte)
@@ -238,14 +237,14 @@ func (_Contract *ContractCaller) Node(opts *bind.CallOpts, addr common.Address) 
 
 // Node is a free data retrieval call binding the contract method 0xbffbe61c.
 //
-// Solidity: function node(address addr) constant returns(bytes32 ret)
+// Solidity: function node(address addr) returns(bytes32 ret)
 func (_Contract *ContractSession) Node(addr common.Address) ([32]byte, error) {
 	return _Contract.Contract.Node(&_Contract.CallOpts, addr)
 }
 
 // Node is a free data retrieval call binding the contract method 0xbffbe61c.
 //
-// Solidity: function node(address addr) constant returns(bytes32 ret)
+// Solidity: function node(address addr) returns(bytes32 ret)
 func (_Contract *ContractCallerSession) Node(addr common.Address) ([32]byte, error) {
 	return _Contract.Contract.Node(&_Contract.CallOpts, addr)
 }
