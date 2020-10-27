@@ -137,7 +137,7 @@ func bindContract(address common.Address, caller bind.ContractCaller, transactor
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Contract *ContractRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Contract *ContractRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Contract.Contract.ContractCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -156,7 +156,7 @@ func (_Contract *ContractRaw) Transact(opts *bind.TransactOpts, method string, p
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Contract *ContractCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Contract *ContractCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Contract.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -175,12 +175,17 @@ func (_Contract *ContractTransactorRaw) Transact(opts *bind.TransactOpts, method
 //
 // Solidity: function ens() returns(address)
 func (_Contract *ContractCaller) Ens(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _Contract.contract.Call(opts, out, "ens")
-	return *ret0, err
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "ens")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Ens is a free data retrieval call binding the contract method 0x3f15457f.
@@ -201,12 +206,17 @@ func (_Contract *ContractCallerSession) Ens() (common.Address, error) {
 //
 // Solidity: function name(bytes32 ) returns(string)
 func (_Contract *ContractCaller) Name(opts *bind.CallOpts, arg0 [32]byte) (string, error) {
-	var (
-		ret0 = new(string)
-	)
-	out := ret0
-	err := _Contract.contract.Call(opts, out, "name", arg0)
-	return *ret0, err
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "name", arg0)
+
+	if err != nil {
+		return *new(string), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(string)).(*string)
+
+	return out0, err
+
 }
 
 // Name is a free data retrieval call binding the contract method 0x691f3431.

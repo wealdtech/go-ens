@@ -29,6 +29,7 @@ type ReverseResolver struct {
 	ContractAddr common.Address
 }
 
+// NewReverseResolverFor creates a reverse resolver contract for the given address.
 func NewReverseResolverFor(backend bind.ContractBackend, address common.Address) (*ReverseResolver, error) {
 	registry, err := NewRegistry(backend)
 	if err != nil {

@@ -137,7 +137,7 @@ func bindContract(address common.Address, caller bind.ContractCaller, transactor
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Contract *ContractRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Contract *ContractRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Contract.Contract.ContractCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -156,7 +156,7 @@ func (_Contract *ContractRaw) Transact(opts *bind.TransactOpts, method string, p
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Contract *ContractCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Contract *ContractCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Contract.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -175,18 +175,19 @@ func (_Contract *ContractTransactorRaw) Transact(opts *bind.TransactOpts, method
 //
 // Solidity: function rrdata(uint16 dnstype, bytes name) view returns(uint32, uint64, bytes20)
 func (_Contract *ContractCaller) Rrdata(opts *bind.CallOpts, dnstype uint16, name []byte) (uint32, uint64, [20]byte, error) {
-	var (
-		ret0 = new(uint32)
-		ret1 = new(uint64)
-		ret2 = new([20]byte)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "rrdata", dnstype, name)
+
+	if err != nil {
+		return *new(uint32), *new(uint64), *new([20]byte), err
 	}
-	err := _Contract.contract.Call(opts, out, "rrdata", dnstype, name)
-	return *ret0, *ret1, *ret2, err
+
+	out0 := *abi.ConvertType(out[0], new(uint32)).(*uint32)
+	out1 := *abi.ConvertType(out[1], new(uint64)).(*uint64)
+	out2 := *abi.ConvertType(out[2], new([20]byte)).(*[20]byte)
+
+	return out0, out1, out2, err
+
 }
 
 // Rrdata is a free data retrieval call binding the contract method 0x087991bc.

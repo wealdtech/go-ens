@@ -137,7 +137,7 @@ func bindContract(address common.Address, caller bind.ContractCaller, transactor
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Contract *ContractRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Contract *ContractRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Contract.Contract.ContractCaller.contract.Call(opts, result, method, params...)
 }
 
@@ -156,7 +156,7 @@ func (_Contract *ContractRaw) Transact(opts *bind.TransactOpts, method string, p
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Contract *ContractCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+func (_Contract *ContractCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _Contract.Contract.contract.Call(opts, result, method, params...)
 }
 
@@ -175,12 +175,17 @@ func (_Contract *ContractTransactorRaw) Transact(opts *bind.TransactOpts, method
 //
 // Solidity: function ens() returns(address)
 func (_Contract *ContractCaller) Ens(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _Contract.contract.Call(opts, out, "ens")
-	return *ret0, err
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "ens")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // Ens is a free data retrieval call binding the contract method 0x3f15457f.
@@ -201,22 +206,21 @@ func (_Contract *ContractCallerSession) Ens() (common.Address, error) {
 //
 // Solidity: function entries(bytes32 _hash) returns(uint8, address, uint256, uint256, uint256)
 func (_Contract *ContractCaller) Entries(opts *bind.CallOpts, _hash [32]byte) (uint8, common.Address, *big.Int, *big.Int, *big.Int, error) {
-	var (
-		ret0 = new(uint8)
-		ret1 = new(common.Address)
-		ret2 = new(*big.Int)
-		ret3 = new(*big.Int)
-		ret4 = new(*big.Int)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
-		ret3,
-		ret4,
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "entries", _hash)
+
+	if err != nil {
+		return *new(uint8), *new(common.Address), *new(*big.Int), *new(*big.Int), *new(*big.Int), err
 	}
-	err := _Contract.contract.Call(opts, out, "entries", _hash)
-	return *ret0, *ret1, *ret2, *ret3, *ret4, err
+
+	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
+	out1 := *abi.ConvertType(out[1], new(common.Address)).(*common.Address)
+	out2 := *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
+	out3 := *abi.ConvertType(out[3], new(*big.Int)).(**big.Int)
+	out4 := *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
+
+	return out0, out1, out2, out3, out4, err
+
 }
 
 // Entries is a free data retrieval call binding the contract method 0x267b6922.
@@ -237,12 +241,17 @@ func (_Contract *ContractCallerSession) Entries(_hash [32]byte) (uint8, common.A
 //
 // Solidity: function getAllowedTime(bytes32 _hash) returns(uint256 timestamp)
 func (_Contract *ContractCaller) GetAllowedTime(opts *bind.CallOpts, _hash [32]byte) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _Contract.contract.Call(opts, out, "getAllowedTime", _hash)
-	return *ret0, err
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "getAllowedTime", _hash)
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // GetAllowedTime is a free data retrieval call binding the contract method 0x13c89a8f.
@@ -263,12 +272,17 @@ func (_Contract *ContractCallerSession) GetAllowedTime(_hash [32]byte) (*big.Int
 //
 // Solidity: function isAllowed(bytes32 _hash, uint256 _timestamp) returns(bool allowed)
 func (_Contract *ContractCaller) IsAllowed(opts *bind.CallOpts, _hash [32]byte, _timestamp *big.Int) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _Contract.contract.Call(opts, out, "isAllowed", _hash, _timestamp)
-	return *ret0, err
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "isAllowed", _hash, _timestamp)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
 }
 
 // IsAllowed is a free data retrieval call binding the contract method 0x93503337.
@@ -289,12 +303,17 @@ func (_Contract *ContractCallerSession) IsAllowed(_hash [32]byte, _timestamp *bi
 //
 // Solidity: function launchLength() returns(uint32)
 func (_Contract *ContractCaller) LaunchLength(opts *bind.CallOpts) (uint32, error) {
-	var (
-		ret0 = new(uint32)
-	)
-	out := ret0
-	err := _Contract.contract.Call(opts, out, "launchLength")
-	return *ret0, err
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "launchLength")
+
+	if err != nil {
+		return *new(uint32), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint32)).(*uint32)
+
+	return out0, err
+
 }
 
 // LaunchLength is a free data retrieval call binding the contract method 0xae1a0b0c.
@@ -315,12 +334,17 @@ func (_Contract *ContractCallerSession) LaunchLength() (uint32, error) {
 //
 // Solidity: function registryStarted() returns(uint256)
 func (_Contract *ContractCaller) RegistryStarted(opts *bind.CallOpts) (*big.Int, error) {
-	var (
-		ret0 = new(*big.Int)
-	)
-	out := ret0
-	err := _Contract.contract.Call(opts, out, "registryStarted")
-	return *ret0, err
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "registryStarted")
+
+	if err != nil {
+		return *new(*big.Int), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+
+	return out0, err
+
 }
 
 // RegistryStarted is a free data retrieval call binding the contract method 0x9c67f06f.
@@ -341,12 +365,17 @@ func (_Contract *ContractCallerSession) RegistryStarted() (*big.Int, error) {
 //
 // Solidity: function rootNode() returns(bytes32)
 func (_Contract *ContractCaller) RootNode(opts *bind.CallOpts) ([32]byte, error) {
-	var (
-		ret0 = new([32]byte)
-	)
-	out := ret0
-	err := _Contract.contract.Call(opts, out, "rootNode")
-	return *ret0, err
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "rootNode")
+
+	if err != nil {
+		return *new([32]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+
+	return out0, err
+
 }
 
 // RootNode is a free data retrieval call binding the contract method 0xfaff50a8.
@@ -367,12 +396,17 @@ func (_Contract *ContractCallerSession) RootNode() ([32]byte, error) {
 //
 // Solidity: function sealedBids(address , bytes32 ) returns(address)
 func (_Contract *ContractCaller) SealedBids(opts *bind.CallOpts, arg0 common.Address, arg1 [32]byte) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _Contract.contract.Call(opts, out, "sealedBids", arg0, arg1)
-	return *ret0, err
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "sealedBids", arg0, arg1)
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
 // SealedBids is a free data retrieval call binding the contract method 0x5e431709.
@@ -393,12 +427,17 @@ func (_Contract *ContractCallerSession) SealedBids(arg0 common.Address, arg1 [32
 //
 // Solidity: function shaBid(bytes32 hash, address owner, uint256 value, bytes32 salt) returns(bytes32 sealedBid)
 func (_Contract *ContractCaller) ShaBid(opts *bind.CallOpts, hash [32]byte, owner common.Address, value *big.Int, salt [32]byte) ([32]byte, error) {
-	var (
-		ret0 = new([32]byte)
-	)
-	out := ret0
-	err := _Contract.contract.Call(opts, out, "shaBid", hash, owner, value, salt)
-	return *ret0, err
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "shaBid", hash, owner, value, salt)
+
+	if err != nil {
+		return *new([32]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+
+	return out0, err
+
 }
 
 // ShaBid is a free data retrieval call binding the contract method 0x22ec1244.
@@ -419,12 +458,17 @@ func (_Contract *ContractCallerSession) ShaBid(hash [32]byte, owner common.Addre
 //
 // Solidity: function state(bytes32 _hash) returns(uint8)
 func (_Contract *ContractCaller) State(opts *bind.CallOpts, _hash [32]byte) (uint8, error) {
-	var (
-		ret0 = new(uint8)
-	)
-	out := ret0
-	err := _Contract.contract.Call(opts, out, "state", _hash)
-	return *ret0, err
+	var out []interface{}
+	err := _Contract.contract.Call(opts, &out, "state", _hash)
+
+	if err != nil {
+		return *new(uint8), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
+
+	return out0, err
+
 }
 
 // State is a free data retrieval call binding the contract method 0x61d585da.
