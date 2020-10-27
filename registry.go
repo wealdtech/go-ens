@@ -130,29 +130,7 @@ func RegistryContractAddress(backend bind.ContractBackend) (common.Address, erro
 
 	// Instantiate the registry contract.  The same for all chains.
 	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
-	// if chainID.Cmp(params.MainnetChainConfig.ChainID) == 0 {
-	// 	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
-	// } else if chainID.Cmp(params.RopstenChainConfig.ChainID) == 0 {
-	// 	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
-	// } else if chainID.Cmp(params.RinkebyChainConfig.ChainID) == 0 {
-	// 	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
-	// } else if chainID.Cmp(params.GoerliChainConfig.ChainID) == 0 {
-	// 	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
-	// } else {
-	// 	return UnknownAddress, fmt.Errorf("No contract for network ID %v", chainID)
-	// }
 }
-
-//// RegistryContract obtains the registry contract for a chain
-//func RegistryContract(backend bind.ContractBackend) (*registry.Contract, error) {
-//	address, err := RegistryContractAddress(backend)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	// Instantiate the registry contract
-//	return registry.NewRegistryContract(address, backend)
-//}
 
 // RegistryContractFromRegistrar obtains the registry contract given an
 // existing registrar contract
@@ -166,18 +144,6 @@ func RegistryContractFromRegistrar(backend bind.ContractBackend, registrar *auct
 	}
 	return registry.NewContract(registryAddress, backend)
 }
-
-//// Resolver obtains the address of the resolver for a .eth name
-//func Resolver(contract *registry.Contract, name string) (common.Address, error) {
-//	if contract == nil {
-//		return UnknownAddress, errors.New("no registry contract")
-//	}
-//	address, err := contract.Resolver(nil, NameHash(name))
-//	if err == nil && bytes.Compare(address.Bytes(), UnknownAddress.Bytes()) == 0 {
-//		err = errors.New("no resolver")
-//	}
-//	return address, err
-//}
 
 // SetResolver sets the resolver for a name
 func SetResolver(session *registry.ContractSession, name string, resolverAddr *common.Address) (*types.Transaction, error) {

@@ -51,15 +51,6 @@ func NewBaseRegistrar(backend bind.ContractBackend, domain string) (*BaseRegistr
 		return nil, err
 	}
 
-	// Ensure this really is a base registrar.  To do this confirm that it supports
-	// the expected interfaces.
-	//supported, err := contract.SupportsInterface(nil, [4]byte{0x01, 0x8f, 0xac, 0x06})
-	//if err != nil {
-	//	return nil, err
-	//}
-	//if !supported {
-	//	return nil, fmt.Errorf("purported registrar for domain %s does not support nametoken functionality", domain)
-	//}
 	supported, err := contract.SupportsInterface(nil, [4]byte{0x28, 0xed, 0x4f, 0x6c})
 	if err != nil {
 		return nil, err

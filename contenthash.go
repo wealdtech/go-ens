@@ -83,7 +83,7 @@ func StringToContenthash(text string) ([]byte, error) {
 			data = append(data, []byte(hash)...)
 		} else {
 			// Wasn't a multihash; pass along as identity
-			encoded, err := multihash.Encode([]byte(bits[2]), multihash.ID)
+			encoded, err := multihash.Encode([]byte(bits[2]), multihash.IDENTITY)
 			if err != nil {
 				return nil, err
 			}
@@ -117,7 +117,7 @@ func StringToContenthash(text string) ([]byte, error) {
 		if err != nil {
 			return nil, errors.New("failed to obtain swarm content hash")
 		}
-		data = append(data, []byte(hash)...)
+		data = append(data, hash...)
 	case "onion":
 		// Codec
 		onionNum, err := multicodec.ID("onion")
@@ -195,7 +195,7 @@ func ContenthashToString(bytes []byte) (string, error) {
 		return fmt.Sprintf("/ipfs/%s", mHash.B58String()), nil
 	case "ipns-ns":
 		switch decodedMHash.Code {
-		case multihash.ID:
+		case multihash.IDENTITY:
 			return fmt.Sprintf("/ipns/%s", string(decodedMHash.Digest)), nil
 		default:
 			return fmt.Sprintf("/ipns/%s", mHash.B58String()), nil

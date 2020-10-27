@@ -581,6 +581,7 @@ func unregisteredDomain(client *ethclient.Client) string {
 	rand.Seed(time.Now().UTC().UnixNano())
 	registry, _ := NewRegistry(client)
 	for {
+		// #nosec G404
 		domain := fmt.Sprintf("go-ens-test-%d.eth", rand.Int31())
 		controller, _ := registry.Owner(domain)
 		if controller == UnknownAddress {
