@@ -558,7 +558,7 @@ func generateTxOpts(client *ethclient.Client, sender common.Address, valueStr st
 }
 
 func keySigner(chainID *big.Int, key *ecdsa.PrivateKey) bind.SignerFn {
-	return func(signer types.Signer, address common.Address, tx *types.Transaction) (*types.Transaction, error) {
+	return func(address common.Address, tx *types.Transaction) (*types.Transaction, error) {
 		keyAddr := crypto.PubkeyToAddress(key.PublicKey)
 		if address != keyAddr {
 			return nil, errors.New("not authorized to sign this account")
