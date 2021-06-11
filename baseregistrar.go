@@ -160,7 +160,7 @@ func (r *BaseRegistrar) Owner(domain string) (common.Address, error) {
 	}
 	owner, err := r.Contract.OwnerOf(nil, new(big.Int).SetBytes(labelHash[:]))
 	// Registrar reverts rather than provide a 0 owner, so...
-	if err != nil && err.Error() == "abi: unmarshalling empty output" {
+	if err != nil && err.Error() == "execution reverted" {
 		return UnknownAddress, nil
 	}
 	return owner, err
