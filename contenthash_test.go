@@ -73,13 +73,13 @@ func TestContenthash(t *testing.T) {
 			name: "IPFSCIDv0",
 			repr: "/ipfs/QmRAQB6YaCyidP37UdDnjFY5vQuiBrcqdyoW1CuDgwxkD4",
 			bin:  _hexStr("e3010170122029f2d17be6139079dc48696d1f582a8530eb9805b561eda517e22a892c7e3f1f"),
-			res:  "ipfs://k2jmtxseqz46solsx2rmxavgbzp6ij1t1kiq1or8a00c2g9bx1for0gv",
+			res:  "/ipfs/k2jmtxseqz46solsx2rmxavgbzp6ij1t1kiq1or8a00c2g9bx1for0gv",
 		},
 		{
 			name: "IPFSCIDv1",
 			repr: "/ipfs/bafybeibj6lixxzqtsb45ysdjnupvqkufgdvzqbnvmhw2kf7cfkesy7r7d4",
 			bin:  _hexStr("e3010170122029f2d17be6139079dc48696d1f582a8530eb9805b561eda517e22a892c7e3f1f"),
-			res:  "ipfs://k2jmtxseqz46solsx2rmxavgbzp6ij1t1kiq1or8a00c2g9bx1for0gv",
+			res:  "/ipfs/k2jmtxseqz46solsx2rmxavgbzp6ij1t1kiq1or8a00c2g9bx1for0gv",
 		},
 		{
 			name: "Onion",
@@ -97,19 +97,19 @@ func TestContenthash(t *testing.T) {
 			name: "IPFS",
 			repr: "ipfs://QmRAQB6YaCyidP37UdDnjFY5vQuiBrcqdyoW1CuDgwxkD4",
 			bin:  _hexStr("e3010170122029f2d17be6139079dc48696d1f582a8530eb9805b561eda517e22a892c7e3f1f"),
-			res:  "ipfs://k2jmtxseqz46solsx2rmxavgbzp6ij1t1kiq1or8a00c2g9bx1for0gv",
+			res:  "/ipfs/k2jmtxseqz46solsx2rmxavgbzp6ij1t1kiq1or8a00c2g9bx1for0gv",
 		},
 		{
 			name: "IPNSIdentity",
 			repr: "/ipns/k51qzi5uqu5djwbl0zcd4g9onue26a8nq97c0m9wp6kir1gibuyjxpkqpoxwag",
 			bin:  _hexStr("e5010172002408011220950b8f62b925ecc50247cc8de1084b43f854fbc452894d9a1a97d7f27d0addb8"),
-			res:  "ipns://k51qzi5uqu5djwbl0zcd4g9onue26a8nq97c0m9wp6kir1gibuyjxpkqpoxwag",
+			res:  "/ipns/k51qzi5uqu5djwbl0zcd4g9onue26a8nq97c0m9wp6kir1gibuyjxpkqpoxwag",
 		},
 		{
 			name: "IPNSEIP1577",
 			repr: "ipns://k51qzi5uqu5djwbl0zcd4g9onue26a8nq97c0m9wp6kir1gibuyjxpkqpoxwag",
 			bin:  _hexStr("e5010172002408011220950b8f62b925ecc50247cc8de1084b43f854fbc452894d9a1a97d7f27d0addb8"),
-			res:  "ipns://k51qzi5uqu5djwbl0zcd4g9onue26a8nq97c0m9wp6kir1gibuyjxpkqpoxwag",
+			res:  "/ipns/k51qzi5uqu5djwbl0zcd4g9onue26a8nq97c0m9wp6kir1gibuyjxpkqpoxwag",
 		},
 		{
 			name: "SwarmBad",
