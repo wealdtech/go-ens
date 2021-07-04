@@ -168,7 +168,7 @@ func ContenthashToString(bytes []byte) (string, error) {
 		if err != nil {
 			return "", errors.Wrap(err, "failed to obtain base36 representation")
 		}
-		return fmt.Sprintf("ipfs://%s", str), nil
+		return fmt.Sprintf("/ipfs/%s", str), nil
 	case "ipns-ns":
 		thisCID, err := cid.Parse(data)
 		if err != nil {
@@ -178,7 +178,7 @@ func ContenthashToString(bytes []byte) (string, error) {
 		if err != nil {
 			return "", errors.Wrap(err, "unknown multibase")
 		}
-		return fmt.Sprintf("ipns://%s", res), nil
+		return fmt.Sprintf("/ipns/%s", res), nil
 	case "swarm-ns":
 		id, offset := binary.Uvarint(data)
 		if id == 0 {
