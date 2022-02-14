@@ -1,4 +1,4 @@
-// Copyright 2019 Weald Technology Trading
+// Copyright 2019, 2022 Weald Technology Trading
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,14 +84,14 @@ func TestNameReRegistration(t *testing.T) {
 		t.Skip()
 	}
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
-	name, err := NewName(client, "domainsale.eth")
+	name, err := NewName(client, "resolver.eth")
 	require.Nil(t, err, "Failed to create name")
 
 	// Register stage 1 - should fail as already registered
 	opts, err := generateTxOpts(client, registrant, "0")
 	require.Nil(t, err, "Failed to generate transaction options")
 	_, _, err = name.RegisterStageOne(registrant, opts)
-	require.Equal(t, err.Error(), "name is already registered")
+	require.EqualError(t, err, "name is already registered")
 }
 
 func TestInvalidName(t *testing.T) {
@@ -233,7 +233,7 @@ func TestNameExtension(t *testing.T) {
 	opts, err := generateTxOpts(client, registrant, "0.001Ether")
 	require.Nil(t, err, "Failed to generate transaction options")
 	tx, err := name.ExtendRegistration(opts)
-	assert.Nil(t, err, "Failed to send transaction")
+	require.Nil(t, err, "Failed to send transaction")
 	// Wait until mined
 	waitForTransaction(client, tx.Hash())
 	// Confirm expiry has increased
@@ -454,7 +454,7 @@ func TestReclaimUnauthorised(t *testing.T) {
 	require.Nil(t, err, "Failed to generate transaction options")
 	_, err = name.Reclaim(opts)
 	require.NotNil(t, err, "Failed to error when it should")
-	assert.Equal(t, "not the current registrant", err.Error())
+	assert.Equal(t, "not the registrant", err.Error())
 }
 
 func TestTransfer(t *testing.T) {
@@ -522,7 +522,7 @@ func TestTransferUnauthorised(t *testing.T) {
 	require.Nil(t, err, "Failed to generate transaction options")
 	_, err = name.Transfer(dsThief, opts)
 	require.NotNil(t, err, "Failed to error when it should")
-	assert.Equal(t, "not the registrant", err.Error())
+	assert.Equal(t, "not the current registrant", err.Error())
 }
 
 func generateTxOpts(client *ethclient.Client, sender common.Address, valueStr string) (*bind.TransactOpts, error) {
