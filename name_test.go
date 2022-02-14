@@ -37,14 +37,14 @@ import (
 )
 
 func TestName(t *testing.T) {
-	dsRegistrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
-	dsController := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
-	dsResolver := common.HexToAddress("4c641fb9bad9b60ef180c31f56051ce826d21a9a")
-	dsExpiry := time.Unix(1628927810, 0)
+	dsRegistrant := common.HexToAddress("a303ddc620aa7d1390baccc8a495508b183fab59")
+	dsController := common.HexToAddress("a303ddc620aa7d1390baccc8a495508b183fab59")
+	dsResolver := common.HexToAddress("DaaF96c344f63131acadD0Ea35170E7892d3dfBA")
+	dsExpiry := time.Unix(4741286688, 0)
 	dsRegistrationInterval := 60 * time.Second
 
 	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
-	name, err := NewName(client, "domainsale.eth")
+	name, err := NewName(client, "resolver.eth")
 	require.Nil(t, err, "Failed to create name")
 
 	registrant, err := name.Registrant()
