@@ -15,6 +15,8 @@
 package ens
 
 import (
+	"encoding/base32"
+	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
@@ -140,6 +142,30 @@ func StringToContenthash(text string) ([]byte, error) {
 			return nil, errors.New("onion address should be 56 characters")
 		}
 		res = append(res, []byte(data)...)
+	case "sia":
+		// Codec
+		buf := make([]byte, binary.MaxVarintLen64)
+		size := binary.PutUvarint(buf, multicodec.MustID("skynet-ns"))
+		res = append(res, buf[0:size]...)
+
+		// Skylink
+		var err error
+		var decoded []byte
+		switch len(data) {
+		case 46:
+			decoded, err = base64.RawURLEncoding.DecodeString(data)
+			if err != nil {
+				return nil, errors.New("skylink not correctly encoded")
+			}
+		case 55:
+			decoded, err = base32.HexEncoding.WithPadding(base32.NoPadding).DecodeString(strings.ToUpper(data))
+			if err != nil {
+				return nil, errors.New("skylink not correctly encoded")
+			}
+		default:
+			return nil, errors.New("skylinks should be either 46 or 55 characters, depending on whether it is base64 or base32 encoded")
+		}
+		res = append(res, decoded...)
 	default:
 		return nil, fmt.Errorf("unknown codec %s", codec)
 	}
@@ -201,6 +227,9 @@ func ContenthashToString(bytes []byte) (string, error) {
 		return fmt.Sprintf("onion://%s", string(data)), nil
 	case "onion3":
 		return fmt.Sprintf("onion3://%s", string(data)), nil
+	case "skynet-ns":
+		skylink := base64.RawURLEncoding.EncodeToString(data)
+		return fmt.Sprintf("sia://%s", skylink), nil
 	default:
 		return "", fmt.Errorf("unknown codec name %s", codecName)
 	}

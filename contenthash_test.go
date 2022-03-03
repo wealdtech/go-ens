@@ -128,6 +128,28 @@ func TestContenthash(t *testing.T) {
 			bin:  []byte{0xe4, 0x01, 0x01, 0xfa, 0x01, 0x1b, 0x20, 0xd1, 0xde, 0x99, 0x94, 0xb4, 0xd0, 0x39, 0xf6, 0x54, 0x8d, 0x19, 0x1e, 0xb2, 0x67, 0x86, 0x76, 0x9f, 0x58, 0x08, 0x09, 0x25, 0x6b, 0x46, 0x85, 0xef, 0x31, 0x68, 0x05, 0x26, 0x5e, 0xa1, 0x62},
 			res:  "bzz://d1de9994b4d039f6548d191eb26786769f580809256b4685ef316805265ea162",
 		},
+		{
+			name: "Skynet",
+			repr: "sia://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg",
+			bin:  _hexStr("90b2c60508004007fd43b74149b31aacbbf2784e874d09b086bed15fd54cacff7120cce95372"),
+			res:  "sia://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg",
+		},
+		{
+			name: "SkynetBase32",
+			repr: "sia://100401vt8erk2idj3ambnsjo9q3kq2dggqvd2nul9imfus90pjkl6sg",
+			bin:  _hexStr("90b2c60508004007fd43b74149b31aacbbf2784e874d09b086bed15fd54cacff7120cce95372"),
+			res:  "sia://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg",
+		},
+		{
+			name: "SkynetInvalidSize",
+			repr: "sia://AAAACABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg",
+			err:  errors.New("skylinks should be either 46 or 55 characters, depending on whether it is base64 or base32 encoded"),
+		},
+		{
+			name: "SkynetInvalidEncoding",
+			repr: "sia://%CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTc",
+			err:  errors.New("skylink not correctly encoded"),
+		},
 	}
 
 	for _, test := range tests {
