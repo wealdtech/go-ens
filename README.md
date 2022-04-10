@@ -23,7 +23,7 @@ Go module to simplify interacting with the [Ethereum Name Service](https://ens.d
 `go-ens` is a standard Go module which can be installed with:
 
 ```sh
-go get github.com/wealdtech/go-ens
+go get github.com/wealdtech/go-ens/v3
 ```
 
 ## Usage
