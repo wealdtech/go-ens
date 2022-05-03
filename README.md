@@ -104,7 +104,7 @@ func main() {
 	}
 
 	// Resolve a name to an address.
-	domain := "avsa.eth"
+	domain := "ethereum.eth"
 	address, err := ens.Resolve(client, domain)
 	if err != nil {
 		panic(err)
