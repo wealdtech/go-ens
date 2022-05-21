@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Weald Technology Trading
+// Copyright 2017-2022 Weald Technology Trading
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -113,6 +113,9 @@ func ReverseResolve(backend bind.ContractBackend, address common.Address) (strin
 
 	// Resolve the name
 	name, err := resolver.Name(address)
+	if err != nil {
+		return "", err
+	}
 	if name == "" {
 		err = errors.New("no resolution")
 	}
