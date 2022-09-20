@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestDeriveTokenIdFromENSName(t *testing.T) {
+func TestDeriveTokenId(t *testing.T) {
 	tests := []struct {
 		name     string
 		expected string
