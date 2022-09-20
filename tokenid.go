@@ -15,22 +15,35 @@
 package ens
 
 import (
+	"errors"
 	"fmt"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common/math"
 )
 
 // DeriveTokenIdFromENSDomain derive token_id from the ENS domain
-func DeriveTokenIdFromENSDomain(domain string) (string, error) {
-	domain, err := NormaliseDomain(domain)
+func DeriveTokenIdFromENSDomain(backend bind.ContractBackend, domain string) (string, error) {
+	if domain == "" {
+		return "", errors.New("empty domain")
+	}
+	_, err := Resolve(backend, domain)
 	if err != nil {
 		return "", err
 	}
+	domain, err = NormaliseDomain(domain)
+	if err != nil {
+		return "", err
+	}
+
 	domain, err = DomainPart(domain, 1)
 	if err != nil {
 		return "", err
 	}
 	labelHash, err := LabelHash(domain)
-	hash := fmt.Sprintf("0x%x", labelHash)
+	if err != nil {
+		return "", err
+	}
+	hash := fmt.Sprintf("%#x", labelHash)
 	tokenId, ok := math.ParseBig256(hash)
 	if !ok {
 		return "", err
