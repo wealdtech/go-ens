@@ -21,8 +21,8 @@ import (
 	"github.com/ethereum/go-ethereum/common/math"
 )
 
-// DeriveTokenIdFromENSDomain derive token_id from the ENS domain
-func DeriveTokenIdFromENSDomain(backend bind.ContractBackend, domain string) (string, error) {
+// DeriveTokenID derive token_id from the ENS domain
+func DeriveTokenID(backend bind.ContractBackend, domain string) (string, error) {
 	if domain == "" {
 		return "", errors.New("empty domain")
 	}
