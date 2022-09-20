@@ -35,7 +35,7 @@ func TestDeriveTokenIdFromENSName(t *testing.T) {
 	require.NoError(t, err)
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actual, err := DeriveTokenIdFromENSDomain(client, test.input)
+			actual, err := DeriveTokenID(client, test.input)
 			if test.err != "" {
 				require.EqualError(t, err, test.err)
 			} else {

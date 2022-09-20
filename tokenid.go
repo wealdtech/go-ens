@@ -21,7 +21,9 @@ import (
 	"github.com/ethereum/go-ethereum/common/math"
 )
 
-// DeriveTokenID derive token_id from the ENS domain
+// DeriveTokenID derive tokenID from the ENS domain.
+//
+// The tokenID of the ENS name is simply the uint256 representation of the tokenID of ERC721
 func DeriveTokenID(backend bind.ContractBackend, domain string) (string, error) {
 	if domain == "" {
 		return "", errors.New("empty domain")
