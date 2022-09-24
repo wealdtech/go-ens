@@ -117,17 +117,6 @@ func (r *Registry) SetSubdomainOwner(opts *bind.TransactOpts, name string, subna
 // RegistryContractAddress obtains the address of the registry contract for a chain.
 // This is (currently) the same for all chains.
 func RegistryContractAddress(backend bind.ContractBackend) (common.Address, error) {
-	//	chainID := big.NewInt(0)
-	//	if reflect.TypeOf(backend).String() == "*ethclient.Client" {
-	//		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	//		defer cancel()
-	//		var err error
-	//		chainID, err = backend.(*ethclient.Client).NetworkID(ctx)
-	//		if err != nil {
-	//			return UnknownAddress, err
-	//		}
-	//	}
-
 	// Instantiate the registry contract.  The same for all chains.
 	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
 }
