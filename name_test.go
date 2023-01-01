@@ -37,13 +37,13 @@ import (
 )
 
 func TestName(t *testing.T) {
-	dsRegistrant := common.HexToAddress("a303ddc620aa7d1390baccc8a495508b183fab59")
-	dsController := common.HexToAddress("a303ddc620aa7d1390baccc8a495508b183fab59")
+	dsRegistrant := common.HexToAddress("b6E040C9ECAaE172a89bD561c5F73e1C48d28cd9")
+	dsController := common.HexToAddress("0904Dac3347eA47d208F3Fd67402D039a3b99859")
 	dsResolver := common.HexToAddress("DaaF96c344f63131acadD0Ea35170E7892d3dfBA")
-	dsExpiry := time.Unix(4741286688, 0)
+	dsExpiry := time.Unix(1904119920, 0)
 	dsRegistrationInterval := 60 * time.Second
 
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	name, err := NewName(client, "resolver.eth")
 	require.Nil(t, err, "Failed to create name")
 
@@ -70,7 +70,7 @@ func TestName(t *testing.T) {
 }
 
 func TestNameExpiry(t *testing.T) {
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	domain := unregisteredDomain(client)
 	name, err := NewName(client, domain)
 	require.Nil(t, err, "Failed to create name")
@@ -83,7 +83,7 @@ func TestNameReRegistration(t *testing.T) {
 	if !hasPrivateKey(registrant) {
 		t.Skip()
 	}
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	name, err := NewName(client, "resolver.eth")
 	require.Nil(t, err, "Failed to create name")
 
@@ -95,13 +95,13 @@ func TestNameReRegistration(t *testing.T) {
 }
 
 func TestInvalidName(t *testing.T) {
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	_, err := NewName(client, "ab.eth")
 	require.Equal(t, err.Error(), "name is not valid according to the rules of the registrar (too short, invalid characters, etc.)")
 }
 
 func TestNameRegistration(t *testing.T) {
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	if !hasPrivateKey(registrant) {
 		t.Skip()
@@ -140,7 +140,7 @@ func TestNameRegistration(t *testing.T) {
 }
 
 func TestNameRegistrationStageTwoNoStageOne(t *testing.T) {
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	if !hasPrivateKey(registrant) {
 		t.Skip()
@@ -159,7 +159,7 @@ func TestNameRegistrationStageTwoNoStageOne(t *testing.T) {
 }
 
 func TestNameRegistrationNoValue(t *testing.T) {
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	if !hasPrivateKey(registrant) {
 		t.Skip()
@@ -192,7 +192,7 @@ func TestNameRegistrationNoValue(t *testing.T) {
 }
 
 func TestNameRegistrationNoInterval(t *testing.T) {
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	registrant := common.HexToAddress("388Ea662EF2c223eC0B047D41Bf3c0f362142ad5")
 	if !hasPrivateKey(registrant) {
 		t.Skip()
@@ -223,7 +223,7 @@ func TestNameExtension(t *testing.T) {
 	if !hasPrivateKey(registrant) {
 		t.Skip()
 	}
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
 
@@ -247,7 +247,7 @@ func TestNameExtensionLowValue(t *testing.T) {
 	if !hasPrivateKey(registrant) {
 		t.Skip()
 	}
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
 
@@ -262,7 +262,7 @@ func TestNameExtensionNotRegistered(t *testing.T) {
 	if !hasPrivateKey(registrant) {
 		t.Skip()
 	}
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 	domain := unregisteredDomain(client)
 	name, err := NewName(client, domain)
 	require.Nil(t, err, "Failed to create name")
@@ -278,7 +278,7 @@ func TestNameSubdomainCreate(t *testing.T) {
 	if !hasPrivateKey(dsRegistrant) {
 		t.Skip()
 	}
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
@@ -309,7 +309,7 @@ func TestNameSubdomainCreateAlreadyExists(t *testing.T) {
 	if !hasPrivateKey(dsRegistrant) {
 		t.Skip()
 	}
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
@@ -330,7 +330,7 @@ func TestSetController(t *testing.T) {
 		t.Skip()
 	}
 	dsController := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
@@ -374,7 +374,7 @@ func TestSetControllerUnauthorised(t *testing.T) {
 	if !hasPrivateKey(dsThief) {
 		t.Skip()
 	}
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
@@ -398,7 +398,7 @@ func TestReclaim(t *testing.T) {
 		t.Skip()
 	}
 	dsController := common.HexToAddress("E195c59BCF26fD36c82d1C720860127A5c1c4040")
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
@@ -439,7 +439,7 @@ func TestReclaimUnauthorised(t *testing.T) {
 	if !hasPrivateKey(dsThief) {
 		t.Skip()
 	}
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
@@ -466,7 +466,7 @@ func TestTransfer(t *testing.T) {
 	if !hasPrivateKey(dsNewRegistrant) {
 		t.Skip()
 	}
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
@@ -507,7 +507,7 @@ func TestTransferUnauthorised(t *testing.T) {
 	if !hasPrivateKey(dsThief) {
 		t.Skip()
 	}
-	client, _ := ethclient.Dial("https://ropsten.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
+	client, _ := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
 
 	name, err := NewName(client, "foobar5.eth")
 	require.Nil(t, err, "Failed to create name")
