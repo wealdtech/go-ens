@@ -27,7 +27,7 @@ var pStrict = idna.New(idna.MapForLookup(), idna.StrictDomainName(true), idna.Tr
 
 // Normalize normalizes a name according to the ENS rules
 func Normalize(input string) (output string, err error) {
-	output, err = p.ToUnicode(input)
+	output, err = pStrict.ToUnicode(input)
 	if err != nil {
 		return
 	}
