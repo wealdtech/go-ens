@@ -17,10 +17,10 @@ package ens
 import (
 	"errors"
 
+	"github.com/airstack-xyz/go-ens/v3/contracts/reverseregistrar"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/wealdtech/go-ens/v3/contracts/reverseregistrar"
 )
 
 // ReverseRegistrar is the structure for the reverse registrar
