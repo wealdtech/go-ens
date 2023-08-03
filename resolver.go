@@ -79,10 +79,12 @@ func NewResolverAt(backend bind.ContractBackend, domain string, address common.A
 	}
 	_, err = contract.Addr(nil, nameHash)
 	if err != nil {
-		if err.Error() == "no contract code at given address" {
-			return nil, errors.New("no resolver")
+		if err.Error() != "execution reverted: Unknown Node ID" {
+			if err.Error() == "no contract code at given address" {
+				return nil, errors.New("no resolver")
+			}
+			return nil, err
 		}
-		return nil, err
 	}
 
 	return &Resolver{

@@ -61,6 +61,13 @@ func TestResolveTestEnsTest(t *testing.T) {
 	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
 }
 
+func TestResolveMoonCat(t *testing.T) {
+	expected := "0xC3082aF35Fe9747D996C8913212e7cd28982081a"
+	actual, err := Resolve(client, "17368.ismymooncat.eth")
+	require.Nil(t, err, "Error resolving name")
+	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
+}
+
 func TestResolveResolverEth(t *testing.T) {
 	expected := "4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41"
 	actual, err := Resolve(client, "resolver.eth")
