@@ -23,8 +23,10 @@ import (
 	"golang.org/x/crypto/sha3"
 )
 
-var p = idna.New(idna.MapForLookup(), idna.StrictDomainName(false), idna.Transitional(false))
-var pStrict = idna.New(idna.MapForLookup(), idna.StrictDomainName(true), idna.Transitional(false))
+var (
+	p       = idna.New(idna.MapForLookup(), idna.ValidateLabels(false), idna.CheckHyphens(false), idna.StrictDomainName(false), idna.Transitional(false))
+	pStrict = idna.New(idna.MapForLookup(), idna.ValidateLabels(false), idna.CheckHyphens(false), idna.StrictDomainName(true), idna.Transitional(false))
+)
 
 // Normalize normalizes a name according to the ENS rules.
 func Normalize(input string) (string, error) {
