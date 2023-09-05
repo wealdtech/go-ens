@@ -19,7 +19,6 @@ import (
 	"compress/zlib"
 	"errors"
 	"io"
-	"io/ioutil"
 	"math/big"
 	"strings"
 
@@ -298,7 +297,7 @@ func (r *Resolver) ABI(name string) (string, error) {
 			}
 			defer z.Close()
 			var uncompressed []byte
-			uncompressed, err = ioutil.ReadAll(z)
+			uncompressed, err = io.ReadAll(z)
 			if err != nil {
 				return "", err
 			}
