@@ -67,7 +67,7 @@ func TestContenthash(t *testing.T) {
 		{
 			name: "BadHash",
 			repr: "/ipfs/invalid",
-			err:  errors.New("invalid IPFS data: selected encoding not supported"),
+			err:  errors.New("invalid IPFS data: invalid cid: selected encoding not supported"),
 		},
 		{
 			name: "IPFSCIDv0",

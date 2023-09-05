@@ -35,8 +35,8 @@ func StringToContenthash(text string) ([]byte, error) {
 		return nil, errors.New("no content hash")
 	}
 
-	codec := ""
-	data := ""
+	var codec string
+	var data string
 	if strings.Contains(text, "://") {
 		// URL style.
 		bits := strings.Split(text, "://")
