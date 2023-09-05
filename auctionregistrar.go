@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Weald Technology Trading
+// Copyright 2017-2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import (
 	"github.com/wealdtech/go-ens/v3/contracts/auctionregistrar"
 )
 
-// AuctionRegistrar is the structure for the auction registrar contract
+// AuctionRegistrar is the structure for the auction registrar contract.
 type AuctionRegistrar struct {
 	backend      bind.ContractBackend
 	domain       string
@@ -33,7 +33,7 @@ type AuctionRegistrar struct {
 	ContractAddr common.Address
 }
 
-// AuctionEntry is an auction entry
+// AuctionEntry is an auction entry.
 type AuctionEntry struct {
 	State        string
 	Deed         common.Address
@@ -42,7 +42,7 @@ type AuctionEntry struct {
 	HighestBid   *big.Int
 }
 
-// NewAuctionRegistrar creates a new auction registrar for a given domain
+// NewAuctionRegistrar creates a new auction registrar for a given domain.
 func NewAuctionRegistrar(backend bind.ContractBackend, domain string) (*AuctionRegistrar, error) {
 	address, err := RegistrarContractAddress(backend, domain)
 	if err != nil {
@@ -52,7 +52,7 @@ func NewAuctionRegistrar(backend bind.ContractBackend, domain string) (*AuctionR
 	return NewAuctionRegistrarAt(backend, domain, address)
 }
 
-// NewAuctionRegistrarAt creates an auction registrar for a given domain at a given address
+// NewAuctionRegistrarAt creates an auction registrar for a given domain at a given address.
 func NewAuctionRegistrarAt(backend bind.ContractBackend, domain string, address common.Address) (*AuctionRegistrar, error) {
 	contract, err := auctionregistrar.NewContract(address, backend)
 	if err != nil {
@@ -66,7 +66,7 @@ func NewAuctionRegistrarAt(backend bind.ContractBackend, domain string, address 
 	}, nil
 }
 
-// State returns the state of a nam
+// State returns the state of a name.
 func (r *AuctionRegistrar) State(name string) (string, error) {
 	entry, err := r.Entry(name)
 	if err != nil {
@@ -78,7 +78,7 @@ func (r *AuctionRegistrar) State(name string) (string, error) {
 	return entry.State, nil
 }
 
-// Entry obtains a registrar entry for a name
+// Entry obtains a registrar entry for a name.
 func (r *AuctionRegistrar) Entry(domain string) (*AuctionEntry, error) {
 	name, err := UnqualifiedName(domain, r.domain)
 	if err != nil {
@@ -106,7 +106,7 @@ func (r *AuctionRegistrar) Entry(domain string) (*AuctionEntry, error) {
 	case 1:
 		entry.State = "Bidding"
 	case 2:
-		// Might be won or owned
+		// Might be won or owned.
 		registry, err := NewRegistry(r.backend)
 		if err != nil {
 			return nil, err
@@ -135,7 +135,7 @@ func (r *AuctionRegistrar) Entry(domain string) (*AuctionEntry, error) {
 	return entry, nil
 }
 
-// Migrate migrates a domain to the permanent registrar
+// Migrate migrates a domain to the permanent registrar.
 func (r *AuctionRegistrar) Migrate(opts *bind.TransactOpts, domain string) (*types.Transaction, error) {
 	name, err := UnqualifiedName(domain, r.domain)
 	if err != nil {
@@ -149,7 +149,7 @@ func (r *AuctionRegistrar) Migrate(opts *bind.TransactOpts, domain string) (*typ
 	return r.Contract.TransferRegistrars(opts, labelHash)
 }
 
-// Release releases a domain
+// Release releases a domain.
 func (r *AuctionRegistrar) Release(opts *bind.TransactOpts, domain string) (*types.Transaction, error) {
 	name, err := UnqualifiedName(domain, r.domain)
 	if err != nil {

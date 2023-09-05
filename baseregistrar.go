@@ -1,4 +1,4 @@
-// Copyright 2019 Weald Technology Trading
+// Copyright 2019 - 2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import (
 	"golang.org/x/crypto/sha3"
 )
 
-// BaseRegistrar is the structure for the registrar
+// BaseRegistrar is the structure for the registrar.
 type BaseRegistrar struct {
 	backend      bind.ContractBackend
 	domain       string
@@ -35,7 +35,7 @@ type BaseRegistrar struct {
 	ContractAddr common.Address
 }
 
-// NewBaseRegistrar obtains the registrar contract for a given domain
+// NewBaseRegistrar obtains the registrar contract for a given domain.
 func NewBaseRegistrar(backend bind.ContractBackend, domain string) (*BaseRegistrar, error) {
 	address, err := RegistrarContractAddress(backend, domain)
 	if err != nil {
@@ -67,7 +67,7 @@ func NewBaseRegistrar(backend bind.ContractBackend, domain string) (*BaseRegistr
 	}, nil
 }
 
-// PriorAuctionContract obtains the previous (auction) registrar contract
+// PriorAuctionContract obtains the previous (auction) registrar contract.
 func (r *BaseRegistrar) PriorAuctionContract() (*AuctionRegistrar, error) {
 	address, err := r.Contract.PreviousRegistrar(nil)
 	if err != nil {
@@ -79,7 +79,7 @@ func (r *BaseRegistrar) PriorAuctionContract() (*AuctionRegistrar, error) {
 		return nil, errors.New("failed to instantiate prior auction contract")
 	}
 
-	// Confirm ths really is an auction contract by trying to create (but not submit) a bid
+	// Confirm ths really is an auction contract by trying to create (but not submit) a bid.
 	var shaBid [32]byte
 	var emptyHash [32]byte
 	sha := sha3.NewLegacyKeccak256()
@@ -110,13 +110,13 @@ func (r *BaseRegistrar) PriorAuctionContract() (*AuctionRegistrar, error) {
 }
 
 // RegisteredWith returns one of "temporary", "permanent" or "none" for the
-// registrar on which this name is registered
+// registrar on which this name is registered.
 func (r *BaseRegistrar) RegisteredWith(domain string) (string, error) {
 	name, err := UnqualifiedName(domain, r.domain)
 	if err != nil {
 		return "", err
 	}
-	// See if we're registered at all - fetch the owner to find out
+	// See if we're registered at all - fetch the owner to find out.
 	registry, err := NewRegistry(r.backend)
 	if err != nil {
 		return "", err
@@ -126,7 +126,7 @@ func (r *BaseRegistrar) RegisteredWith(domain string) (string, error) {
 		return "", err
 	}
 
-	// Fetch the temporary registrar and see if we're registered there
+	// Fetch the temporary registrar and see if we're registered there.
 	auctionRegistrar, err := r.PriorAuctionContract()
 	if err != nil {
 		return "", err
@@ -141,7 +141,7 @@ func (r *BaseRegistrar) RegisteredWith(domain string) (string, error) {
 		}
 	}
 
-	// No temporary registrar or no entry in same
+	// No temporary registrar or no entry in same.
 	if owner == UnknownAddress {
 		return "none", nil
 	}
@@ -166,7 +166,7 @@ func (r *BaseRegistrar) Owner(domain string) (common.Address, error) {
 	return owner, err
 }
 
-// SetOwner sets the owner of the token holding the name
+// SetOwner sets the owner of the token holding the name.
 func (r *BaseRegistrar) SetOwner(opts *bind.TransactOpts, domain string, newOwner common.Address) (*types.Transaction, error) {
 	name, err := UnqualifiedName(domain, r.domain)
 	if err != nil {
@@ -198,7 +198,7 @@ func (r *BaseRegistrar) Expiry(domain string) (*big.Int, error) {
 	return r.Contract.NameExpires(nil, id)
 }
 
-// Reclaim reclaims a domain by the owner
+// Reclaim reclaims a domain by the owner.
 func (r *BaseRegistrar) Reclaim(opts *bind.TransactOpts, domain string, newOwner common.Address) (*types.Transaction, error) {
 	name, err := UnqualifiedName(domain, r.domain)
 	if err != nil {

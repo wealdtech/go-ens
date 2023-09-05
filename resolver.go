@@ -182,43 +182,45 @@ func (r *Resolver) InterfaceImplementer(interfaceID [4]byte) (common.Address, er
 
 // Resolve resolves an ENS name in to an Etheruem address
 // This will return an error if the name is not found or otherwise 0
-func Resolve(backend bind.ContractBackend, input string) (address common.Address, err error) {
+func Resolve(backend bind.ContractBackend, input string) (common.Address, error) {
 	if strings.Contains(input, ".") {
 		return resolveName(backend, input)
 	}
 	if (strings.HasPrefix(input, "0x") && len(input) > 42) || (!strings.HasPrefix(input, "0x") && len(input) > 40) {
-		err = errors.New("address too long")
-	} else {
-		address = common.HexToAddress(input)
-		if address == UnknownAddress {
-			err = errors.New("could not parse address")
-		}
+		return UnknownAddress, errors.New("address too long")
+	}
+	address := common.HexToAddress(input)
+	if address == UnknownAddress {
+		return UnknownAddress, errors.New("could not parse address")
 	}
 
-	return
+	return address, nil
 }
 
-func resolveName(backend bind.ContractBackend, input string) (address common.Address, err error) {
+func resolveName(backend bind.ContractBackend, input string) (common.Address, error) {
 	nameHash, err := NameHash(input)
 	if err != nil {
 		return UnknownAddress, err
 	}
 	if bytes.Equal(nameHash[:], zeroHash) {
-		err = errors.New("bad name")
-	} else {
-		address, err = resolveHash(backend, input)
+		return UnknownAddress, errors.New("bad name")
 	}
-	return
+	address, err := resolveHash(backend, input)
+	if err != nil {
+		return UnknownAddress, err
+	}
+
+	return address, nil
 }
 
-func resolveHash(backend bind.ContractBackend, domain string) (address common.Address, err error) {
+func resolveHash(backend bind.ContractBackend, domain string) (common.Address, error) {
 	resolver, err := NewResolver(backend, domain)
 	if err != nil {
 		return UnknownAddress, err
 	}
 
-	// Resolve the domain
-	address, err = resolver.Address()
+	// Resolve the domain.
+	address, err := resolver.Address()
 	if err != nil {
 		return UnknownAddress, err
 	}
@@ -226,10 +228,10 @@ func resolveHash(backend bind.ContractBackend, domain string) (address common.Ad
 		return UnknownAddress, errors.New("no address")
 	}
 
-	return
+	return address, nil
 }
 
-// SetText sets the text associated with a name
+// SetText sets the text associated with a name.
 func (r *Resolver) SetText(opts *bind.TransactOpts, name string, value string) (*types.Transaction, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -238,7 +240,7 @@ func (r *Resolver) SetText(opts *bind.TransactOpts, name string, value string) (
 	return r.Contract.SetText(opts, nameHash, name, value)
 }
 
-// Text obtains the text associated with a name
+// Text obtains the text associated with a name.
 func (r *Resolver) Text(name string) (string, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -247,15 +249,15 @@ func (r *Resolver) Text(name string) (string, error) {
 	return r.Contract.Text(nil, nameHash, name)
 }
 
-// SetABI sets the ABI associated with a name
-func (r *Resolver) SetABI(opts *bind.TransactOpts, name string, abi string, contentType *big.Int) (*types.Transaction, error) {
+// SetABI sets the ABI associated with a name.
+func (r *Resolver) SetABI(opts *bind.TransactOpts, _ string, abi string, contentType *big.Int) (*types.Transaction, error) {
 	var data []byte
 	switch contentType.Uint64() {
 	case 1:
-		// Uncompressed JSON
+		// Uncompressed JSON.
 		data = []byte(abi)
 	case 2:
-		// Zlib-compressed JSON
+		// Zlib-compressed JSON.
 		var b bytes.Buffer
 		w := zlib.NewWriter(&b)
 		if _, err := w.Write([]byte(abi)); err != nil {
@@ -274,7 +276,7 @@ func (r *Resolver) SetABI(opts *bind.TransactOpts, name string, abi string, cont
 	return r.Contract.SetABI(opts, nameHash, contentType, data)
 }
 
-// ABI returns the ABI associated with a name
+// ABI returns the ABI associated with a name.
 func (r *Resolver) ABI(name string) (string, error) {
 	contentTypes := big.NewInt(3)
 	nameHash, err := NameHash(name)
@@ -285,10 +287,10 @@ func (r *Resolver) ABI(name string) (string, error) {
 	var abi string
 	if err == nil {
 		if contentType.Cmp(big.NewInt(1)) == 0 {
-			// Uncompressed JSON
+			// Uncompressed JSON.
 			abi = string(data)
 		} else if contentType.Cmp(big.NewInt(2)) == 0 {
-			// Zlib-compressed JSON
+			// Zlib-compressed JSON.
 			b := bytes.NewReader(data)
 			var z io.ReadCloser
 			z, err = zlib.NewReader(b)
