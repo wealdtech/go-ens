@@ -1,4 +1,4 @@
-// Copyright 2019 Weald Technology Trading
+// Copyright 2019-2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import (
 	"github.com/wealdtech/go-ens/v3/contracts/dnsregistrar"
 )
 
-// DNSRegistrar is the structure for the registrar
+// DNSRegistrar is the structure for the registrar.
 type DNSRegistrar struct {
 	backend      bind.ContractBackend
 	domain       string
@@ -30,7 +30,7 @@ type DNSRegistrar struct {
 	ContractAddr common.Address
 }
 
-// NewDNSRegistrar obtains the registrar contract for a given domain
+// NewDNSRegistrar obtains the registrar contract for a given domain.
 func NewDNSRegistrar(backend bind.ContractBackend, domain string) (*DNSRegistrar, error) {
 	address, err := RegistrarContractAddress(backend, domain)
 	if err != nil {
@@ -63,5 +63,3 @@ func NewDNSRegistrar(backend bind.ContractBackend, domain string) (*DNSRegistrar
 		ContractAddr: address,
 	}, nil
 }
-
-// TODO claim

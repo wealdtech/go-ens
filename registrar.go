@@ -1,4 +1,4 @@
-// Copyright 2019 Weald Technology Trading
+// Copyright 2019-2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,15 +21,15 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-// RegistrarContractAddress obtains the registrar contract address for a given domain
+// RegistrarContractAddress obtains the registrar contract address for a given domain.
 func RegistrarContractAddress(backend bind.ContractBackend, domain string) (common.Address, error) {
-	// Obtain a registry contract
+	// Obtain a registry contract.
 	registry, err := NewRegistry(backend)
 	if err != nil {
 		return UnknownAddress, err
 	}
 
-	// Obtain the registrar address from the registry
+	// Obtain the registrar address from the registry.
 	address, err := registry.Owner(domain)
 	if address == UnknownAddress {
 		err = fmt.Errorf("no registrar for %s", domain)

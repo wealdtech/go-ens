@@ -1,4 +1,4 @@
-// Copyright 2017 Weald Technology Trading
+// Copyright 2017 - 2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package ens
 import (
 	"strings"
 
+	"github.com/pkg/errors"
 	"golang.org/x/net/idna"
 
 	"golang.org/x/crypto/sha3"
@@ -25,66 +26,77 @@ import (
 var p = idna.New(idna.MapForLookup(), idna.StrictDomainName(false), idna.Transitional(false))
 var pStrict = idna.New(idna.MapForLookup(), idna.StrictDomainName(true), idna.Transitional(false))
 
-// Normalize normalizes a name according to the ENS rules
-func Normalize(input string) (output string, err error) {
-	output, err = p.ToUnicode(input)
+// Normalize normalizes a name according to the ENS rules.
+func Normalize(input string) (string, error) {
+	output, err := p.ToUnicode(input)
 	if err != nil {
-		return
+		return "", errors.Wrap(err, "failed to convert to standard unicode")
 	}
-	// If the name started with a period then ToUnicode() removes it, but we want to keep it
+	// If the name started with a period then ToUnicode() removes it, but we want to keep it.
 	if strings.HasPrefix(input, ".") && !strings.HasPrefix(output, ".") {
 		output = "." + output
 	}
-	return
+
+	return output, nil
 }
 
 // LabelHash generates a simple hash for a piece of a name.
-func LabelHash(label string) (hash [32]byte, err error) {
+func LabelHash(label string) ([32]byte, error) {
+	var hash [32]byte
+
 	normalizedLabel, err := Normalize(label)
 	if err != nil {
-		return
+		return [32]byte{}, err
 	}
 
 	sha := sha3.NewLegacyKeccak256()
 	if _, err = sha.Write([]byte(normalizedLabel)); err != nil {
-		return
+		return [32]byte{}, errors.Wrap(err, "failed to write hash")
 	}
 	sha.Sum(hash[:0])
-	return
+
+	return hash, nil
 }
 
 // NameHash generates a hash from a name that can be used to
-// look up the name in ENS
-func NameHash(name string) (hash [32]byte, err error) {
+// look up the name in ENS.
+func NameHash(name string) ([32]byte, error) {
+	var hash [32]byte
+
 	if name == "" {
-		return
+		return hash, nil
 	}
+
 	normalizedName, err := Normalize(name)
 	if err != nil {
-		return
+		return [32]byte{}, err
 	}
 	parts := strings.Split(normalizedName, ".")
 	for i := len(parts) - 1; i >= 0; i-- {
 		if hash, err = nameHashPart(hash, parts[i]); err != nil {
-			return
+			return [32]byte{}, err
 		}
 	}
-	return
+
+	return hash, nil
 }
 
-func nameHashPart(currentHash [32]byte, name string) (hash [32]byte, err error) {
+func nameHashPart(currentHash [32]byte, name string) ([32]byte, error) {
+	var hash [32]byte
+
 	sha := sha3.NewLegacyKeccak256()
-	if _, err = sha.Write(currentHash[:]); err != nil {
-		return
+	if _, err := sha.Write(currentHash[:]); err != nil {
+		return [32]byte{}, errors.Wrap(err, "failed to write hash")
 	}
 	nameSha := sha3.NewLegacyKeccak256()
-	if _, err = nameSha.Write([]byte(name)); err != nil {
-		return
+	if _, err := nameSha.Write([]byte(name)); err != nil {
+		return [32]byte{}, errors.Wrap(err, "failed to write hash")
 	}
 	nameHash := nameSha.Sum(nil)
-	if _, err = sha.Write(nameHash); err != nil {
-		return
+	if _, err := sha.Write(nameHash); err != nil {
+		return [32]byte{}, errors.Wrap(err, "failed to write hash")
 	}
 	sha.Sum(hash[:0])
-	return
+
+	return hash, nil
 }

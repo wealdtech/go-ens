@@ -30,24 +30,24 @@ import (
 
 var zeroHash = make([]byte, 32)
 
-// UnknownAddress is the address to which unknown entries resolve
+// UnknownAddress is the address to which unknown entries resolve.
 var UnknownAddress = common.HexToAddress("00")
 
-// Resolver is the structure for the resolver contract
+// Resolver is the structure for the resolver contract.
 type Resolver struct {
 	Contract     *resolver.Contract
 	ContractAddr common.Address
 	domain       string
 }
 
-// NewResolver obtains an ENS resolver for a given domain
+// NewResolver obtains an ENS resolver for a given domain.
 func NewResolver(backend bind.ContractBackend, domain string) (*Resolver, error) {
 	registry, err := NewRegistry(backend)
 	if err != nil {
 		return nil, err
 	}
 
-	// Ensure the name is registered
+	// Ensure the name is registered.
 	ownerAddress, err := registry.Owner(domain)
 	if err != nil {
 		return nil, err
@@ -56,7 +56,7 @@ func NewResolver(backend bind.ContractBackend, domain string) (*Resolver, error)
 		return nil, errors.New("unregistered name")
 	}
 
-	// Obtain the resolver address for this domain
+	// Obtain the resolver address for this domain.
 	resolver, err := registry.ResolverAddress(domain)
 	if err != nil {
 		return nil, err
@@ -64,14 +64,14 @@ func NewResolver(backend bind.ContractBackend, domain string) (*Resolver, error)
 	return NewResolverAt(backend, domain, resolver)
 }
 
-// NewResolverAt obtains an ENS resolver at a given address
+// NewResolverAt obtains an ENS resolver at a given address.
 func NewResolverAt(backend bind.ContractBackend, domain string, address common.Address) (*Resolver, error) {
 	contract, err := resolver.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
 
-	// Ensure this really is a resolver contract
+	// Ensure this really is a resolver contract.
 	nameHash, err := NameHash("test.eth")
 	if err != nil {
 		return nil, err
@@ -91,12 +91,12 @@ func NewResolverAt(backend bind.ContractBackend, domain string, address common.A
 	}, nil
 }
 
-// PublicResolverAddress obtains the address of the public resolver for a chain
+// PublicResolverAddress obtains the address of the public resolver for a chain.
 func PublicResolverAddress(backend bind.ContractBackend) (common.Address, error) {
 	return Resolve(backend, "resolver.eth")
 }
 
-// Address returns the Ethereum address of the domain
+// Address returns the Ethereum address of the domain.
 func (r *Resolver) Address() (common.Address, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -105,7 +105,7 @@ func (r *Resolver) Address() (common.Address, error) {
 	return r.Contract.Addr(nil, nameHash)
 }
 
-// SetAddress sets the Ethereum address of the domain
+// SetAddress sets the Ethereum address of the domain.
 func (r *Resolver) SetAddress(opts *bind.TransactOpts, address common.Address) (*types.Transaction, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -134,7 +134,7 @@ func (r *Resolver) SetMultiAddress(opts *bind.TransactOpts, coinType uint64, add
 	return r.Contract.SetAddr0(opts, nameHash, big.NewInt(int64(coinType)), address)
 }
 
-// PubKey returns the public key of the domain
+// PubKey returns the public key of the domain.
 func (r *Resolver) PubKey() ([32]byte, [32]byte, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -144,7 +144,7 @@ func (r *Resolver) PubKey() ([32]byte, [32]byte, error) {
 	return res.X, res.Y, err
 }
 
-// SetPubKey sets the public key of the domain
+// SetPubKey sets the public key of the domain.
 func (r *Resolver) SetPubKey(opts *bind.TransactOpts, x [32]byte, y [32]byte) (*types.Transaction, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -153,7 +153,7 @@ func (r *Resolver) SetPubKey(opts *bind.TransactOpts, x [32]byte, y [32]byte) (*
 	return r.Contract.SetPubkey(opts, nameHash, x, y)
 }
 
-// Contenthash returns the content hash of the domain
+// Contenthash returns the content hash of the domain.
 func (r *Resolver) Contenthash() ([]byte, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -162,7 +162,7 @@ func (r *Resolver) Contenthash() ([]byte, error) {
 	return r.Contract.Contenthash(nil, nameHash)
 }
 
-// SetContenthash sets the content hash of the domain
+// SetContenthash sets the content hash of the domain.
 func (r *Resolver) SetContenthash(opts *bind.TransactOpts, contenthash []byte) (*types.Transaction, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -171,7 +171,7 @@ func (r *Resolver) SetContenthash(opts *bind.TransactOpts, contenthash []byte) (
 	return r.Contract.SetContenthash(opts, nameHash, contenthash)
 }
 
-// InterfaceImplementer returns the address of the contract that implements the given interface for the given domain
+// InterfaceImplementer returns the address of the contract that implements the given interface for the given domain.
 func (r *Resolver) InterfaceImplementer(interfaceID [4]byte) (common.Address, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -180,8 +180,8 @@ func (r *Resolver) InterfaceImplementer(interfaceID [4]byte) (common.Address, er
 	return r.Contract.InterfaceImplementer(nil, nameHash, interfaceID)
 }
 
-// Resolve resolves an ENS name in to an Etheruem address
-// This will return an error if the name is not found or otherwise 0
+// Resolve resolves an ENS name in to an Etheruem address.
+// This will return an error if the name is not found or otherwise 0.
 func Resolve(backend bind.ContractBackend, input string) (common.Address, error) {
 	if strings.Contains(input, ".") {
 		return resolveName(backend, input)

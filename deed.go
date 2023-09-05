@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Weald Technology Trading
+// Copyright 2017-2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,15 +21,14 @@ import (
 	"github.com/wealdtech/go-ens/v3/contracts/deed"
 )
 
-// Deed is the structure for the deed
+// Deed is the structure for the deed.
 type Deed struct {
 	Contract *deed.Contract
 }
 
-// NewDeed obtains the deed contract for a given domain
+// NewDeed obtains the deed contract for a given domain.
 func NewDeed(backend bind.ContractBackend, domain string) (*Deed, error) {
-
-	// Obtain the auction registrar for the deed
+	// Obtain the auction registrar for the deed.
 	auctionRegistrar, err := NewAuctionRegistrar(backend, domain)
 	if err != nil {
 		return nil, err
@@ -43,7 +42,7 @@ func NewDeed(backend bind.ContractBackend, domain string) (*Deed, error) {
 	return NewDeedAt(backend, entry.Deed)
 }
 
-// NewDeedAt creates a deed contract at a given address
+// NewDeedAt creates a deed contract at a given address.
 func NewDeedAt(backend bind.ContractBackend, address common.Address) (*Deed, error) {
 	contract, err := deed.NewContract(address, backend)
 	if err != nil {
@@ -55,17 +54,17 @@ func NewDeedAt(backend bind.ContractBackend, address common.Address) (*Deed, err
 	}, nil
 }
 
-// Owner obtains the owner of the deed
+// Owner obtains the owner of the deed.
 func (c *Deed) Owner() (common.Address, error) {
 	return c.Contract.Owner(nil)
 }
 
-// PreviousOwner obtains the previous owner of the deed
+// PreviousOwner obtains the previous owner of the deed.
 func (c *Deed) PreviousOwner() (common.Address, error) {
 	return c.Contract.PreviousOwner(nil)
 }
 
-// SetOwner sets the owner of the deed
+// SetOwner sets the owner of the deed.
 func (c *Deed) SetOwner(opts *bind.TransactOpts, address common.Address) (*types.Transaction, error) {
 	return c.Contract.SetOwner(opts, address)
 }

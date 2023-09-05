@@ -72,6 +72,7 @@ func (r *BaseRegistrar) PriorAuctionContract() (*AuctionRegistrar, error) {
 	address, err := r.Contract.PreviousRegistrar(nil)
 	if err != nil {
 		// Means there is no prior registrar.
+		//nolint:nilerr
 		return nil, nil
 	}
 	auctionContract, err := NewAuctionRegistrarAt(r.backend, r.domain, address)

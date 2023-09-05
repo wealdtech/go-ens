@@ -39,7 +39,7 @@ import (
 func TestName(t *testing.T) {
 	dsRegistrant := common.HexToAddress("b6E040C9ECAaE172a89bD561c5F73e1C48d28cd9")
 	dsController := common.HexToAddress("0904Dac3347eA47d208F3Fd67402D039a3b99859")
-	dsResolver := common.HexToAddress("DaaF96c344f63131acadD0Ea35170E7892d3dfBA")
+	dsResolver := common.HexToAddress("231b0Ee14048e9dCcD1d247744d114a4EB5E8E63")
 	dsExpiry := time.Unix(1904119920, 0)
 	dsRegistrationInterval := 60 * time.Second
 

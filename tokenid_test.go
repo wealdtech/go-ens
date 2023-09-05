@@ -1,9 +1,10 @@
 package ens
 
 import (
+	"testing"
+
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestDeriveTokenId(t *testing.T) {

@@ -1,4 +1,4 @@
-// Copyright 2019-2021 Weald Technology Trading
+// Copyright 2019-2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import (
 	"github.com/wealdtech/go-multicodec"
 )
 
-// StringToContenthash turns EIP-1577 text format in to EIP-1577 binary format
+// StringToContenthash turns EIP-1577 text format in to EIP-1577 binary format.
 func StringToContenthash(text string) ([]byte, error) {
 	if text == "" {
 		return nil, errors.New("no content hash")
@@ -68,7 +68,7 @@ func StringToContenthash(text string) ([]byte, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "invalid IPFS data")
 		}
-		// Namespace
+		// Namespace.
 		buf := make([]byte, binary.MaxVarintLen64)
 		size := binary.PutUvarint(buf, multicodec.MustID("ipfs-ns"))
 		res = append(res, buf[0:size]...)
@@ -87,7 +87,7 @@ func StringToContenthash(text string) ([]byte, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "invalid IPNS data")
 		}
-		// Namespace
+		// Namespace.
 		buf := make([]byte, binary.MaxVarintLen64)
 		size := binary.PutUvarint(buf, multicodec.MustID("ipns-ns"))
 		res = append(res, buf[0:size]...)
@@ -102,7 +102,7 @@ func StringToContenthash(text string) ([]byte, error) {
 			res = append(res, content.Bytes()...)
 		}
 	case "swarm", "bzz":
-		// Namespace
+		// Namespace.
 		buf := make([]byte, binary.MaxVarintLen64)
 		size := binary.PutUvarint(buf, multicodec.MustID("swarm-ns"))
 		res = append(res, buf[0:size]...)
@@ -121,34 +121,34 @@ func StringToContenthash(text string) ([]byte, error) {
 		}
 		res = append(res, hash...)
 	case "onion":
-		// Codec
+		// Codec.
 		buf := make([]byte, binary.MaxVarintLen64)
 		size := binary.PutUvarint(buf, multicodec.MustID("onion"))
 		res = append(res, buf[0:size]...)
 
-		// Address
+		// Address.
 		if len(data) != 16 {
 			return nil, errors.New("onion address should be 16 characters")
 		}
 		res = append(res, []byte(data)...)
 	case "onion3":
-		// Codec
+		// Codec.
 		buf := make([]byte, binary.MaxVarintLen64)
 		size := binary.PutUvarint(buf, multicodec.MustID("onion3"))
 		res = append(res, buf[0:size]...)
 
-		// Address
+		// Address.
 		if len(data) != 56 {
 			return nil, errors.New("onion address should be 56 characters")
 		}
 		res = append(res, []byte(data)...)
 	case "sia":
-		// Codec
+		// Codec.
 		buf := make([]byte, binary.MaxVarintLen64)
 		size := binary.PutUvarint(buf, multicodec.MustID("skynet-ns"))
 		res = append(res, buf[0:size]...)
 
-		// Skylink
+		// Skylink.
 		var err error
 		var decoded []byte
 		switch len(data) {
@@ -173,7 +173,7 @@ func StringToContenthash(text string) ([]byte, error) {
 	return res, nil
 }
 
-// ContenthashToString turns EIP-1577 binary format in to EIP-1577 text format
+// ContenthashToString turns EIP-1577 binary format in to EIP-1577 text format.
 func ContenthashToString(bytes []byte) (string, error) {
 	data, codec, err := multicodec.RemoveCodec(bytes)
 	if err != nil {

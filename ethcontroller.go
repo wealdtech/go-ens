@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Weald Technology Trading
+// Copyright 2017-2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import (
 	"github.com/wealdtech/go-ens/v3/contracts/ethcontroller"
 )
 
-// ETHController is the structure for the .eth controller contract
+// ETHController is the structure for the .eth controller contract.
 type ETHController struct {
 	backend      bind.ContractBackend
 	Contract     *ethcontroller.Contract
@@ -34,7 +34,7 @@ type ETHController struct {
 	domain       string
 }
 
-// NewETHController creates a new controller for a given domain
+// NewETHController creates a new controller for a given domain.
 func NewETHController(backend bind.ContractBackend, domain string) (*ETHController, error) {
 	registry, err := NewRegistry(backend)
 	if err != nil {
@@ -45,7 +45,7 @@ func NewETHController(backend bind.ContractBackend, domain string) (*ETHControll
 		return nil, err
 	}
 
-	// Obtain the controller from the resolver
+	// Obtain the controller from the resolver.
 	controllerAddress, err := resolver.InterfaceImplementer([4]byte{0x01, 0x8f, 0xac, 0x06})
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func NewETHController(backend bind.ContractBackend, domain string) (*ETHControll
 	return NewETHControllerAt(backend, domain, controllerAddress)
 }
 
-// NewETHControllerAt creates a .eth controller at a given address
+// NewETHControllerAt creates a .eth controller at a given address.
 func NewETHControllerAt(backend bind.ContractBackend, domain string, address common.Address) (*ETHController, error) {
 	contract, err := ethcontroller.NewContract(address, backend)
 	if err != nil {
@@ -86,7 +86,7 @@ func (c *ETHController) IsAvailable(domain string) (bool, error) {
 	return c.Contract.Available(nil, name)
 }
 
-// MinRegistrationDuration returns the minimum duration for which a name can be registered
+// MinRegistrationDuration returns the minimum duration for which a name can be registered.
 func (c *ETHController) MinRegistrationDuration() (time.Duration, error) {
 	tmp, err := c.Contract.MINREGISTRATIONDURATION(nil)
 	if err != nil {
@@ -105,17 +105,17 @@ func (c *ETHController) RentCost(domain string) (*big.Int, error) {
 	return c.Contract.RentPrice(nil, name, big.NewInt(1))
 }
 
-// MinCommitmentInterval returns the minimum time that has to pass between a commit and reveal
+// MinCommitmentInterval returns the minimum time that has to pass between a commit and reveal.
 func (c *ETHController) MinCommitmentInterval() (*big.Int, error) {
 	return c.Contract.MinCommitmentAge(nil)
 }
 
-// MaxCommitmentInterval returns the maximum time that has to pass between a commit and reveal
+// MaxCommitmentInterval returns the maximum time that has to pass between a commit and reveal.
 func (c *ETHController) MaxCommitmentInterval() (*big.Int, error) {
 	return c.Contract.MaxCommitmentAge(nil)
 }
 
-// CommitmentHash returns the commitment hash for a label/owner/secret tuple
+// CommitmentHash returns the commitment hash for a label/owner/secret tuple.
 func (c *ETHController) CommitmentHash(domain string, owner common.Address, secret [32]byte) (common.Hash, error) {
 	name, err := UnqualifiedName(domain, c.domain)
 	if err != nil {
@@ -202,14 +202,14 @@ func (c *ETHController) Reveal(opts *bind.TransactOpts, domain string, owner com
 		return nil, errors.New("commitment too old to reveal")
 	}
 
-	// Calculate the duration given the rent cost and the value
+	// Calculate the duration given the rent cost and the value.
 	costPerSecond, err := c.RentCost(domain)
 	if err != nil {
 		return nil, errors.New("failed to obtain rent cost")
 	}
 	duration := new(big.Int).Div(opts.Value, costPerSecond)
 
-	// Ensure duration is greater than minimum duration
+	// Ensure duration is greater than minimum duration.
 	minDuration, err := c.MinRegistrationDuration()
 	if err != nil {
 		return nil, err
@@ -228,7 +228,7 @@ func (c *ETHController) Renew(opts *bind.TransactOpts, domain string) (*types.Tr
 		return nil, fmt.Errorf("invalid name %s", domain)
 	}
 
-	// See if we're registered at all - fetch the owner to find out
+	// See if we're registered at all - fetch the owner to find out.
 	registry, err := NewRegistry(c.backend)
 	if err != nil {
 		return nil, err
@@ -241,7 +241,7 @@ func (c *ETHController) Renew(opts *bind.TransactOpts, domain string) (*types.Tr
 		return nil, fmt.Errorf("%s not registered", domain)
 	}
 
-	// Calculate the duration given the rent cost and the value
+	// Calculate the duration given the rent cost and the value.
 	costPerSecond, err := c.RentCost(domain)
 	if err != nil {
 		return nil, errors.New("failed to obtain rent cost")

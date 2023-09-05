@@ -1,4 +1,4 @@
-// Copyright 2019 Weald Technology Trading
+// Copyright 2019-2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import (
 	"github.com/wealdtech/go-ens/v3/contracts/dnssecoracle"
 )
 
-// DNSSECOracle is the structure for the DNSSEC oracle
+// DNSSECOracle is the structure for the DNSSEC oracle.
 type DNSSECOracle struct {
 	backend      bind.ContractBackend
 	domain       string
@@ -28,7 +28,7 @@ type DNSSECOracle struct {
 	ContractAddr common.Address
 }
 
-// NewDNSSECOracle obtains the DNSSEC oracle contract for a given domain
+// NewDNSSECOracle obtains the DNSSEC oracle contract for a given domain.
 func NewDNSSECOracle(backend bind.ContractBackend, domain string) (*DNSSECOracle, error) {
 	registrar, err := NewDNSRegistrar(backend, domain)
 	if err != nil {

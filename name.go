@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Weald Technology Trading
+// Copyright 2017-2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ func NewName(backend bind.ContractBackend, name string) (*Name, error) {
 	}, nil
 }
 
-// IsRegistered returns true if the name is registered in the registrar
+// IsRegistered returns true if the name is registered in the registrar.
 func (n *Name) IsRegistered() (bool, error) {
 	registrant, err := n.Registrant()
 	if err != nil {
@@ -219,7 +219,7 @@ func (n *Name) SetController(controller common.Address, opts *bind.TransactOpts)
 		return n.registry.SetOwner(opts, n.Name, controller)
 	}
 
-	// Perhaps we are the registrant
+	// Perhaps we are the registrant.
 	registrant, err := n.Registrant()
 	if err != nil {
 		return nil, err
@@ -232,9 +232,9 @@ func (n *Name) SetController(controller common.Address, opts *bind.TransactOpts)
 	return nil, errors.New("not authorised to change the controller")
 }
 
-// Reclaim reclaims controller rights by the registrant
+// Reclaim reclaims controller rights by the registrant.
 func (n *Name) Reclaim(opts *bind.TransactOpts) (*types.Transaction, error) {
-	// Ensure the we are the registrant
+	// Ensure the we are the registrant.
 	registrant, err := n.Registrant()
 	if err != nil {
 		return nil, err
@@ -252,7 +252,7 @@ func (n *Name) Registrant() (common.Address, error) {
 
 // Transfer transfers the registration of this name to a new registrant.
 func (n *Name) Transfer(registrant common.Address, opts *bind.TransactOpts) (*types.Transaction, error) {
-	// Ensure the we are the registrant
+	// Ensure the we are the registrant.
 	currentRegistrant, err := n.Registrant()
 	if err != nil {
 		return nil, err
@@ -270,7 +270,7 @@ func (n *Name) RentCost() (*big.Int, error) {
 
 // CreateSubdomain creates a subdomain on the name.
 func (n *Name) CreateSubdomain(label string, controller common.Address, opts *bind.TransactOpts) (*types.Transaction, error) {
-	// Confirm the subdomain does not already exist
+	// Confirm the subdomain does not already exist.
 	fqdn := fmt.Sprintf("%s.%s", label, n.Name)
 	subdomainController, err := n.registry.Owner(fqdn)
 	if err != nil {

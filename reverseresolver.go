@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Weald Technology Trading
+// Copyright 2017-2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import (
 	"github.com/wealdtech/go-ens/v3/contracts/reverseresolver"
 )
 
-// ReverseResolver is the structure for the reverse resolver contract
+// ReverseResolver is the structure for the reverse resolver contract.
 type ReverseResolver struct {
 	Contract     *reverseresolver.Contract
 	ContractAddr common.Address
@@ -45,14 +45,14 @@ func NewReverseResolverFor(backend bind.ContractBackend, address common.Address)
 	return NewReverseResolverAt(backend, contractAddress)
 }
 
-// NewReverseResolver obtains the reverse resolver
+// NewReverseResolver obtains the reverse resolver.
 func NewReverseResolver(backend bind.ContractBackend) (*ReverseResolver, error) {
 	reverseRegistrar, err := NewReverseRegistrar(backend)
 	if err != nil {
 		return nil, err
 	}
 
-	// Now fetch the default resolver
+	// Now fetch the default resolver.
 	address, err := reverseRegistrar.DefaultResolverAddress()
 	if err != nil {
 		return nil, err
@@ -61,15 +61,15 @@ func NewReverseResolver(backend bind.ContractBackend) (*ReverseResolver, error) 
 	return NewReverseResolverAt(backend, address)
 }
 
-// NewReverseResolverAt obtains the reverse resolver at a given address
+// NewReverseResolverAt obtains the reverse resolver at a given address.
 func NewReverseResolverAt(backend bind.ContractBackend, address common.Address) (*ReverseResolver, error) {
-	// Instantiate the reverse registrar contract
+	// Instantiate the reverse registrar contract.
 	contract, err := reverseresolver.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
 
-	// Ensure the contract is a resolver
+	// Ensure the contract is a resolver.
 	nameHash, err := NameHash("0.addr.reverse")
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func NewReverseResolverAt(backend bind.ContractBackend, address common.Address) 
 	}, nil
 }
 
-// Name obtains the name for an address
+// Name obtains the name for an address.
 func (r *ReverseResolver) Name(address common.Address) (string, error) {
 	nameHash, err := NameHash(fmt.Sprintf("%s.addr.reverse", address.Hex()[2:]))
 	if err != nil {
@@ -94,7 +94,7 @@ func (r *ReverseResolver) Name(address common.Address) (string, error) {
 	return r.Contract.Name(nil, nameHash)
 }
 
-// Format provides a string version of an address, reverse resolving it if possible
+// Format provides a string version of an address, reverse resolving it if possible.
 func Format(backend bind.ContractBackend, address common.Address) string {
 	result, err := ReverseResolve(backend, address)
 	if err != nil {
@@ -103,15 +103,15 @@ func Format(backend bind.ContractBackend, address common.Address) string {
 	return result
 }
 
-// ReverseResolve resolves an address in to an ENS name
-// This will return an error if the name is not found or otherwise 0
+// ReverseResolve resolves an address in to an ENS name.
+// This will return an error if the name is not found or otherwise 0.
 func ReverseResolve(backend bind.ContractBackend, address common.Address) (string, error) {
 	resolver, err := NewReverseResolverFor(backend, address)
 	if err != nil {
 		return "", err
 	}
 
-	// Resolve the name
+	// Resolve the name.
 	name, err := resolver.Name(address)
 	if err != nil {
 		return "", err

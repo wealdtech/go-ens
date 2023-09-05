@@ -27,14 +27,14 @@ import (
 	"github.com/wealdtech/go-ens/v3/util"
 )
 
-// Registry is the structure for the registry contract
+// Registry is the structure for the registry contract.
 type Registry struct {
 	backend      bind.ContractBackend
 	Contract     *registry.Contract
 	ContractAddr common.Address
 }
 
-// NewRegistry obtains the ENS registry
+// NewRegistry obtains the ENS registry.
 func NewRegistry(backend bind.ContractBackend) (*Registry, error) {
 	address, err := RegistryContractAddress(backend)
 	if err != nil {
@@ -43,7 +43,7 @@ func NewRegistry(backend bind.ContractBackend) (*Registry, error) {
 	return NewRegistryAt(backend, address)
 }
 
-// NewRegistryAt obtains the ENS registry at a given address
+// NewRegistryAt obtains the ENS registry at a given address.
 func NewRegistryAt(backend bind.ContractBackend, address common.Address) (*Registry, error) {
 	contract, err := registry.NewContract(address, backend)
 	if err != nil {
@@ -56,7 +56,7 @@ func NewRegistryAt(backend bind.ContractBackend, address common.Address) (*Regis
 	}, nil
 }
 
-// Owner returns the address of the owner of a name
+// Owner returns the address of the owner of a name.
 func (r *Registry) Owner(name string) (common.Address, error) {
 	nameHash, err := NameHash(name)
 	if err != nil {
@@ -65,7 +65,7 @@ func (r *Registry) Owner(name string) (common.Address, error) {
 	return r.Contract.Owner(nil, nameHash)
 }
 
-// ResolverAddress returns the address of the resolver for a name
+// ResolverAddress returns the address of the resolver for a name.
 func (r *Registry) ResolverAddress(name string) (common.Address, error) {
 	nameHash, err := NameHash(name)
 	if err != nil {
@@ -74,7 +74,7 @@ func (r *Registry) ResolverAddress(name string) (common.Address, error) {
 	return r.Contract.Resolver(nil, nameHash)
 }
 
-// SetResolver sets the resolver for a name
+// SetResolver sets the resolver for a name.
 func (r *Registry) SetResolver(opts *bind.TransactOpts, name string, address common.Address) (*types.Transaction, error) {
 	nameHash, err := NameHash(name)
 	if err != nil {
@@ -83,7 +83,7 @@ func (r *Registry) SetResolver(opts *bind.TransactOpts, name string, address com
 	return r.Contract.SetResolver(opts, nameHash, address)
 }
 
-// Resolver returns the resolver for a name
+// Resolver returns the resolver for a name.
 func (r *Registry) Resolver(name string) (*Resolver, error) {
 	address, err := r.ResolverAddress(name)
 	if err != nil {
@@ -92,7 +92,7 @@ func (r *Registry) Resolver(name string) (*Resolver, error) {
 	return NewResolverAt(r.backend, name, address)
 }
 
-// SetOwner sets the ownership of a domain
+// SetOwner sets the ownership of a domain.
 func (r *Registry) SetOwner(opts *bind.TransactOpts, name string, address common.Address) (*types.Transaction, error) {
 	nameHash, err := NameHash(name)
 	if err != nil {
@@ -101,7 +101,7 @@ func (r *Registry) SetOwner(opts *bind.TransactOpts, name string, address common
 	return r.Contract.SetOwner(opts, nameHash, address)
 }
 
-// SetSubdomainOwner sets the ownership of a subdomain, potentially creating it in the process
+// SetSubdomainOwner sets the ownership of a subdomain, potentially creating it in the process.
 func (r *Registry) SetSubdomainOwner(opts *bind.TransactOpts, name string, subname string, address common.Address) (*types.Transaction, error) {
 	nameHash, err := NameHash(name)
 	if err != nil {
@@ -116,13 +116,13 @@ func (r *Registry) SetSubdomainOwner(opts *bind.TransactOpts, name string, subna
 
 // RegistryContractAddress obtains the address of the registry contract for a chain.
 // This is (currently) the same for all chains.
-func RegistryContractAddress(backend bind.ContractBackend) (common.Address, error) {
+func RegistryContractAddress(_ bind.ContractBackend) (common.Address, error) {
 	// Instantiate the registry contract.  The same for all chains.
 	return common.HexToAddress("00000000000C2E074eC69A0dFb2997BA6C7d2e1e"), nil
 }
 
 // RegistryContractFromRegistrar obtains the registry contract given an
-// existing registrar contract
+// existing registrar contract.
 func RegistryContractFromRegistrar(backend bind.ContractBackend, registrar *auctionregistrar.Contract) (*registry.Contract, error) {
 	if registrar == nil {
 		return nil, errors.New("no registrar contract")
@@ -134,7 +134,7 @@ func RegistryContractFromRegistrar(backend bind.ContractBackend, registrar *auct
 	return registry.NewContract(registryAddress, backend)
 }
 
-// SetResolver sets the resolver for a name
+// SetResolver sets the resolver for a name.
 func SetResolver(session *registry.ContractSession, name string, resolverAddr *common.Address) (*types.Transaction, error) {
 	nameHash, err := NameHash(name)
 	if err != nil {
@@ -143,7 +143,7 @@ func SetResolver(session *registry.ContractSession, name string, resolverAddr *c
 	return session.SetResolver(nameHash, *resolverAddr)
 }
 
-// SetSubdomainOwner sets the owner for a subdomain of a name
+// SetSubdomainOwner sets the owner for a subdomain of a name.
 func SetSubdomainOwner(session *registry.ContractSession, name string, subdomain string, ownerAddr *common.Address) (*types.Transaction, error) {
 	nameHash, err := NameHash(name)
 	if err != nil {
@@ -156,12 +156,12 @@ func SetSubdomainOwner(session *registry.ContractSession, name string, subdomain
 	return session.SetSubnodeOwner(nameHash, labelHash, *ownerAddr)
 }
 
-// CreateRegistrySession creates a session suitable for multiple calls
+// CreateRegistrySession creates a session suitable for multiple calls.
 func CreateRegistrySession(chainID *big.Int, wallet *accounts.Wallet, account *accounts.Account, passphrase string, contract *registry.Contract, gasPrice *big.Int) *registry.ContractSession {
-	// Create a signer
+	// Create a signer.
 	signer := util.AccountSigner(chainID, wallet, account, passphrase)
 
-	// Return our session
+	// Return our session.
 	session := &registry.ContractSession{
 		Contract: contract,
 		CallOpts: bind.CallOpts{

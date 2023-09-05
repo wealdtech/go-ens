@@ -25,7 +25,6 @@ import (
 
 // TestReverseResolve tests the reverse resolution functionality.
 func TestReverseResolve(t *testing.T) {
-
 	tests := []struct {
 		name    string
 		address common.Address

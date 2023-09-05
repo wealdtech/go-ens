@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Weald Technology Trading
+// Copyright 2017-2023 Weald Technology Trading.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import (
 	"golang.org/x/crypto/sha3"
 )
 
-// DNSResolver is the structure for the DNS resolver contract
+// DNSResolver is the structure for the DNS resolver contract.
 type DNSResolver struct {
 	backend      bind.ContractBackend
 	domain       string
@@ -33,7 +33,7 @@ type DNSResolver struct {
 	ContractAddr common.Address
 }
 
-// NewDNSResolver creates a new DNS resolver for a given domain
+// NewDNSResolver creates a new DNS resolver for a given domain.
 func NewDNSResolver(backend bind.ContractBackend, domain string) (*DNSResolver, error) {
 	registry, err := NewRegistry(backend)
 	if err != nil {
@@ -47,14 +47,14 @@ func NewDNSResolver(backend bind.ContractBackend, domain string) (*DNSResolver, 
 	return NewDNSResolverAt(backend, domain, address)
 }
 
-// NewDNSResolverAt creates a new DNS resolver for a given domain at a given address
+// NewDNSResolverAt creates a new DNS resolver for a given domain at a given address.
 func NewDNSResolverAt(backend bind.ContractBackend, domain string, address common.Address) (*DNSResolver, error) {
 	contract, err := dnsresolver.NewContract(address, backend)
 	if err != nil {
 		return nil, err
 	}
 
-	// Ensure that this is a DNS resolver
+	// Ensure that this is a DNS resolver.
 	supported, err := contract.SupportsInterface(nil, [4]byte{0xa8, 0xfa, 0x56, 0x82})
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func NewDNSResolverAt(backend bind.ContractBackend, domain string, address commo
 	}, nil
 }
 
-// Record obtains an RRSet for a name
+// Record obtains an RRSet for a name.
 func (r *DNSResolver) Record(name string, rrType uint16) ([]byte, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -80,7 +80,7 @@ func (r *DNSResolver) Record(name string, rrType uint16) ([]byte, error) {
 	return r.Contract.DnsRecord(nil, nameHash, DNSWireFormatDomainHash(name), rrType)
 }
 
-// HasRecords returns true if the given name has any RRsets
+// HasRecords returns true if the given name has any RRsets.
 func (r *DNSResolver) HasRecords(name string) (bool, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -89,7 +89,7 @@ func (r *DNSResolver) HasRecords(name string) (bool, error) {
 	return r.Contract.HasDNSRecords(nil, nameHash, DNSWireFormatDomainHash(name))
 }
 
-// SetRecords sets one or more RRSets
+// SetRecords sets one or more RRSets.
 func (r *DNSResolver) SetRecords(opts *bind.TransactOpts, data []byte) (*types.Transaction, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -98,7 +98,7 @@ func (r *DNSResolver) SetRecords(opts *bind.TransactOpts, data []byte) (*types.T
 	return r.Contract.SetDNSRecords(opts, nameHash, data)
 }
 
-// ClearDNSZone clears all records in the zone
+// ClearDNSZone clears all records in the zone.
 func (r *DNSResolver) ClearDNSZone(opts *bind.TransactOpts) (*types.Transaction, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -107,7 +107,7 @@ func (r *DNSResolver) ClearDNSZone(opts *bind.TransactOpts) (*types.Transaction,
 	return r.Contract.ClearDNSZone(opts, nameHash)
 }
 
-// Zonehash returns the zone hash of the domain
+// Zonehash returns the zone hash of the domain.
 func (r *DNSResolver) Zonehash() ([]byte, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -116,7 +116,7 @@ func (r *DNSResolver) Zonehash() ([]byte, error) {
 	return r.Contract.Zonehash(nil, nameHash)
 }
 
-// SetZonehash sets the zone hash of the domain
+// SetZonehash sets the zone hash of the domain.
 func (r *DNSResolver) SetZonehash(opts *bind.TransactOpts, zonehash []byte) (*types.Transaction, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -125,18 +125,21 @@ func (r *DNSResolver) SetZonehash(opts *bind.TransactOpts, zonehash []byte) (*ty
 	return r.Contract.SetZonehash(opts, nameHash, zonehash)
 }
 
-// DNSWireFormatDomainHash hashes a domain name in wire format
-func DNSWireFormatDomainHash(domain string) (hash [32]byte) {
+// DNSWireFormatDomainHash hashes a domain name in wire format.
+func DNSWireFormatDomainHash(domain string) [32]byte {
+	var hash [32]byte
+
 	sha := sha3.NewLegacyKeccak256()
 	// //nolint:golint,errcheck
 	sha.Write(DNSWireFormat(domain))
 	sha.Sum(hash[:0])
-	return
+
+	return hash
 }
 
-// DNSWireFormat turns a domain name in to wire format
+// DNSWireFormat turns a domain name in to wire format.
 func DNSWireFormat(domain string) []byte {
-	// Remove leading and trailing dots
+	// Remove leading and trailing dots.
 	domain = strings.TrimLeft(domain, ".")
 	domain = strings.TrimRight(domain, ".")
 	domain = strings.ToLower(domain)
