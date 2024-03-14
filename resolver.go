@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"compress/zlib"
 	"errors"
+	"fmt"
 	"io"
 	"math/big"
 	"strings"
@@ -25,10 +26,12 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/wealdtech/go-ens/v3/contracts/resolver"
 )
 
 var zeroHash = make([]byte, 32)
+var offchainLookupSignature = "0x556f1830"
 
 // UnknownAddress is the address to which unknown entries resolve.
 var UnknownAddress = common.HexToAddress("00")
@@ -243,6 +246,11 @@ func resolveHash(backend bind.ContractBackend, domain string) (common.Address, e
 		[]string{},
 	)
 	if err != nil {
+		var jsonErr = err.(rpc.DataError)
+		errData := fmt.Sprintf("%v", jsonErr.ErrorData())
+		if errData[:10] == offchainLookupSignature {
+			return UnknownAddress, errors.New("external resolver")
+		}
 		return UnknownAddress, errors.New("unregistered name")
 	}
 	if r1 == UnknownAddress {

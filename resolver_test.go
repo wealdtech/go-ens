@@ -109,6 +109,12 @@ func TestSubdomainResolveAddress(t *testing.T) {
 	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
 }
 
+func TestExternalResolverAddress(t *testing.T) {
+	_, err := Resolve(client, "jesse.cb.id")
+	require.NotNil(t, err, "Error resolving address")
+	assert.Equal(t, "external resolver", err.Error(), "Unexpected error")
+}
+
 func TestInvalidSubdomainResolveAddress(t *testing.T) {
 	_, err := Resolve(client, "a.b.c.d.e.eth")
 	require.NotNil(t, err, "Error resolving address")
