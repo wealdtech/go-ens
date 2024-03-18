@@ -17,9 +17,7 @@ package ens
 import (
 	"bytes"
 	"compress/zlib"
-	"encoding/hex"
 	"errors"
-	"fmt"
 	"io"
 	"math/big"
 	"strings"
@@ -28,9 +26,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/wealdtech/go-ens/v3/contracts/offchainresolver"
 	"github.com/wealdtech/go-ens/v3/contracts/resolver"
-	"github.com/wealdtech/go-ens/v3/contracts/universalresolver"
 )
 
 var zeroHash = make([]byte, 32)
@@ -76,19 +72,6 @@ func NewResolverAt(backend bind.ContractBackend, domain string, address common.A
 	if err != nil {
 		return nil, err
 	}
-
-	// Ensure this really is a resolver contract.
-	// nameHash, err := NameHash("test.eth")
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// _, err = contract.Addr(nil, nameHash)
-	// if err != nil {
-	// 	if err.Error() == "no contract code at given address" {
-	// 		return nil, errors.New("no resolver")
-	// 	}
-	// 	return nil, err
-	// }
 
 	return &Resolver{
 		Contract:     contract,
@@ -234,69 +217,32 @@ func resolveHash(backend bind.ContractBackend, domain string) (common.Address, e
 	if err != nil {
 		return UnknownAddress, err
 	}
-	rAddr, node, _, err := ur.Contract.FindResolver(nil, dnsdomain)
-	if len(node) == 0 {
+	rAddr, _, _, err := ur.Contract.FindResolver(nil, dnsdomain)
+	if err != nil || rAddr == common.Address(zeroHash) {
+		return UnknownAddress, errors.New("unregistered name")
 	}
 	r, err := NewResolverAt(backend, domain, rAddr)
+	if err != nil {
+		return UnknownAddress, errors.New("no resolver")
+	}
 	addr, err := r.Contract.Addr(nil, hash)
 
 	if err == nil {
 		return addr, nil
 	}
 
+	// CCIP Read check
 	var jsonErr = err.(rpc.DataError)
 	errData := jsonErr.ErrorData().(string)
-
-	if errData[:10] == offchainLookupSignature {
-		hexBytes, err := hex.DecodeString(errData[2:])
-		if err != nil {
-			return UnknownAddress, err
+	if len(errData) >= 10 && errData[:10] == offchainLookupSignature {
+		rawAddr, err := CCIPRead(backend, rAddr, errData)
+		if err != nil || bytes.Equal(rawAddr, zeroHash) {
+			return UnknownAddress, errors.New("no address")
 		}
 
-		uAbi, err := universalresolver.ContractMetaData.GetAbi()
-		if err != nil {
-			return UnknownAddress, err
-		}
-		var sig [4]byte
-		copy(sig[:], hexBytes[:4])
-		abiErr, err := uAbi.ErrorByID(sig)
-		if err != nil {
-			return UnknownAddress, err
-		}
-		errArgs, err := abiErr.Inputs.Unpack(hexBytes[4:])
-		if err != nil {
-			return UnknownAddress, err
-		}
-
-		sender := errArgs[0].(common.Address)
-		urls := errArgs[1].([]string)
-		calldata := common.Bytes2Hex(errArgs[2].([]byte))
-		calldataHex := fmt.Sprintf("0x%s", calldata)
-		// callback := errArgs[3].([4]byte)
-		extraData := errArgs[4].([]byte)
-
-		resp, err := ccipFetch(sender, calldataHex, urls)
-		if err != nil || len(resp) == 0 {
-		}
-
-		offR, err := offchainresolver.NewContract(rAddr, backend)
-		if err != nil {
-			return common.Address{}, errors.New("unregistered name")
-		}
-
-		z, err := offR.ResolveWithProof(nil, common.Hex2Bytes(resp[2:]), extraData)
-		if len(z) == 0 {
-		}
-
-		return common.BytesToAddress(z), nil
+		return common.BytesToAddress(rawAddr), nil
 	}
 	return UnknownAddress, errors.New("unregistered name")
-	// if r1 == UnknownAddress {
-	// 	return UnknownAddress, errors.New("no resolver")
-	// }
-	// if bytes.Equal(address, zeroHash) {
-	// 	return UnknownAddress, errors.New("no address")
-	// }
 }
 
 // SetText sets the text associated with a name.
