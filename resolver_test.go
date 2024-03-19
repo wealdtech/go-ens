@@ -51,7 +51,7 @@ func TestResolveNotPresent(t *testing.T) {
 func TestResolveBadResolver(t *testing.T) {
 	_, err := Resolve(client, "resolvestozero.eth")
 	require.NotNil(t, err, "Resolved name with a bad resolver")
-	assert.Equal(t, "no address", err.Error(), "Unexpected error")
+	assert.Equal(t, "unregistered name", err.Error(), "Unexpected error")
 }
 
 func TestResolveTestEnsTest(t *testing.T) {
@@ -113,8 +113,7 @@ func TestExternalResolverAddress(t *testing.T) {
 	expected := "849151d7d0bf1f34b70d5cad5149d28cc2308bf1"
 	actual, err := Resolve(client, "jesse.cb.id")
 	require.Nil(t, err, "Error resolving address")
-	x := hex.EncodeToString(actual[:])
-	assert.Equal(t, expected, x, "Did not receive expected result")
+	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
 }
 
 func TestInvalidSubdomainResolveAddress(t *testing.T) {

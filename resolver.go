@@ -26,6 +26,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/wealdtech/go-ens/v3/contracts/offchainresolver"
 	"github.com/wealdtech/go-ens/v3/contracts/resolver"
 )
 
@@ -208,16 +209,16 @@ func resolveHash(backend bind.ContractBackend, domain string) (common.Address, e
 		return UnknownAddress, err
 	}
 
-	hash, err := NameHash(domain)
+	nhash, err := NameHash(domain)
 	if err != nil {
 		return UnknownAddress, err
 	}
 
-	dnsdomain, err := DNSEncode(domain)
+	lhash, err := DNSEncode(domain)
 	if err != nil {
 		return UnknownAddress, err
 	}
-	rAddr, _, _, err := ur.Contract.FindResolver(nil, dnsdomain)
+	rAddr, _, _, err := ur.Contract.FindResolver(nil, lhash)
 	if err != nil || rAddr == common.Address(zeroHash) {
 		return UnknownAddress, errors.New("unregistered name")
 	}
@@ -225,21 +226,40 @@ func resolveHash(backend bind.ContractBackend, domain string) (common.Address, e
 	if err != nil {
 		return UnknownAddress, errors.New("no resolver")
 	}
-	addr, err := r.Contract.Addr(nil, hash)
+	addr, err := r.Contract.Addr(nil, nhash)
 
 	if err == nil {
+		if addr == common.Address(zeroHash) {
+			return UnknownAddress, errors.New("unregistered name")
+		}
 		return addr, nil
 	}
 
 	// CCIP Read check
 	var jsonErr = err.(rpc.DataError)
-	errData := jsonErr.ErrorData().(string)
+	errData, ok := jsonErr.ErrorData().(string)
+	if !ok || len(errData) < 10 {
+		offR, err := offchainresolver.NewContract(rAddr, backend)
+		if err != nil {
+			return UnknownAddress, errors.New("no address")
+		}
+		rAbi, _ := resolver.ContractMetaData.GetAbi()
+		m := rAbi.Methods["addr"]
+		args, _ := m.Inputs.Pack(nhash)
+		rawAddr, err := offR.Resolve(nil, lhash, append(m.ID, args...))
+		if err == nil {
+			// resolved on-chain
+			return common.BytesToAddress(rawAddr), nil
+		}
+		jsonErr = err.(rpc.DataError)
+		errData = jsonErr.ErrorData().(string)
+	}
+
 	if len(errData) >= 10 && errData[:10] == offchainLookupSignature {
 		rawAddr, err := CCIPRead(backend, rAddr, errData)
 		if err != nil || bytes.Equal(rawAddr, zeroHash) {
 			return UnknownAddress, errors.New("no address")
 		}
-
 		return common.BytesToAddress(rawAddr), nil
 	}
 	return UnknownAddress, errors.New("unregistered name")
