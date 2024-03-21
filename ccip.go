@@ -14,9 +14,19 @@ import (
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/wealdtech/go-ens/v3/contracts/offchainresolver"
 	"github.com/wealdtech/go-ens/v3/contracts/universalresolver"
 )
+
+func getCcipReadError(err error) (bool, string) {
+	var jsonErr = err.(rpc.DataError)
+	errData, ok := jsonErr.ErrorData().(string)
+	if !ok {
+		return false, ""
+	}
+	return (len(errData) >= 10 && errData[:10] == offchainLookupSignature), errData
+}
 
 func CCIPRead(backend bind.ContractBackend, rAddr common.Address, revertData string) ([]byte, error) {
 	hexBytes, err := hex.DecodeString(revertData[2:])
@@ -28,6 +38,8 @@ func CCIPRead(backend bind.ContractBackend, rAddr common.Address, revertData str
 	if err != nil {
 		return nil, err
 	}
+
+	// Extracting error details from the revert data
 	var sig [4]byte
 	copy(sig[:], hexBytes[:4])
 	abiErr, err := uAbi.ErrorByID(sig)
@@ -46,6 +58,7 @@ func CCIPRead(backend bind.ContractBackend, rAddr common.Address, revertData str
 	callback := errArgs[3].([4]byte)
 	extraData := errArgs[4].([]byte)
 
+	// Fetching data from external source using CCIP
 	resp, err := CCIPFetch(sender, calldataHex, urls)
 	if err != nil || len(resp) == 0 {
 		return nil, errors.New("unregistered name")
@@ -64,6 +77,7 @@ func CCIPRead(backend bind.ContractBackend, rAddr common.Address, revertData str
 		return nil, errors.New("no address")
 	}
 
+	// Calling the offchain resolver callback to validate the external source response
 	return backend.CallContract(context.Background(), ethereum.CallMsg{
 		To:   &rAddr,
 		Data: append(callback[:], args...),

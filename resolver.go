@@ -25,7 +25,6 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/wealdtech/go-ens/v3/contracts/offchainresolver"
 	"github.com/wealdtech/go-ens/v3/contracts/resolver"
 )
@@ -41,30 +40,25 @@ type Resolver struct {
 	Contract     *resolver.Contract
 	ContractAddr common.Address
 	domain       string
+	backend      bind.ContractBackend
+	offResolver  *offchainresolver.Contract
 }
 
 // NewResolver obtains an ENS resolver for a given domain.
 func NewResolver(backend bind.ContractBackend, domain string) (*Resolver, error) {
-	registry, err := NewRegistry(backend)
+	ur, err := NewUniversalResolver(backend)
 	if err != nil {
 		return nil, err
 	}
-
-	// Ensure the name is registered.
-	ownerAddress, err := registry.Owner(domain)
+	lhash, err := DNSEncode(domain)
 	if err != nil {
 		return nil, err
 	}
-	if bytes.Equal(ownerAddress.Bytes(), UnknownAddress.Bytes()) {
-		return nil, errors.New("unregistered name")
-	}
-
-	// Obtain the resolver address for this domain.
-	resolver, err := registry.ResolverAddress(domain)
-	if err != nil {
+	rAddr, _, _, err := ur.Contract.FindResolver(nil, lhash)
+	if err != nil || rAddr == common.Address(zeroHash) {
 		return nil, err
 	}
-	return NewResolverAt(backend, domain, resolver)
+	return NewResolverAt(backend, domain, rAddr)
 }
 
 // NewResolverAt obtains an ENS resolver at a given address.
@@ -74,10 +68,17 @@ func NewResolverAt(backend bind.ContractBackend, domain string, address common.A
 		return nil, err
 	}
 
+	offR, err := offchainresolver.NewContract(address, backend)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Resolver{
 		Contract:     contract,
 		ContractAddr: address,
 		domain:       domain,
+		backend:      backend,
+		offResolver:  offR,
 	}, nil
 }
 
@@ -204,30 +205,20 @@ func resolveName(backend bind.ContractBackend, input string) (common.Address, er
 }
 
 func resolveHash(backend bind.ContractBackend, domain string) (common.Address, error) {
-	ur, err := NewUniversalResolver(backend)
-	if err != nil {
-		return UnknownAddress, err
-	}
-
-	nhash, err := NameHash(domain)
-	if err != nil {
-		return UnknownAddress, err
-	}
-
-	lhash, err := DNSEncode(domain)
-	if err != nil {
-		return UnknownAddress, err
-	}
-	rAddr, _, _, err := ur.Contract.FindResolver(nil, lhash)
-	if err != nil || rAddr == common.Address(zeroHash) {
-		return UnknownAddress, errors.New("unregistered name")
-	}
-	r, err := NewResolverAt(backend, domain, rAddr)
+	r, err := NewResolver(backend, domain)
 	if err != nil {
 		return UnknownAddress, errors.New("no resolver")
 	}
-	addr, err := r.Contract.Addr(nil, nhash)
+	node, err := NameHash(domain)
+	if err != nil {
+		return UnknownAddress, err
+	}
+	lhash, err := DNSEncode(domain)
+	if err != nil {
+		return common.Address{}, err
+	}
 
+	addr, err := r.Contract.Addr(nil, node)
 	if err == nil {
 		if addr == common.Address(zeroHash) {
 			return UnknownAddress, errors.New("unregistered name")
@@ -236,33 +227,28 @@ func resolveHash(backend bind.ContractBackend, domain string) (common.Address, e
 	}
 
 	// CCIP Read check
-	var jsonErr = err.(rpc.DataError)
-	errData, ok := jsonErr.ErrorData().(string)
-	if !ok || len(errData) < 10 {
-		offR, err := offchainresolver.NewContract(rAddr, backend)
-		if err != nil {
-			return UnknownAddress, errors.New("no address")
-		}
+	ccipErr, errData := getCcipReadError(err)
+	if !ccipErr {
 		rAbi, _ := resolver.ContractMetaData.GetAbi()
 		m := rAbi.Methods["addr"]
-		args, _ := m.Inputs.Pack(nhash)
-		rawAddr, err := offR.Resolve(nil, lhash, append(m.ID, args...))
+		args, _ := m.Inputs.Pack(node)
+		rawAddr, err := r.offResolver.Resolve(nil, lhash, append(m.ID, args...))
 		if err == nil {
 			// resolved on-chain
 			return common.BytesToAddress(rawAddr), nil
 		}
-		jsonErr = err.(rpc.DataError)
-		errData = jsonErr.ErrorData().(string)
+		ccipErr, errData = getCcipReadError(err)
 	}
 
-	if len(errData) >= 10 && errData[:10] == offchainLookupSignature {
-		rawAddr, err := CCIPRead(backend, rAddr, errData)
-		if err != nil || bytes.Equal(rawAddr, zeroHash) {
-			return UnknownAddress, errors.New("no address")
-		}
-		return common.BytesToAddress(rawAddr), nil
+	if !ccipErr {
+		return UnknownAddress, errors.New("unregistered name")
 	}
-	return UnknownAddress, errors.New("unregistered name")
+
+	rawAddr, err := CCIPRead(backend, r.ContractAddr, errData)
+	if err != nil || bytes.Equal(rawAddr, zeroHash) {
+		return UnknownAddress, errors.New("no address")
+	}
+	return common.BytesToAddress(rawAddr), nil
 }
 
 // SetText sets the text associated with a name.
@@ -276,11 +262,32 @@ func (r *Resolver) SetText(opts *bind.TransactOpts, name string, value string) (
 
 // Text obtains the text associated with a name.
 func (r *Resolver) Text(name string) (string, error) {
-	nameHash, err := NameHash(r.domain)
+	node, err := NameHash(r.domain)
 	if err != nil {
 		return "", err
 	}
-	return r.Contract.Text(nil, nameHash, name)
+	text, err := r.Contract.Text(nil, node, name)
+	if err == nil {
+		return text, nil
+	}
+	rAbi, _ := resolver.ContractMetaData.GetAbi()
+	m := rAbi.Methods["text"]
+
+	ccipErr, errData := getCcipReadError(err)
+	if !ccipErr {
+		lhash, err := DNSEncode(r.domain)
+		if err != nil {
+			return "", err
+		}
+
+		args, _ := m.Inputs.Pack(node, name)
+		rawResp, err := r.offResolver.Resolve(nil, lhash, append(m.ID, args...))
+		if err == nil {
+			return string(rawResp), err
+		}
+	}
+	rawResp, err := CCIPRead(r.backend, r.ContractAddr, errData)
+	return string(rawResp), err
 }
 
 // SetABI sets the ABI associated with a name.
