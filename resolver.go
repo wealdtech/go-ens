@@ -56,10 +56,7 @@ func NewResolver(backend bind.ContractBackend, domain string) (*Resolver, error)
 		return nil, err
 	}
 	rAddr, _, _, err := ur.Contract.FindResolver(nil, lhash)
-	if err != nil {
-		return nil, err
-	}
-	if rAddr == common.Address(zeroHash) {
+	if err != nil || rAddr == common.Address(zeroHash) {
 		return nil, errors.New("unregistered name")
 	}
 	return NewResolverAt(backend, domain, rAddr)
@@ -211,7 +208,7 @@ func resolveName(backend bind.ContractBackend, input string) (common.Address, er
 func resolveHash(backend bind.ContractBackend, domain string) (common.Address, error) {
 	r, err := NewResolver(backend, domain)
 	if err != nil {
-		return UnknownAddress, errors.New("no resolver")
+		return UnknownAddress, err
 	}
 	node, err := NameHash(domain)
 	if err != nil {
