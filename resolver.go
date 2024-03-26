@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"compress/zlib"
 	"errors"
+	"fmt"
 	"io"
 	"math/big"
 	"strings"
@@ -55,8 +56,11 @@ func NewResolver(backend bind.ContractBackend, domain string) (*Resolver, error)
 		return nil, err
 	}
 	rAddr, _, _, err := ur.Contract.FindResolver(nil, lhash)
-	if err != nil || rAddr == common.Address(zeroHash) {
+	if err != nil {
 		return nil, err
+	}
+	if rAddr == common.Address(zeroHash) {
+		return nil, errors.New("unregistered name")
 	}
 	return NewResolverAt(backend, domain, rAddr)
 }
@@ -270,10 +274,11 @@ func (r *Resolver) Text(name string) (string, error) {
 	if err == nil {
 		return text, nil
 	}
+
+	ccipErr, errData := getCcipReadError(err)
 	rAbi, _ := resolver.ContractMetaData.GetAbi()
 	m := rAbi.Methods["text"]
 
-	ccipErr, errData := getCcipReadError(err)
 	if !ccipErr {
 		lhash, err := DNSEncode(r.domain)
 		if err != nil {
@@ -285,9 +290,18 @@ func (r *Resolver) Text(name string) (string, error) {
 		if err == nil {
 			return string(rawResp), err
 		}
+		_, errData = getCcipReadError(err)
 	}
+
 	rawResp, err := CCIPRead(r.backend, r.ContractAddr, errData)
-	return string(rawResp), err
+	if err != nil {
+		return "", err
+	}
+	x, err := m.Outputs.Unpack(rawResp)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprint(x[0]), nil
 }
 
 // SetABI sets the ABI associated with a name.

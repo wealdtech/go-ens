@@ -56,7 +56,8 @@ func CCIPRead(backend bind.ContractBackend, rAddr common.Address, revertData str
 	calldata := common.Bytes2Hex(errArgs[2].([]byte))
 	calldataHex := fmt.Sprintf("0x%s", calldata)
 	callback := errArgs[3].([4]byte)
-	extraData := errArgs[4].([]byte)
+	extraData := common.Bytes2Hex(errArgs[4].([]byte))
+	extraDataHex := fmt.Sprintf("0x%s", extraData)
 
 	// Fetching data from external source using CCIP
 	resp, err := CCIPFetch(sender, calldataHex, urls)
@@ -72,16 +73,25 @@ func CCIPRead(backend bind.ContractBackend, rAddr common.Address, revertData str
 	if err != nil {
 		return nil, errors.New("no address")
 	}
-	args, err := m.Inputs.Pack(common.Hex2Bytes(resp[2:]), extraData)
+	args, err := m.Inputs.Pack(common.FromHex(resp), common.FromHex(extraDataHex))
 	if err != nil {
 		return nil, errors.New("no address")
 	}
 
-	// Calling the offchain resolver callback to validate the external source response
-	return backend.CallContract(context.Background(), ethereum.CallMsg{
+	encodedResp, err := backend.CallContract(context.Background(), ethereum.CallMsg{
 		To:   &rAddr,
 		Data: append(callback[:], args...),
 	}, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	outputs, err := m.Outputs.Unpack(encodedResp)
+	if err != nil || len(outputs) == 0 {
+		return nil, err
+	}
+	return outputs[0].([]byte), nil
 }
 
 func CCIPFetch(sender common.Address, data string, urls []string) (result string, err error) {

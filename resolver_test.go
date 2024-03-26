@@ -133,7 +133,7 @@ func TestOnchainReadText(t *testing.T) {
 
 func TestOffchainReadText(t *testing.T) {
 	expected := "https://twitter.com/sid_coelho"
-	r, err := NewResolver(client, "jesse.cb.id")
+	r, err := NewResolver(client, "sid.cb.id")
 	require.Nil(t, err, "Error creating resolver")
 	actual, err := r.Text("com.twitter")
 	require.Nil(t, err, "Error reading twitter")
