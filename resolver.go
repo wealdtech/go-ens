@@ -90,11 +90,45 @@ func PublicResolverAddress(backend bind.ContractBackend) (common.Address, error)
 
 // Address returns the Ethereum address of the domain.
 func (r *Resolver) Address() (common.Address, error) {
-	nameHash, err := NameHash(r.domain)
+	node, err := NameHash(r.domain)
 	if err != nil {
 		return UnknownAddress, err
 	}
-	return r.Contract.Addr(nil, nameHash)
+	addr, err := r.Contract.Addr(nil, node)
+	if err == nil && addr != common.Address(zeroHash) {
+		return addr, err
+	}
+	ccipErr, errData := getCcipReadError(err)
+
+	// CCIP Read check
+	if !ccipErr {
+		rAbi, _ := resolver.ContractMetaData.GetAbi()
+		m := rAbi.Methods["addr"]
+		args, _ := m.Inputs.Pack(node)
+		lhash, err := DNSEncode(r.domain)
+		if err != nil {
+			return common.Address{}, err
+		}
+		rawAddr, err := r.offResolver.Resolve(nil, lhash, append(m.ID, args...))
+		if err == nil {
+			// resolved on-chain
+			return common.BytesToAddress(rawAddr), nil
+		}
+		ccipErr, errData = getCcipReadError(err)
+		if errData == "" && addr == common.Address(zeroHash) {
+			return UnknownAddress, errors.New("unregistered name")
+		}
+	}
+
+	if !ccipErr {
+		return UnknownAddress, errors.New("unregistered name")
+	}
+
+	rawAddr, err := CCIPRead(r.backend, r.ContractAddr, errData)
+	if err != nil || bytes.Equal(rawAddr, zeroHash) {
+		return UnknownAddress, errors.New("no address")
+	}
+	return common.BytesToAddress(rawAddr), nil
 }
 
 // SetAddress sets the Ethereum address of the domain.
@@ -210,46 +244,7 @@ func resolveHash(backend bind.ContractBackend, domain string) (common.Address, e
 	if err != nil {
 		return UnknownAddress, err
 	}
-	node, err := NameHash(domain)
-	if err != nil {
-		return UnknownAddress, err
-	}
-	lhash, err := DNSEncode(domain)
-	if err != nil {
-		return common.Address{}, err
-	}
-
-	addr, err := r.Contract.Addr(nil, node)
-	if err == nil {
-		if addr == common.Address(zeroHash) {
-			return UnknownAddress, errors.New("unregistered name")
-		}
-		return addr, nil
-	}
-
-	// CCIP Read check
-	ccipErr, errData := getCcipReadError(err)
-	if !ccipErr {
-		rAbi, _ := resolver.ContractMetaData.GetAbi()
-		m := rAbi.Methods["addr"]
-		args, _ := m.Inputs.Pack(node)
-		rawAddr, err := r.offResolver.Resolve(nil, lhash, append(m.ID, args...))
-		if err == nil {
-			// resolved on-chain
-			return common.BytesToAddress(rawAddr), nil
-		}
-		ccipErr, errData = getCcipReadError(err)
-	}
-
-	if !ccipErr {
-		return UnknownAddress, errors.New("unregistered name")
-	}
-
-	rawAddr, err := CCIPRead(backend, r.ContractAddr, errData)
-	if err != nil || bytes.Equal(rawAddr, zeroHash) {
-		return UnknownAddress, errors.New("no address")
-	}
-	return common.BytesToAddress(rawAddr), nil
+	return r.Address()
 }
 
 // SetText sets the text associated with a name.

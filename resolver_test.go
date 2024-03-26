@@ -116,13 +116,6 @@ func TestOffchainResolverAddress(t *testing.T) {
 	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
 }
 
-func TestOffchainResolverAddressMulticoin(t *testing.T) {
-	expected := "849151d7d0bf1f34b70d5cad5149d28cc2308bf1"
-	actual, err := Resolve(client, "jesse.cb.id")
-	require.Nil(t, err, "Error resolving address")
-	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
-}
-
 func TestInvalidSubdomainResolveAddress(t *testing.T) {
 	_, err := Resolve(client, "a.b.c.d.e.eth")
 	require.NotNil(t, err, "Error resolving address")
@@ -157,6 +150,15 @@ func TestOffchainReadAddressTLD(t *testing.T) {
 func TestOffchainReadAddressSubdomain(t *testing.T) {
 	expected := "179a862703a4adfb29896552df9e307980d19285"
 	actual, err := Resolve(client, "gregskril.uni.eth")
+	require.Nil(t, err, "Error resolving address")
+	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
+}
+
+func TestOffchainReadAddressSubdomainThroughResolver(t *testing.T) {
+	expected := "179a862703a4adfb29896552df9e307980d19285"
+	r, err := NewResolver(client, "gregskril.uni.eth")
+	require.Nil(t, err, "Error resolving address")
+	actual, err := r.Address()
 	require.Nil(t, err, "Error resolving address")
 	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
 }

@@ -20,7 +20,10 @@ import (
 )
 
 func getCcipReadError(err error) (bool, string) {
-	var jsonErr = err.(rpc.DataError)
+	var jsonErr, ok = err.(rpc.DataError)
+	if !ok {
+		return false, ""
+	}
 	errData, ok := jsonErr.ErrorData().(string)
 	if !ok {
 		return false, ""
