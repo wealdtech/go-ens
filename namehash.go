@@ -102,3 +102,32 @@ func nameHashPart(currentHash [32]byte, name string) ([32]byte, error) {
 
 	return hash, nil
 }
+
+func DNSEncode(name string) ([]byte, error) {
+	name = strings.Trim(name, ".")
+
+	encoded := make([]byte, len(name)+2)
+	offset := 0
+
+	// split name into labels
+	labels := strings.Split(name, ".")
+
+	for _, label := range labels {
+		l := len(label)
+
+		// length must be less than 64
+		if l > 63 {
+			return nil, errors.New("label too long")
+		}
+
+		// write length
+		encoded[offset] = byte(l)
+		offset++
+
+		// write label
+		copy(encoded[offset:offset+l], []byte(label))
+		offset += l
+	}
+
+	return encoded, nil
+}
