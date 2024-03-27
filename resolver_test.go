@@ -117,7 +117,7 @@ func TestOffchainResolverAddress(t *testing.T) {
 }
 
 func TestInvalidSubdomainResolveAddress(t *testing.T) {
-	_, err := Resolve(client, "a.b.c.d.e.eth")
+	_, err := Resolve(client, "xxxx.cb.id")
 	require.NotNil(t, err, "Error resolving address")
 	assert.Equal(t, "unregistered name", err.Error(), "Unexpected error")
 }

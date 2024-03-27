@@ -126,7 +126,7 @@ func (r *Resolver) Address() (common.Address, error) {
 
 	rawAddr, err := CCIPRead(r.backend, r.ContractAddr, errData)
 	if err != nil || bytes.Equal(rawAddr, zeroHash) {
-		return UnknownAddress, errors.New("no address")
+		return UnknownAddress, errors.New("unregistered name")
 	}
 	return common.BytesToAddress(rawAddr), nil
 }
