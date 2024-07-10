@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -31,15 +32,18 @@ func getCcipReadError(err error) (bool, string) {
 	return (len(errData) >= 10 && errData[:10] == offchainLookupSignature), errData
 }
 
-func CCIPRead(backend bind.ContractBackend, rAddr common.Address, revertData string) ([]byte, error) {
-	hexBytes, err := hex.DecodeString(revertData[2:])
+func ccipRead(backend bind.ContractBackend, resolverAddr common.Address, revertData string) ([]byte, error) {
+	hexBytes, err := hex.DecodeString(strings.TrimPrefix(revertData, "0x"))
+	if err != nil {
+		return nil, err
+	}
+	uAbi, err := universalresolver.ContractMetaData.GetAbi()
 	if err != nil {
 		return nil, err
 	}
 
-	uAbi, err := universalresolver.ContractMetaData.GetAbi()
-	if err != nil {
-		return nil, err
+	if len(revertData) < 5 {
+		return nil, errors.New("invalid revert data")
 	}
 
 	// Extracting error details from the revert data
@@ -63,7 +67,7 @@ func CCIPRead(backend bind.ContractBackend, rAddr common.Address, revertData str
 	extraDataHex := fmt.Sprintf("0x%s", extraData)
 
 	// Fetching data from external source using CCIP
-	resp, err := CCIPFetch(sender, calldataHex, urls)
+	resp, err := ccipFetch(sender, calldataHex, urls)
 	if err != nil || len(resp) == 0 {
 		return nil, errors.New("unregistered name")
 	}
@@ -82,7 +86,7 @@ func CCIPRead(backend bind.ContractBackend, rAddr common.Address, revertData str
 	}
 
 	encodedResp, err := backend.CallContract(context.Background(), ethereum.CallMsg{
-		To:   &rAddr,
+		To:   &resolverAddr,
 		Data: append(callback[:], args...),
 	}, nil)
 
@@ -97,7 +101,7 @@ func CCIPRead(backend bind.ContractBackend, rAddr common.Address, revertData str
 	return outputs[0].([]byte), nil
 }
 
-func CCIPFetch(sender common.Address, data string, urls []string) (result string, err error) {
+func ccipFetch(sender common.Address, data string, urls []string) (result string, err error) {
 	for _, url := range urls {
 		method := "POST"
 		if strings.Contains(url, "{data}") {
@@ -123,7 +127,9 @@ func CCIPFetch(sender common.Address, data string, urls []string) (result string
 		}
 		req.Header.Set("Content-Type", "application/json")
 
-		client := &http.Client{}
+		client := &http.Client{
+			Timeout: 5 * time.Second,
+		}
 		resp, err := client.Do(req)
 		if err != nil {
 			return "", err
@@ -141,7 +147,6 @@ func CCIPFetch(sender common.Address, data string, urls []string) (result string
 			var ok bool
 			result, ok = responseData["data"].(string)
 			if !ok {
-				err = errors.New("invalid response from gateway")
 				continue
 			}
 		} else {

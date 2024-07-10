@@ -90,11 +90,11 @@ func PublicResolverAddress(backend bind.ContractBackend) (common.Address, error)
 
 // Address returns the Ethereum address of the domain.
 func (r *Resolver) Address() (common.Address, error) {
-	node, err := NameHash(r.domain)
+	nameHash, err := NameHash(r.domain)
 	if err != nil {
 		return UnknownAddress, err
 	}
-	addr, err := r.Contract.Addr(nil, node)
+	addr, err := r.Contract.Addr(nil, nameHash)
 	if err == nil && addr != common.Address(zeroHash) {
 		return addr, err
 	}
@@ -104,7 +104,7 @@ func (r *Resolver) Address() (common.Address, error) {
 	if !ccipErr {
 		rAbi, _ := resolver.ContractMetaData.GetAbi()
 		m := rAbi.Methods["addr"]
-		args, _ := m.Inputs.Pack(node)
+		args, _ := m.Inputs.Pack(nameHash)
 		lhash, err := DNSEncode(r.domain)
 		if err != nil {
 			return common.Address{}, err
@@ -124,7 +124,7 @@ func (r *Resolver) Address() (common.Address, error) {
 		return UnknownAddress, errors.New("unregistered name")
 	}
 
-	rawAddr, err := CCIPRead(r.backend, r.ContractAddr, errData)
+	rawAddr, err := ccipRead(r.backend, r.ContractAddr, errData)
 	if err != nil || bytes.Equal(rawAddr, zeroHash) {
 		return UnknownAddress, errors.New("unregistered name")
 	}
@@ -240,11 +240,11 @@ func resolveName(backend bind.ContractBackend, input string) (common.Address, er
 }
 
 func resolveHash(backend bind.ContractBackend, domain string) (common.Address, error) {
-	r, err := NewResolver(backend, domain)
+	resolver, err := NewResolver(backend, domain)
 	if err != nil {
 		return UnknownAddress, err
 	}
-	return r.Address()
+	return resolver.Address()
 }
 
 // SetText sets the text associated with a name.
@@ -258,11 +258,11 @@ func (r *Resolver) SetText(opts *bind.TransactOpts, name string, value string) (
 
 // Text obtains the text associated with a name.
 func (r *Resolver) Text(name string) (string, error) {
-	node, err := NameHash(r.domain)
+	nameHash, err := NameHash(r.domain)
 	if err != nil {
 		return "", err
 	}
-	text, err := r.Contract.Text(nil, node, name)
+	text, err := r.Contract.Text(nil, nameHash, name)
 	if err == nil {
 		return text, nil
 	}
@@ -277,7 +277,7 @@ func (r *Resolver) Text(name string) (string, error) {
 			return "", err
 		}
 
-		args, _ := m.Inputs.Pack(node, name)
+		args, _ := m.Inputs.Pack(nameHash, name)
 		rawResp, err := r.offResolver.Resolve(nil, lhash, append(m.ID, args...))
 		if err == nil {
 			return string(rawResp), err
@@ -285,15 +285,15 @@ func (r *Resolver) Text(name string) (string, error) {
 		_, errData = getCcipReadError(err)
 	}
 
-	rawResp, err := CCIPRead(r.backend, r.ContractAddr, errData)
+	rawResp, err := ccipRead(r.backend, r.ContractAddr, errData)
 	if err != nil {
 		return "", err
 	}
-	x, err := m.Outputs.Unpack(rawResp)
+	outputs, err := m.Outputs.Unpack(rawResp)
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprint(x[0]), nil
+	return fmt.Sprint(outputs[0]), nil
 }
 
 // SetABI sets the ABI associated with a name.
