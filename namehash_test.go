@@ -64,6 +64,7 @@ func TestNameHash(t *testing.T) {
 		{"𓀀𓀁𓀂.eth", "36f75325f4013011b96014606224f03c77366d89caf480a1060d7453edaf5c98", nil},
 		{"𓆏➡🐸️.eth", "f2663423c7aadf794d6f84addcfee1f877458d86c20740954482094a20985228", nil},
 		{"ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ.eth", "254a068876bdac64ad35425816bf444fbe9a26ec19287f47e663f928727ff69c", nil},
+		{"trish🫧.eth", "9a6aa3aaa97ed3b694265d4b0e776b2e8fad34b8869199b1a062e3cc0ee0d41d", nil},
 	}
 
 	for _, tt := range tests {
