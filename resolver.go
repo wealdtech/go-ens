@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"compress/zlib"
 	"errors"
+	"fmt"
 	"io"
 	"math/big"
 	"strings"
@@ -25,10 +26,12 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/wealdtech/go-ens/v3/contracts/resolver"
 )
 
 var zeroHash = make([]byte, 32)
+var offchainLookupSignature = "0x556f1830"
 
 // UnknownAddress is the address to which unknown entries resolve.
 var UnknownAddress = common.HexToAddress("00")
@@ -214,21 +217,50 @@ func resolveName(backend bind.ContractBackend, input string) (common.Address, er
 }
 
 func resolveHash(backend bind.ContractBackend, domain string) (common.Address, error) {
-	resolver, err := NewResolver(backend, domain)
+	r, err := NewUniversalResolver(backend)
 	if err != nil {
 		return UnknownAddress, err
 	}
 
 	// Resolve the domain.
-	address, err := resolver.Address()
+	hash, err := NameHash(domain)
 	if err != nil {
 		return UnknownAddress, err
 	}
-	if bytes.Equal(address.Bytes(), UnknownAddress.Bytes()) {
+	abi, err := resolver.ContractMetaData.GetAbi()
+	if err != nil {
+		return UnknownAddress, err
+	}
+	input, err := abi.Pack("addr", hash)
+	if err != nil {
+		return UnknownAddress, err
+	}
+	dnsdomain, err := DNSEncode(domain)
+	if err != nil {
+		return UnknownAddress, err
+	}
+	address, r1, err := r.Contract.Resolve(
+		nil,
+		dnsdomain,
+		input,
+		[]string{},
+	)
+	if err != nil {
+		var jsonErr = err.(rpc.DataError)
+		errData := fmt.Sprintf("%v", jsonErr.ErrorData())
+		if errData[:10] == offchainLookupSignature {
+			return UnknownAddress, errors.New("external resolver")
+		}
+		return UnknownAddress, errors.New("unregistered name")
+	}
+	if r1 == UnknownAddress {
+		return UnknownAddress, errors.New("no resolver")
+	}
+	if bytes.Equal(address, zeroHash) {
 		return UnknownAddress, errors.New("no address")
 	}
 
-	return address, nil
+	return common.BytesToAddress(address), nil
 }
 
 // SetText sets the text associated with a name.

@@ -101,3 +101,22 @@ func TestReverseResolveTestEnsTest(t *testing.T) {
 	require.Nil(t, err, "Error resolving address")
 	assert.Equal(t, expected, actual, "Did not receive expected result")
 }
+
+func TestSubdomainResolveAddress(t *testing.T) {
+	expected := "51050ec063d393217b436747617ad1c2285aeeee"
+	actual, err := Resolve(client, "331.moo.nft-owner.eth")
+	require.Nil(t, err, "Error resolving address")
+	assert.Equal(t, expected, hex.EncodeToString(actual[:]), "Did not receive expected result")
+}
+
+func TestExternalResolverAddress(t *testing.T) {
+	_, err := Resolve(client, "jesse.cb.id")
+	require.NotNil(t, err, "Error resolving address")
+	assert.Equal(t, "external resolver", err.Error(), "Unexpected error")
+}
+
+func TestInvalidSubdomainResolveAddress(t *testing.T) {
+	_, err := Resolve(client, "a.b.c.d.e.eth")
+	require.NotNil(t, err, "Error resolving address")
+	assert.Equal(t, "unregistered name", err.Error(), "Unexpected error")
+}
