@@ -22,7 +22,7 @@ func TestDeriveTokenId(t *testing.T) {
 		{
 			name:     "Invalid ENS domain",
 			expected: "",
-			input:    "foo.bar",
+			input:    "invalid.domain",
 			err:      "unregistered name",
 		},
 		{
