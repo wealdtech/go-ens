@@ -1,8 +1,7 @@
 module github.com/wealdtech/go-ens/v3
 
 go 1.22.0
-
-toolchain go1.23.2
+toolchain go1.24.1
 
 require (
 	github.com/ethereum/go-ethereum v1.14.12
@@ -13,7 +12,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/wealdtech/go-multicodec v1.4.0
 	github.com/wealdtech/go-string2eth v1.2.1
-	golang.org/x/crypto v0.31.0
+	golang.org/x/crypto v0.35.0
 	golang.org/x/net v0.33.0
 )
 
@@ -49,9 +48,9 @@ require (
 	github.com/tklauser/numcpus v0.9.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/blake3 v1.3.0 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect
