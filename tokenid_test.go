@@ -1,6 +1,7 @@
 package ens
 
 import (
+	"context"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -20,9 +21,12 @@ func TestDeriveTokenId(t *testing.T) {
 			input:    "vitalik.eth",
 		},
 		{
+			// Long, intentionally-unregistered .eth label used as the unregistered-name
+			// fixture. Any .eth name is in principle registerable, so picking a long
+			// label keeps the registration cost high and the chance of collision low.
 			name:     "Invalid ENS domain",
 			expected: "",
-			input:    "foo.bar",
+			input:    "this-name-is-not-registered-go-ens-test-fixture-do-not-register.eth",
 			err:      "unregistered name",
 		},
 		{
@@ -36,7 +40,7 @@ func TestDeriveTokenId(t *testing.T) {
 	require.NoError(t, err)
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actual, err := DeriveTokenID(client, test.input)
+			actual, err := DeriveTokenID(context.Background(), client, test.input)
 			if test.err != "" {
 				require.EqualError(t, err, test.err)
 			} else {

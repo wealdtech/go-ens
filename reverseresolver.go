@@ -15,12 +15,13 @@
 package ens
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/wealdtech/go-ens/v3/contracts/reverseresolver"
+	"github.com/wealdtech/go-ens/v4/contracts/reverseresolver"
 )
 
 // ReverseResolver is the structure for the reverse resolver contract.
@@ -95,30 +96,34 @@ func (r *ReverseResolver) Name(address common.Address) (string, error) {
 }
 
 // Format provides a string version of an address, reverse resolving it if possible.
-func Format(backend bind.ContractBackend, address common.Address) string {
-	result, err := ReverseResolve(backend, address)
+func Format(ctx context.Context, backend bind.ContractBackend, address common.Address) string {
+	result, err := ReverseResolve(ctx, backend, address)
 	if err != nil {
 		result = address.Hex()
 	}
 	return result
 }
 
-// ReverseResolve resolves an address in to an ENS name.
-// This will return an error if the name is not found or otherwise 0.
-func ReverseResolve(backend bind.ContractBackend, address common.Address) (string, error) {
-	resolver, err := NewReverseResolverFor(backend, address)
+// ReverseResolve resolves an address in to an ENS name. Resolution flows
+// through the ENS UniversalResolver, so ENSIP-10 wildcard resolution and
+// ERC-3668 CCIP-Read are handled transparently and reverse records stored
+// offchain or on an L2 resolve the same way as fully on-chain reverse records.
+//
+// ctx is honoured for cancellation and deadline propagation through the
+// CCIP-Read hops.
+//
+// This will return an error if no primary name is set for the address.
+func ReverseResolve(ctx context.Context, backend bind.ContractBackend, address common.Address) (string, error) {
+	ur, err := NewUniversalResolver(ctx, backend)
 	if err != nil {
 		return "", err
 	}
-
-	// Resolve the name.
-	name, err := resolver.Name(address)
+	name, _, _, err := ur.Reverse(ctx, address.Bytes(), CoinTypeETH)
 	if err != nil {
 		return "", err
 	}
 	if name == "" {
-		err = errors.New("no resolution")
+		return "", errors.New("no resolution")
 	}
-
-	return name, err
+	return name, nil
 }
