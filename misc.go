@@ -3,6 +3,8 @@ package ens
 import (
 	"fmt"
 	"strings"
+
+	"github.com/adraffy/go-ens-normalize/ensip15"
 )
 
 // DomainLevel calculates the level of the domain presented.
@@ -13,32 +15,33 @@ func DomainLevel(name string) int {
 	return len(strings.Split(name, ".")) - 1
 }
 
-// NormaliseDomain turns ENS domain in to normal form.
+// NormaliseDomain turns an ENS domain into normal form per ENSIP-15.
+//
+// A leading "*." wildcard prefix is preserved (stripped before normalisation
+// and re-attached afterwards); the rest of the name is normalised by the
+// canonical ENSIP-15 implementation. Empty labels, disallowed codepoints,
+// and other ENSIP-15 violations return an error.
 func NormaliseDomain(domain string) (string, error) {
 	wildcard := false
 	if strings.HasPrefix(domain, "*.") {
 		wildcard = true
 		domain = domain[2:]
 	}
-	output, err := p.ToUnicode(domain)
+	output, err := ensip15.Shared().Normalize(domain)
 	if err != nil {
 		return "", err
 	}
-
-	// ToUnicode() removes leading periods.  Replace them.
-	if strings.HasPrefix(domain, ".") && !strings.HasPrefix(output, ".") {
-		output = "." + output
-	}
-
-	// If we removed a wildcard then add it back.
 	if wildcard {
 		output = "*." + output
 	}
 	return output, nil
 }
 
-// NormaliseDomainStrict turns ENS domain in to normal form, using strict DNS
-// rules (e.g. no underscores).
+// NormaliseDomainStrict applies strict DNS rules (e.g. no underscores) via
+// golang.org/x/net/idna with StrictDomainName=true. This is NOT ENSIP-15
+// normalisation — for that, use NormaliseDomain. NormaliseDomainStrict is
+// kept for callers that need DNS-strict validation, e.g. before publishing
+// a name to a DNS-backed registrar.
 func NormaliseDomainStrict(domain string) (string, error) {
 	wildcard := false
 	if strings.HasPrefix(domain, "*.") {

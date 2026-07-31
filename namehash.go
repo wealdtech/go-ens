@@ -17,28 +17,28 @@ package ens
 import (
 	"strings"
 
+	"github.com/adraffy/go-ens-normalize/ensip15"
 	"github.com/pkg/errors"
 	"golang.org/x/net/idna"
 
 	"golang.org/x/crypto/sha3"
 )
 
-var (
-	p       = idna.New(idna.MapForLookup(), idna.ValidateLabels(false), idna.CheckHyphens(false), idna.StrictDomainName(false), idna.Transitional(false))
-	pStrict = idna.New(idna.MapForLookup(), idna.ValidateLabels(false), idna.CheckHyphens(false), idna.StrictDomainName(true), idna.Transitional(false))
-)
+// pStrict is the legacy IDNA "strict" profile, used only by
+// NormaliseDomainStrict for DNS-strict checks (no underscores, etc.). It is
+// NOT an ENSIP-15 normalizer — see Normalize / NormaliseDomain for that.
+var pStrict = idna.New(idna.MapForLookup(), idna.ValidateLabels(false), idna.CheckHyphens(false), idna.StrictDomainName(true), idna.Transitional(false))
 
-// Normalize normalizes a name according to the ENS rules.
+// Normalize normalizes a name according to ENSIP-15. Empty labels, disallowed
+// codepoints, mixed-script confusables, and other ENSIP-15 violations return
+// an error. The implementation delegates to github.com/adraffy/go-ens-normalize,
+// the canonical Go port (Unicode 17.0.0, passes the full ENSIP-15 validation
+// suite).
 func Normalize(input string) (string, error) {
-	output, err := p.ToUnicode(input)
+	output, err := ensip15.Shared().Normalize(input)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to convert to standard unicode")
+		return "", errors.Wrap(err, "failed to ensip-15 normalize")
 	}
-	// If the name started with a period then ToUnicode() removes it, but we want to keep it.
-	if strings.HasPrefix(input, ".") && !strings.HasPrefix(output, ".") {
-		output = "." + output
-	}
-
 	return output, nil
 }
 

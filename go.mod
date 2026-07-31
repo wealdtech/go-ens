@@ -1,10 +1,11 @@
-module github.com/wealdtech/go-ens/v3
+module github.com/wealdtech/go-ens/v4
 
-go 1.22.0
+go 1.22.4
 
 toolchain go1.23.2
 
 require (
+	github.com/adraffy/go-ens-normalize v0.1.1
 	github.com/ethereum/go-ethereum v1.14.12
 	github.com/ipfs/go-cid v0.4.1
 	github.com/multiformats/go-multibase v0.2.0

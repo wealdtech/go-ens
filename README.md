@@ -2,12 +2,14 @@
 
 [![Tag](https://img.shields.io/github/tag/wealdtech/go-ens.svg)](https://github.com/wealdtech/go-ens/releases/)
 [![License](https://img.shields.io/github/license/wealdtech/go-ens.svg)](LICENSE)
-[![GoDoc](https://godoc.org/github.com/wealdtech/go-ens?status.svg)](https://godoc.org/github.com/wealdtech/go-ens)
+[![GoDoc](https://pkg.go.dev/badge/github.com/wealdtech/go-ens/v4.svg)](https://pkg.go.dev/github.com/wealdtech/go-ens/v4)
 [![Travis CI](https://img.shields.io/travis/wealdtech/go-ens.svg)](https://travis-ci.org/wealdtech/go-ens)
 [![codecov.io](https://img.shields.io/codecov/c/github/wealdtech/go-ens.svg)](https://codecov.io/github/wealdtech/go-ens)
 [![Go Report Card](https://goreportcard.com/badge/github.com/wealdtech/go-ens)](https://goreportcard.com/report/github.com/wealdtech/go-ens)
 
 Go module to simplify interacting with the [Ethereum Name Service](https://ens.domains/) contracts.
+
+v4 resolves names through the ENS [Universal Resolver](https://docs.ens.domains/web/ensv2-readiness/), so ENSIP-10 wildcards and ERC-3668 CCIP-Read work out of the box. Callers that need the previous registry-walking behaviour should stay on `github.com/wealdtech/go-ens/v3`.
 
 
 ## Table of Contents
@@ -23,7 +25,7 @@ Go module to simplify interacting with the [Ethereum Name Service](https://ens.d
 `go-ens` is a standard Go module which can be installed with:
 
 ```sh
-go get github.com/wealdtech/go-ens/v3
+go get github.com/wealdtech/go-ens/v4
 ```
 
 ## Usage
@@ -35,21 +37,21 @@ go get github.com/wealdtech/go-ens/v3
 The most commonly-used feature of ENS is resolution: converting an ENS name to an Ethereum address.  `go-ens` provides a simple call to allow this:
 
 ```go
-address, err := ens.Resolve(client, domain)
+address, err := ens.Resolve(ctx, client, domain)
 ```
 
-where `client` is a connection to an Ethereum client and `domain` is the fully-qualified name you wish to resolve (e.g. `foo.mydomain.eth`) (full examples for using this are given in the [Example](#Example) section below).
+where `ctx` is a `context.Context` (honoured for cancellation and deadlines through any CCIP-Read hops), `client` is a connection to an Ethereum client, and `domain` is the fully-qualified name you wish to resolve (e.g. `foo.mydomain.eth`) (full examples for using this are given in the [Example](#Example) section below).
 
 The reverse process, converting an address to an ENS name, is just as simple:
 
 ```go
-domain, err := ens.ReverseResolve(client, address)
+domain, err := ens.ReverseResolve(ctx, client, address)
 ```
 
-Note that if the address does not have a reverse resolution this will return "".  If you just want a string version of an address for on-screen display then you can use `ens.Format()`, for example:
+If the address has no primary name set this returns an error (`"no resolution"`).  If you just want a string version of an address for on-screen display then you can use `ens.Format()`, for example:
 
 ```go
-fmt.Printf("The address is %s\n", ens.Format(client, address))
+fmt.Printf("The address is %s\n", ens.Format(ctx, client, address))
 ```
 
 This will carry out reverse resolution of the address and print the name if present; if not it will print a formatted version of the address.
@@ -70,7 +72,7 @@ Addresses can be set and obtained using the address functions, for example to ge
 
 ```go
 COIN_TYPE_ETHEREUM := uint64(60)
-address, err := name.Address(COIN_TYPE_ETHEREUM)
+address, err := name.Address(ctx, COIN_TYPE_ETHEREUM)
 ```
 
 ENS supports addresses for multiple coin types; values of coin types can be found at https://github.com/satoshilabs/slips/blob/master/slip-0044.md
@@ -90,13 +92,16 @@ Because subdomains have their own registrars they do not work with the `Name` in
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/ethereum/go-ethereum/ethclient"
-	ens "github.com/wealdtech/go-ens/v3"
+	ens "github.com/wealdtech/go-ens/v4"
 )
 
 func main() {
+	ctx := context.Background()
+
 	// Replace SECRET with your own access token for this example to work.
 	client, err := ethclient.Dial("https://mainnet.infura.io/v3/SECRET")
 	if err != nil {
@@ -105,19 +110,16 @@ func main() {
 
 	// Resolve a name to an address.
 	domain := "ethereum.eth"
-	address, err := ens.Resolve(client, domain)
+	address, err := ens.Resolve(ctx, client, domain)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("Address of %s is %s\n", domain, address.Hex())
 
 	// Reverse resolve an address to a name.
-	reverse, err := ens.ReverseResolve(client, address)
+	reverse, err := ens.ReverseResolve(ctx, client, address)
 	if err != nil {
-		panic(err)
-	}
-	if reverse == "" {
-		fmt.Printf("%s has no reverse lookup\n", address.Hex())
+		fmt.Printf("%s has no reverse lookup: %v\n", address.Hex(), err)
 	} else {
 		fmt.Printf("Name of %s is %s\n", address.Hex(), reverse)
 	}

@@ -23,7 +23,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/wealdtech/go-ens/v3/contracts/ethcontroller"
+	"github.com/wealdtech/go-ens/v4/contracts/ethcontroller"
 )
 
 // ETHController is the structure for the .eth controller contract.

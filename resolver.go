@@ -17,6 +17,7 @@ package ens
 import (
 	"bytes"
 	"compress/zlib"
+	"context"
 	"errors"
 	"io"
 	"math/big"
@@ -25,10 +26,8 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/wealdtech/go-ens/v3/contracts/resolver"
+	"github.com/wealdtech/go-ens/v4/contracts/resolver"
 )
-
-var zeroHash = make([]byte, 32)
 
 // UnknownAddress is the address to which unknown entries resolve.
 var UnknownAddress = common.HexToAddress("00")
@@ -92,11 +91,18 @@ func NewResolverAt(backend bind.ContractBackend, domain string, address common.A
 }
 
 // PublicResolverAddress obtains the address of the public resolver for a chain.
-func PublicResolverAddress(backend bind.ContractBackend) (common.Address, error) {
-	return Resolve(backend, "resolver.eth")
+func PublicResolverAddress(ctx context.Context, backend bind.ContractBackend) (common.Address, error) {
+	return Resolve(ctx, backend, "resolver.eth")
 }
 
 // Address returns the Ethereum address of the domain.
+//
+// This reads the addr(bytes32) record directly from the resolver contract this
+// Resolver is bound to (located via the registry when the Resolver was
+// created). It does NOT perform ENSIP-10 wildcard resolution or follow ERC-3668
+// CCIP-Read, so names whose addresses live off-chain or on an L2 return the
+// zero address or a raw revert error here. For wildcard- and CCIP-Read-aware
+// resolution use Resolve or UniversalResolver.ResolveAddress instead.
 func (r *Resolver) Address() (common.Address, error) {
 	nameHash, err := NameHash(r.domain)
 	if err != nil {
@@ -180,11 +186,25 @@ func (r *Resolver) InterfaceImplementer(interfaceID [4]byte) (common.Address, er
 	return r.Contract.InterfaceImplementer(nil, nameHash, interfaceID)
 }
 
-// Resolve resolves an ENS name in to an Etheruem address.
-// This will return an error if the name is not found or otherwise 0.
-func Resolve(backend bind.ContractBackend, input string) (common.Address, error) {
+// Resolve resolves an ENS name into an Ethereum address, or parses input
+// directly if it is already a hex address.
+//
+// If input contains a dot it is treated as an ENS name and resolved through
+// the ENS UniversalResolver, so ENSIP-10 wildcard resolution and ERC-3668
+// CCIP-Read are followed transparently — names backed by offchain or L2 data
+// resolve the same way as fully on-chain names. If input contains no dot it is
+// treated as a literal hex address and returned after validation, without any
+// on-chain lookup.
+//
+// ctx is honoured for cancellation and deadline propagation, flowing through
+// the CCIP-Read hops, so a caller that sets a per-request deadline can cap the
+// total resolution time end-to-end.
+//
+// It returns an error if the name is not found or otherwise resolves to the
+// zero address.
+func Resolve(ctx context.Context, backend bind.ContractBackend, input string) (common.Address, error) {
 	if strings.Contains(input, ".") {
-		return resolveName(backend, input)
+		return resolveName(ctx, backend, input)
 	}
 	if (strings.HasPrefix(input, "0x") && len(input) > 42) || (!strings.HasPrefix(input, "0x") && len(input) > 40) {
 		return UnknownAddress, errors.New("address too long")
@@ -197,38 +217,15 @@ func Resolve(backend bind.ContractBackend, input string) (common.Address, error)
 	return address, nil
 }
 
-func resolveName(backend bind.ContractBackend, input string) (common.Address, error) {
-	nameHash, err := NameHash(input)
+func resolveName(ctx context.Context, backend bind.ContractBackend, input string) (common.Address, error) {
+	if _, err := NameHash(input); err != nil {
+		return UnknownAddress, err
+	}
+	ur, err := NewUniversalResolver(ctx, backend)
 	if err != nil {
 		return UnknownAddress, err
 	}
-	if bytes.Equal(nameHash[:], zeroHash) {
-		return UnknownAddress, errors.New("bad name")
-	}
-	address, err := resolveHash(backend, input)
-	if err != nil {
-		return UnknownAddress, err
-	}
-
-	return address, nil
-}
-
-func resolveHash(backend bind.ContractBackend, domain string) (common.Address, error) {
-	resolver, err := NewResolver(backend, domain)
-	if err != nil {
-		return UnknownAddress, err
-	}
-
-	// Resolve the domain.
-	address, err := resolver.Address()
-	if err != nil {
-		return UnknownAddress, err
-	}
-	if bytes.Equal(address.Bytes(), UnknownAddress.Bytes()) {
-		return UnknownAddress, errors.New("no address")
-	}
-
-	return address, nil
+	return ur.ResolveAddress(ctx, input)
 }
 
 // SetText sets the text associated with a name.

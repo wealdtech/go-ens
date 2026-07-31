@@ -15,12 +15,12 @@
 package ens_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/stretchr/testify/require"
-	ens "github.com/wealdtech/go-ens/v3"
+	ens "github.com/wealdtech/go-ens/v4"
 )
 
 // TestReverseResolve tests the reverse resolution functionality.
@@ -34,7 +34,9 @@ func TestReverseResolve(t *testing.T) {
 		{
 			name:    "NoResolver",
 			address: common.Address{},
-			err:     "not a resolver",
+			// UniversalResolver returns an empty primary name for the zero
+			// address; ReverseResolve translates that to "no resolution".
+			err: "no resolution",
 		},
 		{
 			name:    "NoReverseRecord",
@@ -48,12 +50,11 @@ func TestReverseResolve(t *testing.T) {
 		},
 	}
 
-	client, err := ethclient.Dial("https://mainnet.infura.io/v3/831a5442dc2e4536a9f8dee4ea1707a6")
-	require.NoError(t, err)
+	client := mainnetClient(t)
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			res, err := ens.ReverseResolve(client, test.address)
+			res, err := ens.ReverseResolve(context.Background(), client, test.address)
 			if test.err != "" {
 				require.EqualError(t, err, test.err)
 			} else {
